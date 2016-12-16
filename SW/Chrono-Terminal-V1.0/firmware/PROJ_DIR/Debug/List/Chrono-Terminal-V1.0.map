@@ -1,87 +1,87 @@
 ###############################################################################
 #
-# IAR ELF Linker V7.80.2.11947/W32 for ARM                15/Dec/2016  13:04:24
+# IAR ELF Linker V7.80.2.11947/W32 for ARM                17/Dec/2016  00:15:39
 # Copyright 2007-2016 IAR Systems AB.
 #
 #    Output file  =  
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Exe\Chrono-Terminal-V1.0.out
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Exe\Chrono-Terminal-V1.0.out
 #    Map file     =  
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\List\Chrono-Terminal-V1.0.map
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\List\Chrono-Terminal-V1.0.map
 #    Command line =  
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\clock.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\delay.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\gpio.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\i2c.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\lis3.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\main.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\MicroMenu.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\ssdFonts.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\ssdGraph.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\startup_stm32f042x6.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_adc.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_adc_ex.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_can.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_cec.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_comp.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_cortex.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_crc.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_crc_ex.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_dac.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_dac_ex.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_dma.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_flash.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_flash_ex.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_gpio.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_i2c.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_i2c_ex.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_i2s.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_irda.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_iwdg.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_msp.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_pcd.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_pcd_ex.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_pwr.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_pwr_ex.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_rcc.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_rcc_ex.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_rtc.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_rtc_ex.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_smartcard.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_smartcard_ex.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_smbus.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_spi.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_spi_ex.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_tim.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_tim_ex.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_tsc.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_uart.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_uart_ex.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_usart.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_wwdg.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_it.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_adc.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_comp.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_crc.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_crs.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_dac.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_dma.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_exti.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_gpio.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_i2c.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_pwr.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_rcc.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_rtc.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_spi.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_tim.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_usart.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_utils.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\system_stm32f0xx.o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\ug2864.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\clock.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\delay.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\gpio.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\i2c.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\lis3.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\main.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\MicroMenu.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\ssdFonts.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\ssdGraph.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\startup_stm32f042x6.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_adc.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_adc_ex.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_can.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_cec.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_comp.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_cortex.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_crc.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_crc_ex.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_dac.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_dac_ex.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_dma.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_flash.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_flash_ex.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_gpio.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_i2c.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_i2c_ex.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_i2s.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_irda.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_iwdg.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_msp.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_pcd.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_pcd_ex.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_pwr.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_pwr_ex.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_rcc.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_rcc_ex.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_rtc.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_rtc_ex.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_smartcard.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_smartcard_ex.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_smbus.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_spi.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_spi_ex.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_tim.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_tim_ex.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_tsc.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_uart.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_uart_ex.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_usart.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_hal_wwdg.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_it.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_adc.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_comp.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_crc.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_crs.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_dac.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_dma.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_exti.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_gpio.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_i2c.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_pwr.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_rcc.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_rtc.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_spi.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_tim.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_usart.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\stm32f0xx_ll_utils.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\system_stm32f0xx.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\ug2864.o
 #        -o
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Exe\Chrono-Terminal-V1.0.out
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Exe\Chrono-Terminal-V1.0.out
 #        --redirect _Printf=_PrintfLargeNoMb --map
-#        D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\List\Chrono-Terminal-V1.0.map
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\List\Chrono-Terminal-V1.0.map
 #        --config "C:\Program Files (x86)\IAR Systems\Embedded Workbench
 #        7.5\arm\config\linker\ST\stm32f042x6.icf" --semihosting --entry
 #        __iar_program_start --vfe
@@ -322,7 +322,7 @@ Copy (__iar_copy_init3)
 
     Module                  ro code  ro data  rw data
     ------                  -------  -------  -------
-D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj: [1]
+C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj: [1]
     MicroMenu.o                 276       28      228
     clock.o                     152
     delay.o                      96
@@ -683,7 +683,7 @@ ug2864init              0x08004179   0xba  Code  Gb  ug2864.o [1]
 uwTick                  0x20000a2c    0x4  Data  Gb  stm32f0xx_hal.o [1]
 
 
-[1] = D:\Documents\4eef\Work\SW\ARM\IAREW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj
+[1] = C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj
 [2] = command line
 [3] = dl6M_tln.a
 [4] = m6M_tl.a
