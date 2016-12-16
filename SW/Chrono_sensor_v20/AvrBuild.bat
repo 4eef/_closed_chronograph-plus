@@ -1,0 +1,2 @@
+@ECHO OFF
+"C:\Program Files (x86)\Atmel\AVR Tools\AvrAssembler2\avrasm2.exe" -S "D:\Documents\4eef\AVR\Chrono_sensor_v20\labels.tmp" -fI -W+ie -C AVR8L_0 -o "D:\Documents\4eef\AVR\Chrono_sensor_v20\Chrono_sensor_v20.hex" -d "D:\Documents\4eef\AVR\Chrono_sensor_v20\Chrono_sensor_v20.obj" -e "D:\Documents\4eef\AVR\Chrono_sensor_v20\Chrono_sensor_v20.eep" -m "D:\Documents\4eef\AVR\Chrono_sensor_v20\Chrono_sensor_v20.map" "D:\Documents\4eef\AVR\Chrono_sensor_v20\Chrono_sensor_v20.asm"

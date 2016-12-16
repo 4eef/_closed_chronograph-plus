@@ -1,0 +1,13 @@
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\bin\armproc.dll" 
+
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\bin\armsim2.dll" 
+
+"D:\Documents\4eef\Work\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Exe\Chrono-Terminal-V1.0.out" 
+
+--plugin "C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\bin\armbat.dll" 
+
+--device_macro "C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.5\arm\config\debugger\ST\STM32F0xx.dmac" 
+
+
+
+
