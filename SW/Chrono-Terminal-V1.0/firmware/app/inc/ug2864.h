@@ -34,8 +34,8 @@
 #define SCROLL_LINE_WIDTH               2
 #define SCROLL_LINE_LENGTH              52
 #define ROLL_PERIOD                     7
-#define ROLL_HIGH_HEIGHT                35
-#define ROLL_HIGH_Y                     19
+#define ROLL_HIGH_HEIGHT                46
+#define ROLL_HIGH_Y                     18
 #define ROLL_LOW_HEIGHT                 8
 #define ROLL_LOW_Y                      56
 #define PITCH_X                         124

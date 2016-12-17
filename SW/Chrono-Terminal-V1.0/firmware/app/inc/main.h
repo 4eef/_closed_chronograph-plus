@@ -77,6 +77,7 @@ typedef struct{
     uint16_t    pellet;
     uint8_t     currPellets;
     uint8_t     numPellets;
+    uint16_t    shots;
     uint8_t     battCharge;
     uint16_t    battVolt;
     float       speed0;
@@ -84,6 +85,9 @@ typedef struct{
     uint16_t    speed2;
     uint16_t    speed3;
     uint16_t    speed4;
+    float       energy;
+    float       mean;
+    float       sdev;
     float       accRoll;
     float       accPitch;
     float       accRollBorder;
@@ -127,7 +131,6 @@ float tiltAngCalc(float A, float B, float C);
 void drawMainScreen(void);
 enum buttonValues getButtonState(void);
 void drawMenu(void);
-void drawAngles(void);
 
 #endif //main_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

@@ -214,7 +214,7 @@ void ssd_putBatt(uint8_t percentage){
 * @retval   
 */
 void ssd_putChar12x16(uint8_t x, uint8_t y, char c){
-    uint8_t i, j;     
+    uint8_t i, j;
     //Draw the char
     for(i=0; i<24; i++){
         for (j=0; j<8; j++){

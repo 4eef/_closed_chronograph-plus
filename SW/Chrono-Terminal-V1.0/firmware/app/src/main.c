@@ -94,7 +94,15 @@ void main(void){
     meas.accPitchBorder = 90;
     meas.currPellets = 10;
     meas.numPellets = 10;
+    meas.pellet = 1;
+    meas.mean = 245.5;
+    meas.sdev = 5.6;
+    meas.shots = 100;
+    meas.energy = 15.6;
     sysSettings.magEn = 1;
+    sysSettings.chrDisp = 0;
+    sysSettings.comDisp = 1;
+    sysSettings.incDisp = 0;
     kalman.F = 1;
     kalman.H = 1;
     kalman.R = 15;
@@ -285,28 +293,11 @@ void displayRefresh(void){
     //Draw screen
     if(Menu_GetCurrentMenu() == &display){
         drawMainScreen();
-        //drawAngles();
     }else{
         drawMenu();
     }
     //Refresh GDDRAM
     ug2864_refresh();
-}
-
-/*!****************************************************************************
-* @brief    Fill video buffer with "angles display"
-* @param    
-* @retval   
-*/
-void drawAngles(void){
-    char rollAng[7], pitchAng[7], border[4];
-    sprintf(rollAng, "%c%.1f%c", 59, fabs(meas.accRoll), 61); //Roll angle
-    sprintf(pitchAng, "%c%.1f%c", 232, fabs(meas.accPitch), 248);//Pitch angle
-    sprintf(border, "%c%.0f%c", 241, meas.accRollBorder, 248);//Roll border
-    ssd_putString12x16(0, 8, &rollAng[0]);
-    ssd_putString6x8(92, 10, &pitchAng[0]);
-    ssd_putString6x8(0, 56, &border[0]);
-    ssd_putRollBar(meas.accRoll, meas.accRollBorder, ROLL_HIGH_Y, ROLL_HIGH_HEIGHT);
 }
 
 /*!****************************************************************************
@@ -343,34 +334,56 @@ void drawMenu(void){
 * @retval   
 */
 void drawMainScreen(void){
-    char speed0[7], speed1[4], speed2[4], speed3[4], speed4[4], magStat[6], rollAng[7], pitchAng[7];
-    //Convert all measured data to strings
-    sprintf(speed0, "%.2f%c", meas.speed0, 47);                 //Speed 0
-    sprintf(speed1, "%u", meas.speed1);                         //Speed 1
-    sprintf(speed2, "%u", meas.speed2);                         //Speed 2
-    sprintf(speed3, "%u", meas.speed3);                         //Speed 3
-    if(sysSettings.magEn == 1){                                 //Magazine status/Speed4
-        sprintf(magStat, "%u/%u", meas.currPellets, meas.numPellets);
+    char speed0[8], speed1[4], speed2[4], speed3[4], speed4[4], magStat[6], def[21];
+    char rollAng[7], pitchAng[7], energy[8], shots[4], mean[8], sdev[8], border[4];
+    sprintf(pitchAng, "%c%.1f%c", 232, fabs(meas.accPitch), 248);
+    //Display settings
+    if(((sysSettings.chrDisp != 0) && (sysSettings.comDisp == 0) && (sysSettings.incDisp == 0)) ||
+        ((sysSettings.chrDisp == 0) && (sysSettings.comDisp != 0) && (sysSettings.incDisp == 0))){
+        sprintf(speed0, "%.2f%c", meas.speed0, 47);             //Speed 0
+        sprintf(speed1, "%u", meas.speed1);                     //Speed 1
+        sprintf(speed2, "%u", meas.speed2);                     //Speed 2
+        sprintf(speed3, "%u", meas.speed3);                     //Speed 3
+        if(sysSettings.magEn == 1){                             //Magazine status/Speed4
+            sprintf(magStat, "%u/%u", meas.currPellets, meas.numPellets);
+            ssd_putString6x8(92, 45, &magStat[0]);
+        }else{
+            sprintf(speed4, "%u", meas.speed4);
+            ssd_putString6x8(98, 45, &speed4[0]);
+        }
+        ssd_putString6x8(0, 0, pellets[meas.pellet]);           //Detected pellet
+        ssd_putString12x16(0, 24, &speed0[0]);                  //Measured speed
+        ssd_putString6x8(98, 15, &speed1[0]);                   //Previous measurements
+        ssd_putString6x8(98, 25, &speed2[0]);
+        ssd_putString6x8(98, 35, &speed3[0]);
+        //Select the info to display
+        if(sysSettings.comDisp != 0){
+            sprintf(rollAng, "%c%.1f%c", 226, fabs(meas.accRoll), 248);
+            ssd_putString6x8(0, 40, &rollAng[0]);
+            ssd_putString6x8(42, 40, &pitchAng[0]);
+            ssd_putRollBar(meas.accRoll, meas.accRollBorder, ROLL_LOW_Y, ROLL_LOW_HEIGHT);
+            ssd_putPitchBar(meas.accPitch, meas.accPitchBorder);
+        }else{
+            sprintf(shots, "%d", meas.shots);                   //Number of shots per measurement
+            sprintf(mean, "%c%.2f", 230, meas.mean);            //Mean of current measurement
+            sprintf(sdev, "%c%.2f", 229, meas.sdev);            //Standard deviation
+            sprintf(energy, "%.2f%c", meas.energy, 58);         //Calculated energy
+            ssd_putString6x8(98, 55, &shots[0]);
+            ssd_putString6x8(0, 36, &mean[0]);
+            ssd_putString6x8(48, 36, &sdev[0]);
+            ssd_putString12x16(0, 56, &energy[0]);
+        }
+    }else if((sysSettings.chrDisp == 0) && (sysSettings.comDisp == 0) && (sysSettings.incDisp != 0)){
+        sprintf(rollAng, "%c%.1f%c", 59, fabs(meas.accRoll), 61);//Roll angle
+        sprintf(border, "%c%.0f%c", 241, meas.accRollBorder, 248);//Roll border
+        ssd_putString12x16(0, 8, &rollAng[0]);
+        ssd_putString6x8(76, 0, &pitchAng[0]);
+        ssd_putString6x8(76, 9, &border[0]);
+        ssd_putRollBar(meas.accRoll, meas.accRollBorder, ROLL_HIGH_Y, ROLL_HIGH_HEIGHT);
     }else{
-        sprintf(speed4, "%u", meas.speed4);
+        sprintf(def, "Error display config");                   //Default line
+        ssd_putString6x8(8, 0, &def[0]);
     }
-    sprintf(rollAng, "%c%.1f%c", 226, fabs(meas.accRoll), 248); //Roll angle
-    sprintf(pitchAng, "%c%.1f%c", 232, fabs(meas.accPitch), 248);//Pitch angle
-    //Put all the strings to the buffer
-    ssd_putString6x8(0, 0, pellets[meas.pellet]);               //Detected pellet
-    ssd_putString12x16(0, 24, &speed0[0]);                      //Measured speed
-    ssd_putString6x8(98, 15, &speed1[0]);                       //Previous measurements
-    ssd_putString6x8(98, 25, &speed2[0]);
-    ssd_putString6x8(98, 35, &speed3[0]);
-    if(sysSettings.magEn == 1){                                 //Magazine status/Speed4
-        ssd_putString6x8(92, 45, &magStat[0]);
-    }else{
-        ssd_putString6x8(98, 45, &speed4[0]);
-    }
-    ssd_putString6x8(0, 40, &rollAng[0]);                       //Roll angle
-    ssd_putString6x8(42, 40, &pitchAng[0]);                     //Pitch angle
-    ssd_putRollBar(meas.accRoll, meas.accRollBorder, ROLL_LOW_Y, ROLL_LOW_HEIGHT);//Roll bar
-    ssd_putPitchBar(meas.accPitch, meas.accPitchBorder);        //Pitch bar
 }
 
 /*!****************************************************************************
