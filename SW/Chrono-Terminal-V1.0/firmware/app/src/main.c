@@ -14,13 +14,16 @@
 /*!****************************************************************************
 * MEMORY
 */
-extern ssdVideoBff_type ssdVideoBff;
-meas_type               meas;
-extern accel_type       accel;
-kalman_type             kalman;
-sysSettings_type        sysSettings;
-extern menu_type        menu;
-buttonCnts_type         buttonCnts;
+extern ssdVideoBff_type     ssdVideoBff;
+extern accel_type           accel;
+extern menu_type            menu;
+kalman_type                 kalman;
+buttonCnts_type             buttonCnts;
+Menu_Item_t                 *CurrentMenuItem;
+meas_type                   meas;
+sysSettings_type            sysSettings;
+lis3Settings_type           lis3Settings;
+ssdSettings_type            ssdSettings;
 
 //Known pellets database
 const char *pellets[2] = {
@@ -38,9 +41,9 @@ MENU_ITEM(stats,        setts,          mode,           display,        NULL_MEN
 MENU_ITEM(setts,        about,          stats,          display,        smag,           NULL,           NULL,           "Settings");
 MENU_ITEM(about,        NULL_MENU,      setts,          display,        service,        NULL,           NULL,           "About");
 //Menu/Display mode
-MENU_ITEM(mgeneral,     mchron,         NULL_MENU,      mode,           NULL_MENU,      NULL,           menuParSel,     "General");
-MENU_ITEM(mchron,       mincline,       mgeneral,       mode,           NULL_MENU,      NULL,           menuParSel,     "Chronograph");
-MENU_ITEM(mincline,     NULL_MENU,      mchron,         mode,           NULL_MENU,      NULL,           menuParSel,     "Inclinometer");
+MENU_ITEM(mgeneral,     mchron,         NULL_MENU,      mode,           NULL_MENU,      NULL,           modeEdit,       "General");
+MENU_ITEM(mchron,       mincline,       mgeneral,       mode,           NULL_MENU,      NULL,           modeEdit,       "Chronograph");
+MENU_ITEM(mincline,     NULL_MENU,      mchron,         mode,           NULL_MENU,      NULL,           modeEdit,       "Inclinometer");
 //Menu/Settings
 MENU_ITEM(smag,         schrono,        NULL_MENU,      setts,          smcapacity,     NULL,           NULL,           "Magazine");
 MENU_ITEM(schrono,      sincline,       smag,           setts,          scdist,         NULL,           NULL,           "Chronograph");
@@ -50,17 +53,17 @@ MENU_ITEM(swusrc,       sdatime,        sdisplay,       setts,          NULL_MEN
 MENU_ITEM(sdatime,      spsupply,       swusrc,         setts,          NULL_MENU,      NULL,           NULL,           "Date & time");
 MENU_ITEM(spsupply,     NULL_MENU,      sdatime,        setts,          spdoff,         NULL,           NULL,           "Power supply");
 //Menu/Settings/Magazine
-MENU_ITEM(smcapacity,   smon,           NULL_MENU,      smag,           NULL_MENU,      NULL,           NULL,           "Capacity");
-MENU_ITEM(smon,         smoff,          smcapacity,     smag,           NULL_MENU,      NULL,           menuParSel,     "Enable");
-MENU_ITEM(smoff,        NULL_MENU,      smon,           smag,           NULL_MENU,      NULL,           menuParSel,     "Disable");
+MENU_ITEM(smcapacity,   smon,           NULL_MENU,      smag,           NULL_MENU,      NULL,           parEditRedir,   "Capacity");
+MENU_ITEM(smon,         smoff,          smcapacity,     smag,           NULL_MENU,      NULL,           modeEdit,       "Enable");
+MENU_ITEM(smoff,        NULL_MENU,      smon,           smag,           NULL_MENU,      NULL,           modeEdit,       "Disable");
 //Menu/Settings/Chronograph
 MENU_ITEM(scdist,       scir,           NULL_MENU,      schrono,        NULL_MENU,      NULL,           NULL,           "Sensor distance");
 MENU_ITEM(scir,         scbind,         scdist,         schrono,        NULL_MENU,      NULL,           NULL,           "IR protocol");
 MENU_ITEM(scbind,       NULL_MENU,      scir,           schrono,        NULL_MENU,      NULL,           NULL,           "Bind");
 //Menu/Settings/Inclinometer
-MENU_ITEM(sifilt,       sinsamp,        NULL_MENU,      sincline,       NULL_MENU,      NULL,           NULL,           "Filtering");
-MENU_ITEM(sinsamp,      sical,          sifilt,         sincline,       NULL_MENU,      NULL,           NULL,           "Sampling");
-MENU_ITEM(sical,        NULL_MENU,      sinsamp,        sincline,       NULL_MENU,      NULL,           NULL,           "Calibration");
+MENU_ITEM(sifilt,       sibrdr,         NULL_MENU,      sincline,       NULL_MENU,      NULL,           NULL,           "Filtering");
+MENU_ITEM(sibrdr,       sical,          sifilt,         sincline,       NULL_MENU,      NULL,           parEditRedir,   "Roll level border");
+MENU_ITEM(sical,        NULL_MENU,      sibrdr,         sincline,       NULL_MENU,      NULL,           NULL,           "Calibration");
 //Menu/Settings/Display
 MENU_ITEM(sdcntr,       sdfreq,         NULL_MENU,      sdisplay,       NULL_MENU,      NULL,           NULL,           "Contrast");
 MENU_ITEM(sdfreq,       NULL_MENU,      sdcntr,         sdisplay,       NULL_MENU,      NULL,           NULL,           "Frequency");
@@ -78,6 +81,8 @@ MENU_ITEM(service,      NULL_MENU,      NULL_MENU,      about,          NULL_MEN
 */
 void main(void){
     uint8_t offs, len;
+    char text[20], par[6];
+    //Initialize hardware
     HAL_Init();
     SystemClock_Config();
     initGpios();
@@ -88,6 +93,7 @@ void main(void){
     //Initial parameters
     meas.accRollBorder = 5;
     meas.accPitchBorder = 90;
+    meas.numPellets = PELLETS_MIN;
     sysSettings.magEn = 0;
     sysSettings.dispMode = MODE_COM;
     kalman.F = 1;
@@ -104,27 +110,59 @@ void main(void){
         //MicroMenu navigation
         switch (getButtonState()){
         case UP:
-            Menu_Navigate(MENU_PREVIOUS);
+            if(menu.parEdit == PAR_EDIT_ENABLE){
+                if(menu.parValue <= menu.parBorderMin){
+                    strcpy(menu.message, "Lower limit");
+                    menu.msgCnt = MSG_CNT;
+                }else{
+                    menu.parValue--;
+                }
+            }else{
+                Menu_Navigate(MENU_PREVIOUS);
+            }
             break;
         case DOWN:
-            Menu_Navigate(MENU_NEXT);
+            if(menu.parEdit == PAR_EDIT_ENABLE){
+                if(menu.parValue >= menu.parBorderMax){
+                    strcpy(menu.message, "Higher limit");
+                    menu.msgCnt = MSG_CNT;
+                }else{
+                    menu.parValue++;
+                }
+            }else{
+                Menu_Navigate(MENU_NEXT);
+            }
             break;
         case OK:
-            if((MENU_CHILD == &NULL_MENU) || (MENU_CHILD == NULL)){
-                Menu_EnterCurrentItem();
+            if(menu.parEdit == PAR_EDIT_ENABLE){
+                strcpy(menu.message, "Saved");
+                menu.msgCnt = MSG_CNT;
+                menu.parStat = PAR_SAVE;
             }else{
-                Menu_Navigate(MENU_CHILD);
+                if((MENU_CHILD == &NULL_MENU) || (MENU_CHILD == NULL)){
+                    Menu_EnterCurrentItem();
+                }else{
+                    Menu_Navigate(MENU_CHILD);
+                }
             }
             break;
         case CANCEL:
-            Menu_Navigate(MENU_PARENT);
+            if(menu.parEdit == PAR_EDIT_ENABLE){
+                strcpy(menu.message, "Cancelled");
+                menu.msgCnt = MSG_CNT;
+                menu.parStat = PAR_CANCEL;
+            }else{
+                Menu_Navigate(MENU_PARENT);
+            }
             break;
         case HOME:
-            Menu_Navigate(&display);
+            if(menu.parEdit == PAR_EDIT_DISABLE) Menu_Navigate(&display);
             break;
         default:
+            menu.parStat = PAR_NONE;
             break;
         }
+        CurrentMenuItem = Menu_GetCurrentMenu();
         trxAccData();
         //Refresh video buffer with nre data and transmit it
         memset(ssdVideoBff.video, 0, sizeof(ssdVideoBff.video));
@@ -135,7 +173,16 @@ void main(void){
         }else{
             drawMenu();
         }
-        //Put message
+        //Parameter edit box
+        if(menu.parEdit == PAR_EDIT_ENABLE){
+            strcpy(text, CurrentMenuItem->Text);
+            ssd_putParBox(&text[0]);
+            sprintf(par, "%d", menu.parValue);
+            len = strlen(par);
+            offs = SSD1306_LCDWIDTH/2 - (len*6)/2;
+            ssd_putString6x8(offs, 28, &par[0]);
+        }
+        //Message
         if(menu.msgCnt != 0){
             menu.msgCnt--;
             len = strlen(menu.message);
@@ -149,31 +196,64 @@ void main(void){
 }
 
 /*!****************************************************************************
-* @brief    Menu parameter edit
+* @brief    Redirect routine to edit required parameter
 * @param    
 * @retval   
 */
-void menuParEdit(void){
-    menu.parEdit = 1;
+void parEditRedir(void){
+    //Magazine capacity
+    if(CurrentMenuItem == &smcapacity){
+        menu.parBorderMax = PELLETS_MAX;
+        menu.parBorderMin = PELLETS_MIN;
+        meas.numPellets = parEdit(meas.numPellets);
+    }else
+    //Inclinometer roll level border
+    if(CurrentMenuItem == &sibrdr){
+        menu.parBorderMax = INC_BORDER_MAX;
+        menu.parBorderMin = INC_BORDER_MIN;
+        meas.accRollBorder = parEdit(meas.accRollBorder);
+    }
 }
 
 /*!****************************************************************************
-* @brief    Menu parameter select
+* @brief    Menu parameters edit routine
 * @param    
 * @retval   
 */
-void menuParSel(void){
-    //Configure corresponding parameter due to selected item
-    if(Menu_GetCurrentMenu() == &mgeneral) sysSettings.dispMode = MODE_COM;
+int16_t parEdit(int16_t param){
+    int16_t retVal = param;
+    if(menu.parEdit == PAR_EDIT_ENABLE){
+        if(menu.parStat == PAR_SAVE){
+            retVal = menu.parValue;
+            menu.parEdit = PAR_EDIT_DISABLE;
+            return retVal;
+        }else
+        if(menu.parStat == PAR_CANCEL){
+            menu.parEdit = PAR_EDIT_DISABLE;
+            return retVal;
+        }
+    }else{
+        menu.parValue = param;
+        menu.parEdit = PAR_EDIT_ENABLE;
+    }
+    return retVal;
+}
+
+/*!****************************************************************************
+* @brief    Menu parameters routines
+* @param    
+* @retval   
+*/
+void modeEdit(void){
+    if(CurrentMenuItem == &mgeneral)sysSettings.dispMode = MODE_COM;
     else
-    if(Menu_GetCurrentMenu() == &mchron) sysSettings.dispMode = MODE_CHR;
+    if(CurrentMenuItem == &mchron)sysSettings.dispMode = MODE_CHR;
     else
-    if(Menu_GetCurrentMenu() == &mincline) sysSettings.dispMode = MODE_INC;
+    if(CurrentMenuItem == &mincline)sysSettings.dispMode = MODE_INC;
     else
-    if(Menu_GetCurrentMenu() == &smon) sysSettings.magEn = 1;
+    if(CurrentMenuItem == &smon)sysSettings.magEn = MAG_ENABLE;
     else
-    if(Menu_GetCurrentMenu() == &smoff) sysSettings.magEn = 0;
-    //Put message to display parameter is changed
+    if(CurrentMenuItem == &smoff)sysSettings.magEn = MAG_DISABLE;
     strcpy(menu.message, "OK");
     menu.msgCnt = MSG_CNT;
 }
@@ -344,10 +424,8 @@ void drawMenu(void){
     for(i = 0; i < MENU_POSITIONS; i++){
         ssd_putString6x8(8, MENU_START+MENU_INTERVAL*i, &menu.child[offs+i][0]);
     }
-    //Put "parameter edit" box
-    if(menu.parEdit == PAR_EDIT_ENABLE){
-        
-    }
+    //Edit function
+    if(menu.parEdit == PAR_EDIT_ENABLE || menu.parStat != PAR_NONE) parEditRedir();
 }
 
 /*!****************************************************************************

@@ -44,8 +44,8 @@
 #define BATT_X                          113
 #define BATT_Y                          0
 #define MSG_BOX_HEIGHT                  16
-#define PAR_BOX_HEIGHT                  48
-#define PAR_BOX_WIDTH                   112
+#define PAR_BOX_WIDTH                   111
+#define PAR_BOX_HEIGHT                  47
 
 /*!****************************************************************************
 * User enum
@@ -58,6 +58,10 @@ typedef struct{
     uint8_t     data;
     uint8_t     video[SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8];
 }ssdVideoBff_type;
+
+typedef struct{
+    uint8_t     contrast;
+}ssdSettings_type;
 
 /*!****************************************************************************
 * Extern viriables
@@ -87,6 +91,7 @@ void ssd_putMenuFolder(void);
 void ssd_putMenuScroll(void);
 void ssd_putRollBar(float aabs, uint16_t border, uint8_t y, uint8_t hgt);
 void ssd_putMsgBox(uint8_t len);
+void ssd_putParBox(char *text);
 
 #endif //ug9616_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

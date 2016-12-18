@@ -14,8 +14,39 @@
 /*!****************************************************************************
 * MEMORY
 */
-ssdVideoBff_type ssdVideoBff;
+ssdVideoBff_type    ssdVideoBff;
 extern menu_type    menu;
+
+/*!****************************************************************************
+* @brief    Put box for text at the center of display
+* @param    
+* @retval   
+*/
+void ssd_putParBox(char *text){
+    uint8_t i, j, x, y;
+    char tmp[20], uArrow[2]={24, 0}, dArrow[2]={25, 0};
+    //Parameters
+    x = (SSD1306_LCDWIDTH - PAR_BOX_WIDTH)/2;
+    y = (SSD1306_LCDHEIGHT - PAR_BOX_HEIGHT)/2;
+    //Put box
+    for(i = 0; i <= PAR_BOX_WIDTH; i++){
+        for(j = 0; j <= PAR_BOX_HEIGHT; j++){
+            if(j == 0 || j == PAR_BOX_HEIGHT || i == 0 || i == PAR_BOX_WIDTH){
+                ssd_setpix(x+i, y+j, WHITE);
+            }else{
+                ssd_setpix(x+i, y+j, BLACK);
+            }
+        }
+    }
+    //Put text
+    ssd_putString6x8(10, 10, text);
+    ssd_putString6x8(46, 46, &dArrow[0]);
+    ssd_putString6x8(76, 46, &uArrow[0]);
+    strcpy(tmp, "Back");
+    ssd_putString6x8(10, 46, &tmp[0]);
+    strcpy(tmp, "Save");
+    ssd_putString6x8(94, 46, &tmp[0]);
+}
 
 /*!****************************************************************************
 * @brief    Put box for text at the center of display

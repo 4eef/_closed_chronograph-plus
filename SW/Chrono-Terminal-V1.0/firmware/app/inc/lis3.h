@@ -44,6 +44,10 @@ typedef struct{
     uint8_t     rawZH;
 }accel_type;
 
+typedef struct{
+    uint8_t     dummy;
+}lis3Settings_type;
+
 /*!****************************************************************************
 * Extern viriables
 */

@@ -35,9 +35,23 @@
 #define BUTTON_DOWN             GP_SW1
 #define BUTTON_OK               GP_SW4
 #define BUTTON_CANCEL           GP_SW3
+#define MSG_CNT                 20
+#define PAR_NONE                0
+#define PAR_SAVE                1
+#define PAR_CANCEL              2
+#define PAR_EDIT_DISABLE        0
+#define PAR_EDIT_ENABLE         1
+#define PAR_UNSIGNED            0
+#define PAR_SIGNED              1
 #define MODE_COM                0
 #define MODE_CHR                1
 #define MODE_INC                2
+#define PELLETS_MAX             99
+#define PELLETS_MIN             2
+#define INC_BORDER_MAX          90
+#define INC_BORDER_MIN          1
+#define MAG_DISABLE             0
+#define MAG_ENABLE              1
 
 /*!****************************************************************************
 * User enum
@@ -54,13 +68,6 @@ enum buttonValues{
 /*!****************************************************************************
 * User typedef
 */
-typedef struct{
-    uint8_t     cntUp;
-    uint8_t     cntDn;
-    uint8_t     cntOK;
-    uint8_t     cntCl;
-}buttonCnts_type;
-
 typedef struct{
     uint8_t     reserv      :3;
     uint8_t     dispMode    :2;
@@ -87,6 +94,13 @@ typedef struct{
     uint16_t    accRollBorder;
     uint16_t    accPitchBorder;
 }meas_type;
+
+typedef struct{
+    uint8_t     cntUp;
+    uint8_t     cntDn;
+    uint8_t     cntOK;
+    uint8_t     cntCl;
+}buttonCnts_type;
 
 typedef struct{
     uint16_t F;
@@ -127,8 +141,9 @@ float tiltAngCalc(float A, float B, float C);
 void drawMainScreen(void);
 enum buttonValues getButtonState(void);
 void drawMenu(void);
-void menuParSel(void);
-void menuParEdit(void);
+void parEditRedir(void);
+int16_t parEdit(int16_t param);
+void modeEdit(void);
 
 #endif //main_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/
