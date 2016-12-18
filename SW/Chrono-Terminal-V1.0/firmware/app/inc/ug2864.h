@@ -43,6 +43,9 @@
 #define BATT_PIXELS                     4
 #define BATT_X                          113
 #define BATT_Y                          0
+#define MSG_BOX_HEIGHT                  16
+#define PAR_BOX_HEIGHT                  48
+#define PAR_BOX_WIDTH                   112
 
 /*!****************************************************************************
 * User enum
@@ -79,10 +82,11 @@ void ssd_putChar6x8(uint8_t x, uint8_t y, char c);
 void ssd_putString6x8(uint8_t x, uint8_t y, const char *s);
 void ssd_setpix(uint8_t x, uint8_t y, uint8_t color);
 void ssd_putBatt(uint8_t percentage);
-void ssd_putPitchBar(float aabs, float border);
+void ssd_putPitchBar(float aabs, uint16_t border);
 void ssd_putMenuFolder(void);
 void ssd_putMenuScroll(void);
-void ssd_putRollBar(float aabs, float border, uint8_t y, uint8_t hgt);
+void ssd_putRollBar(float aabs, uint16_t border, uint8_t y, uint8_t hgt);
+void ssd_putMsgBox(uint8_t len);
 
 #endif //ug9616_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

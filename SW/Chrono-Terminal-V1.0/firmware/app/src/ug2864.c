@@ -15,14 +15,37 @@
 * MEMORY
 */
 ssdVideoBff_type ssdVideoBff;
-extern menuStrs_type    menuStrs;
+extern menu_type    menu;
+
+/*!****************************************************************************
+* @brief    Put box for text at the center of display
+* @param    
+* @retval   
+*/
+void ssd_putMsgBox(uint8_t len){
+    uint8_t i, j, x, y, boxLength;
+    //Parameters
+    boxLength = len*6 + 8;
+    x = SSD1306_LCDWIDTH/2 - boxLength/2;
+    y = SSD1306_LCDHEIGHT/2 - MSG_BOX_HEIGHT/2 - 1;
+    //Put box
+    for(i = 0; i <= boxLength; i++){
+        for(j = 0; j <= MSG_BOX_HEIGHT; j++){
+            if(j == 0 || j == MSG_BOX_HEIGHT || i == 0 || i == boxLength){
+                ssd_setpix(x+i, y+j, WHITE);
+            }else{
+                ssd_setpix(x+i, y+j, BLACK);
+            }
+        }
+    }
+}
 
 /*!****************************************************************************
 * @brief    Put roll progress bar and fill it
 * @param    
 * @retval   
 */
-void ssd_putRollBar(float aabs, float border, uint8_t y, uint8_t hgt){
+void ssd_putRollBar(float aabs, uint16_t border, uint8_t y, uint8_t hgt){
     uint8_t i, j, k, l, m, cStrt, cEnd, fYBias, fHgt;
     int16_t brel, angle, end, iaabs, iborder, izero;
     //Parameters calculation
@@ -70,7 +93,7 @@ void ssd_putRollBar(float aabs, float border, uint8_t y, uint8_t hgt){
         angle = izero - iaabs;
     }
     if(angle > brel) angle = brel;                  //If border is leaped over
-    end = (angle*SSD1306_LCDWIDTH/2)/brel;                       //End of the line
+    end = (angle*SSD1306_LCDWIDTH/2)/brel;          //End of the line
     //Fill the line
     for(i = 0; i < end; i++){
         for(j = 0; j < fHgt; j++){
@@ -101,7 +124,7 @@ void ssd_putMenuScroll(void){
     }
     //Put scroll onto line
     x = SCROLL_X_OFF;
-    off = (menuStrs.currItem-1)*length/menuStrs.totItems;//Calculate scroll offset
+    off = (menu.currItem-1)*length/menu.totItems;   //Calculate scroll offset
     y = SCROLL_Y_OFF + off;
     for(i=0; i<sizeof(menuScroll); i++){
         for (j=0; j<8; j++){
@@ -119,7 +142,7 @@ void ssd_putMenuScroll(void){
 * @param    
 * @retval   
 */
-void ssd_putPitchBar(float aabs, float border){
+void ssd_putPitchBar(float aabs, uint16_t border){
     uint8_t i, j, k;
     int16_t brel, angle, end, iaabs, iborder, izero;
     //Parameters calculation
@@ -327,7 +350,9 @@ void ug2864init(void){
     ug2864_com(0x40);
     ug2864_com(0x8d);                           //Set Charge Pump enable
     ug2864_com(0x14);                           //0x10 for disable
-    ug2864_com(0xaf);                           //Turn on oled panel 
+    ug2864_com(0xaf);                           //Turn on oled panel
+    memset(ssdVideoBff.video, 0, sizeof(ssdVideoBff.video));
+    ug2864_refresh();
 }
 
 /*!****************************************************************************

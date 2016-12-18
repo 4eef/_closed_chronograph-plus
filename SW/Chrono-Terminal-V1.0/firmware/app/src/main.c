@@ -19,7 +19,7 @@ meas_type               meas;
 extern accel_type       accel;
 kalman_type             kalman;
 sysSettings_type        sysSettings;
-extern menuStrs_type    menuStrs;
+extern menu_type        menu;
 buttonCnts_type         buttonCnts;
 
 //Known pellets database
@@ -77,35 +77,19 @@ MENU_ITEM(service,      NULL_MENU,      NULL_MENU,      about,          NULL_MEN
 * @retval   
 */
 void main(void){
+    uint8_t offs, len;
     HAL_Init();
     SystemClock_Config();
     initGpios();
     MX_DMA_Init();
     MX_I2C1_Init();
     ug2864init();
-    memset(ssdVideoBff.video, 0, sizeof(ssdVideoBff.video));
-    ug2864_refresh();
     lis3init();
-    //Debug info
-    meas.speed0 = 240.5;
-    meas.speed1 = 240;
-    meas.speed2 = 230;
-    meas.speed3 = 220;
-    meas.speed4 = 210;
-    meas.battCharge = 0;
+    //Initial parameters
     meas.accRollBorder = 5;
     meas.accPitchBorder = 90;
-    meas.currPellets = 10;
-    meas.numPellets = 10;
-    meas.pellet = 1;
-    meas.mean = 245.5;
-    meas.sdev = 5.6;
-    meas.shots = 100;
-    meas.energy = 15.6;
     sysSettings.magEn = 0;
-    sysSettings.chrDisp = 0;
-    sysSettings.comDisp = 1;
-    sysSettings.incDisp = 0;
+    sysSettings.dispMode = MODE_COM;
     kalman.F = 1;
     kalman.H = 1;
     kalman.R = 15;
@@ -137,11 +121,30 @@ void main(void){
             break;
         case HOME:
             Menu_Navigate(&display);
+            break;
         default:
             break;
         }
         trxAccData();
-        displayRefresh();
+        //Refresh video buffer with nre data and transmit it
+        memset(ssdVideoBff.video, 0, sizeof(ssdVideoBff.video));
+        ssd_putBatt(meas.battCharge);
+        //Draw screen
+        if(Menu_GetCurrentMenu() == &display){
+            drawMainScreen();
+        }else{
+            drawMenu();
+        }
+        //Put message
+        if(menu.msgCnt != 0){
+            menu.msgCnt--;
+            len = strlen(menu.message);
+            ssd_putMsgBox(len);
+            offs = SSD1306_LCDWIDTH/2 - (len*6)/2;
+            ssd_putString6x8(offs, 28, &menu.message[0]);
+        }
+        //Refresh GDDRAM
+        ug2864_refresh();
     }
 }
 
@@ -151,7 +154,7 @@ void main(void){
 * @retval   
 */
 void menuParEdit(void){
-    sysSettings.parEdit = 1;
+    menu.parEdit = 1;
 }
 
 /*!****************************************************************************
@@ -161,29 +164,18 @@ void menuParEdit(void){
 */
 void menuParSel(void){
     //Configure corresponding parameter due to selected item
-    if(Menu_GetCurrentMenu() == &mgeneral){
-        sysSettings.comDisp = 1;
-        sysSettings.chrDisp = 0;
-        sysSettings.incDisp = 0;
-    }else
-    if(Menu_GetCurrentMenu() == &mchron){
-        sysSettings.comDisp = 0;
-        sysSettings.chrDisp = 1;
-        sysSettings.incDisp = 0;
-    }else
-    if(Menu_GetCurrentMenu() == &mincline){
-        sysSettings.comDisp = 0;
-        sysSettings.chrDisp = 0;
-        sysSettings.incDisp = 1;
-    }else
-    if(Menu_GetCurrentMenu() == &smon){
-        sysSettings.magEn = 1;
-    }else
-    if(Menu_GetCurrentMenu() == &smoff){
-        sysSettings.magEn = 0;
-    }
-    //Go to main display
-    Menu_Navigate(&display);
+    if(Menu_GetCurrentMenu() == &mgeneral) sysSettings.dispMode = MODE_COM;
+    else
+    if(Menu_GetCurrentMenu() == &mchron) sysSettings.dispMode = MODE_CHR;
+    else
+    if(Menu_GetCurrentMenu() == &mincline) sysSettings.dispMode = MODE_INC;
+    else
+    if(Menu_GetCurrentMenu() == &smon) sysSettings.magEn = 1;
+    else
+    if(Menu_GetCurrentMenu() == &smoff) sysSettings.magEn = 0;
+    //Put message to display parameter is changed
+    strcpy(menu.message, "OK");
+    menu.msgCnt = MSG_CNT;
 }
 
 /*!****************************************************************************
@@ -327,51 +319,34 @@ void trxAccData(void){
 }
 
 /*!****************************************************************************
-* @brief    Write new data to video buffer and transmit
-* @param    
-* @retval   
-*/
-void displayRefresh(void){
-    memset(ssdVideoBff.video, 0, sizeof(ssdVideoBff.video));    //Clear the buffer
-    ssd_putBatt(meas.battCharge);                               //Battery symbol with charge percentage
-    if(sysSettings.parEdit != 0){
-        
-    }else
-    //Draw screen
-    if(Menu_GetCurrentMenu() == &display){
-        drawMainScreen();
-    }else{
-        drawMenu();
-    }
-    //Refresh GDDRAM
-    ug2864_refresh();
-}
-
-/*!****************************************************************************
 * @brief    Fill video buffer with "menu"
 * @param    
 * @retval   
 */
 void drawMenu(void){
     char arrow[2] = {26, 0};
-    uint8_t i, pos, off;
+    uint8_t i, pos, offs;
     ssd_putMenuFolder();                                        //Folder for parent position
-    if(menuStrs.totItems > MENU_POSITIONS) ssd_putMenuScroll(); //Put scroll bar
+    if(menu.totItems > MENU_POSITIONS) ssd_putMenuScroll(); //Put scroll bar
     //Offset calculation
-    off = menuStrs.off;
-    if(((menuStrs.currItem - MENU_POSITIONS) > off) && (menuStrs.currItem > MENU_POSITIONS)){
-        off = menuStrs.currItem - MENU_POSITIONS;
-    }else if(((menuStrs.currItem - MENU_POSITIONS) < off) && ((off - (menuStrs.currItem - MENU_POSITIONS)) > (MENU_POSITIONS-1))){
-        off--;
+    offs = menu.offs;
+    if(((menu.currItem - MENU_POSITIONS) > offs) && (menu.currItem > MENU_POSITIONS)){
+        offs = menu.currItem - MENU_POSITIONS;
+    }else if(((menu.currItem - MENU_POSITIONS) < offs) && ((offs - (menu.currItem - MENU_POSITIONS)) > (MENU_POSITIONS-1))){
+        offs--;
     }
-    menuStrs.off = off;
+    menu.offs = offs;
     //Calculate arrow position
-    pos = menuStrs.currItem - off;
+    pos = menu.currItem - offs;
     //Put strings
-    ssd_putString6x8(14, 1, &menuStrs.parent[0]);
+    ssd_putString6x8(14, 1, &menu.parent[0]);
     ssd_putString6x8(0, (MENU_START+MENU_INTERVAL*(pos-1)), &arrow[0]);//Arrow to current position
     for(i = 0; i < MENU_POSITIONS; i++){
-        ssd_putString6x8(8, MENU_START+MENU_INTERVAL*i, &menuStrs.child[off+i][0]);
+        ssd_putString6x8(8, MENU_START+MENU_INTERVAL*i, &menu.child[offs+i][0]);
+    }
+    //Put "parameter edit" box
+    if(menu.parEdit == PAR_EDIT_ENABLE){
+        
     }
 }
 
@@ -385,8 +360,7 @@ void drawMainScreen(void){
     char rollAng[7], pitchAng[7], energy[8], shots[4], mean[8], sdev[8], border[4];
     sprintf(pitchAng, "%c%.1f%c", 232, fabs(meas.accPitch), 248);
     //Display settings
-    if(((sysSettings.chrDisp != 0) && (sysSettings.comDisp == 0) && (sysSettings.incDisp == 0)) ||
-        ((sysSettings.chrDisp == 0) && (sysSettings.comDisp != 0) && (sysSettings.incDisp == 0))){
+    if(sysSettings.dispMode == MODE_COM || sysSettings.dispMode == MODE_CHR){
         sprintf(speed0, "%.2f%c", meas.speed0, 47);             //Speed 0
         sprintf(speed1, "%u", meas.speed1);                     //Speed 1
         sprintf(speed2, "%u", meas.speed2);                     //Speed 2
@@ -404,7 +378,7 @@ void drawMainScreen(void){
         ssd_putString6x8(98, 25, &speed2[0]);
         ssd_putString6x8(98, 35, &speed3[0]);
         //Select the info to display
-        if(sysSettings.comDisp != 0){
+        if(sysSettings.dispMode == MODE_COM){
             sprintf(rollAng, "%c%.1f%c", 226, fabs(meas.accRoll), 248);
             ssd_putString6x8(0, 40, &rollAng[0]);
             ssd_putString6x8(42, 40, &pitchAng[0]);
@@ -420,9 +394,9 @@ void drawMainScreen(void){
             ssd_putString6x8(48, 36, &sdev[0]);
             ssd_putString12x16(0, 56, &energy[0]);
         }
-    }else if((sysSettings.chrDisp == 0) && (sysSettings.comDisp == 0) && (sysSettings.incDisp != 0)){
+    }else if(sysSettings.dispMode == MODE_INC){
         sprintf(rollAng, "%c%.1f%c", 59, fabs(meas.accRoll), 61);//Roll angle
-        sprintf(border, "%c%.0f%c", 241, meas.accRollBorder, 248);//Roll border
+        sprintf(border, "%c%d%c", 241, meas.accRollBorder, 248);//Roll border
         ssd_putString12x16(0, 8, &rollAng[0]);
         ssd_putString6x8(76, 0, &pitchAng[0]);
         ssd_putString6x8(76, 9, &border[0]);

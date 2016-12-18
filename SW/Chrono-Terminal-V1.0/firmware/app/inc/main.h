@@ -7,18 +7,6 @@
 */
 #ifndef main_H
 #define main_H
-#define SPS 800UL
-#define Trc 0.005f
-#define K (SPS*Trc)
-#define accSamples 1
-#define degRad 57.2958f
-#define BUTTON_UP GP_SW2
-#define BUTTON_DOWN GP_SW1
-#define BUTTON_OK GP_SW4
-#define BUTTON_CANCEL GP_SW3
-#define MENU_POSITIONS 5
-#define MENU_INTERVAL 10
-#define MENU_START 12
 
 /*!****************************************************************************
 * Include
@@ -38,9 +26,18 @@
 /*!****************************************************************************
 * User define
 */
-extern I2C_HandleTypeDef hi2c1;
-extern DMA_HandleTypeDef hdma_i2c1_rx;
-extern DMA_HandleTypeDef hdma_i2c1_tx;
+#define SPS                     800UL
+#define Trc                     0.005f
+#define K                       (SPS*Trc)
+#define accSamples              1
+#define degRad                  57.2958f
+#define BUTTON_UP               GP_SW2
+#define BUTTON_DOWN             GP_SW1
+#define BUTTON_OK               GP_SW4
+#define BUTTON_CANCEL           GP_SW3
+#define MODE_COM                0
+#define MODE_CHR                1
+#define MODE_INC                2
 
 /*!****************************************************************************
 * User enum
@@ -65,13 +62,9 @@ typedef struct{
 }buttonCnts_type;
 
 typedef struct{
-    uint8_t     reserv  :2;
-    uint8_t     parEdit :1;
-    uint8_t     setDisp :1;
-    uint8_t     incDisp :1;
-    uint8_t     chrDisp :1;
-    uint8_t     comDisp :1;
-    uint8_t     magEn   :1;
+    uint8_t     reserv      :3;
+    uint8_t     dispMode    :2;
+    uint8_t     magEn       :1;
 }sysSettings_type;
 
 typedef struct{
@@ -91,8 +84,8 @@ typedef struct{
     float       sdev;
     float       accRoll;
     float       accPitch;
-    float       accRollBorder;
-    float       accPitchBorder;
+    uint16_t    accRollBorder;
+    uint16_t    accPitchBorder;
 }meas_type;
 
 typedef struct{
@@ -110,6 +103,9 @@ typedef struct{
 /*!****************************************************************************
 * Extern viriables
 */
+extern I2C_HandleTypeDef hi2c1;
+extern DMA_HandleTypeDef hdma_i2c1_rx;
+extern DMA_HandleTypeDef hdma_i2c1_tx;
 
 /*!****************************************************************************
 * Macro functions
@@ -120,7 +116,6 @@ typedef struct{
 */
 void main(void);
 extern void SystemClock_Config(void);
-void displayRefresh(void);
 void convtochar(void);
 int16_t lpfx(int16_t data);
 int16_t lpfy(int16_t data);

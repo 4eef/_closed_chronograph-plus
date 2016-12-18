@@ -14,7 +14,7 @@
 /*!****************************************************************************
 * MEMORY
 */
-menuStrs_type           menuStrs;
+menu_type               menu;
 
 /** This is used when an invalid menu handle is required in
  *  a \ref MENU_ITEM() definition, i.e. to indicate that a
@@ -53,40 +53,73 @@ Menu_Item_t* Menu_GetCurrentMenu(void){
 void Menu_Navigate(Menu_Item_t* const NewMenu){
     Menu_Item_t *tmpItem, *tmpParItem;
     uint8_t i;
-    
-    if((NewMenu == &NULL_MENU) || (NewMenu == NULL)) return;
-    if((NewMenu == MENU_CHILD) || (NewMenu == MENU_PARENT)) menuStrs.off = 0;//Clear offset if passed to other level
-    CurrentMenuItem = NewMenu;
-    tmpItem = CurrentMenuItem;
-    //Get to the upper position of the menu list
-    i = 0;
-    while(1){
-        tmpParItem = tmpItem->Parent;
-        i++;                                                    //Current menu item
-        menuStrs.currItem = i;
-        if(tmpItem->Previous == &NULL_MENU) break;
-        tmpItem = tmpItem->Previous;
+    int16_t border;
+    //Look if parameter edit is enable
+    if(menu.parEdit == PAR_EDIT_ENABLE){
+        if(menu.parSigned == PAR_SIGNED){
+            border = -menu.parBorder;
+        }else{
+            border = 0;
+        }
+        //Navigation
+        if(NewMenu == MENU_NEXT){
+            if(menu.par >= menu.parBorder){
+                strcpy(menu.message, "Higher limit");
+                menu.msgCnt = MSG_CNT;
+            }else{
+                menu.par++;
+            }
+        }else
+        if(NewMenu == MENU_PREVIOUS){
+            if(menu.par <= border){
+                strcpy(menu.message, "Lower limit");
+                menu.msgCnt = MSG_CNT;
+            }else{
+                menu.par--;
+            }
+        }else
+        if(NewMenu == MENU_PARENT){
+            strcpy(menu.message, "Cancelled");
+            menu.msgCnt = MSG_CNT;
+            menu.parStat = PAR_CANCEL;
+        }else
+        if(NewMenu == MENU_CHILD){
+            strcpy(menu.message, "Saved");
+            menu.msgCnt = MSG_CNT;
+            menu.parStat = PAR_SAVE;
+        }
+    }else{
+        if((NewMenu == &NULL_MENU) || (NewMenu == NULL)) return;
+        if((NewMenu == MENU_CHILD) || (NewMenu == MENU_PARENT)) menu.offs = 0;//Clear offset if passed to other level
+        CurrentMenuItem = NewMenu;
+        tmpItem = CurrentMenuItem;
+        //Get to the upper position of the menu list
+        i = 0;
+        while(1){
+            tmpParItem = tmpItem->Parent;
+            i++;                                                    //Current menu item
+            menu.currItem = i;
+            if(tmpItem->Previous == &NULL_MENU) break;
+            tmpItem = tmpItem->Previous;
+        }
+        //Clear strings
+        for(i = 0; i < 10; i++){
+            memset(menu.child[i], 0, sizeof(menu.child[i]));
+        }
+        //Copy all menu listing
+        strcpy(menu.parent, tmpParItem->Text);                      //Parent text string
+        i = 0;
+        while(1){                                                   //Child text strings
+            strcpy(menu.child[i], tmpItem->Text);
+            i++;
+            menu.totItems = i;                                      //Total menu elements
+            if(tmpItem->Next == &NULL_MENU) break;
+            tmpItem = tmpItem->Next;
+        }
+        //if(MenuWriteFunc) MenuWriteFunc(CurrentMenuItem->Text);
+        void (*SelectCallback)(void) = CurrentMenuItem->SelectCallback;
+        if(SelectCallback) SelectCallback();
     }
-    //Clear strings
-    for(i = 0; i < 10; i++){
-        memset(menuStrs.child[i], 0, sizeof(menuStrs.child[i]));
-    }
-    //Copy all menu listing
-    strcpy(menuStrs.parent, tmpParItem->Text);                  //Parent text string
-    i = 0;
-    while(1){                                                   //Child text strings
-        strcpy(menuStrs.child[i], tmpItem->Text);
-        i++;
-        menuStrs.totItems = i;                                  //Total menu elements
-        if(tmpItem->Next == &NULL_MENU) break;
-        tmpItem = tmpItem->Next;
-    }
-    
-    //if(MenuWriteFunc) MenuWriteFunc(CurrentMenuItem->Text);
-    
-    void (*SelectCallback)(void) = CurrentMenuItem->SelectCallback;
-    
-    if(SelectCallback) SelectCallback();
 }
 
 /*!****************************************************************************
