@@ -65,7 +65,8 @@ typedef struct{
 }buttonCnts_type;
 
 typedef struct{
-    uint8_t     reserv  :3;
+    uint8_t     reserv  :2;
+    uint8_t     parEdit :1;
     uint8_t     setDisp :1;
     uint8_t     incDisp :1;
     uint8_t     chrDisp :1;
@@ -131,6 +132,8 @@ float tiltAngCalc(float A, float B, float C);
 void drawMainScreen(void);
 enum buttonValues getButtonState(void);
 void drawMenu(void);
+void menuParSel(void);
+void menuParEdit(void);
 
 #endif //main_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

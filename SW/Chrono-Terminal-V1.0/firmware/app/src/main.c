@@ -38,17 +38,21 @@ MENU_ITEM(stats,        setts,          mode,           display,        NULL_MEN
 MENU_ITEM(setts,        about,          stats,          display,        smag,           NULL,           NULL,           "Settings");
 MENU_ITEM(about,        NULL_MENU,      setts,          display,        service,        NULL,           NULL,           "About");
 //Menu/Display mode
-MENU_ITEM(mgeneral,     mchron,         NULL_MENU,      mode,           NULL_MENU,      NULL,           NULL,           "General");
-MENU_ITEM(mchron,       mincline,       mgeneral,       mode,           NULL_MENU,      NULL,           NULL,           "Chronograph");
-MENU_ITEM(mincline,     NULL_MENU,      mchron,         mode,           NULL_MENU,      NULL,           NULL,           "Inclinometer");
+MENU_ITEM(mgeneral,     mchron,         NULL_MENU,      mode,           NULL_MENU,      NULL,           menuParSel,     "General");
+MENU_ITEM(mchron,       mincline,       mgeneral,       mode,           NULL_MENU,      NULL,           menuParSel,     "Chronograph");
+MENU_ITEM(mincline,     NULL_MENU,      mchron,         mode,           NULL_MENU,      NULL,           menuParSel,     "Inclinometer");
 //Menu/Settings
-MENU_ITEM(smag,         schrono,        NULL_MENU,      setts,          NULL_MENU,      NULL,           NULL,           "Magazine");
+MENU_ITEM(smag,         schrono,        NULL_MENU,      setts,          smcapacity,     NULL,           NULL,           "Magazine");
 MENU_ITEM(schrono,      sincline,       smag,           setts,          scdist,         NULL,           NULL,           "Chronograph");
 MENU_ITEM(sincline,     sdisplay,       schrono,        setts,          sifilt,         NULL,           NULL,           "Inclinometer");
 MENU_ITEM(sdisplay,     swusrc,         sincline,       setts,          sdcntr,         NULL,           NULL,           "Display");
 MENU_ITEM(swusrc,       sdatime,        sdisplay,       setts,          NULL_MENU,      NULL,           NULL,           "Wake-up source");
 MENU_ITEM(sdatime,      spsupply,       swusrc,         setts,          NULL_MENU,      NULL,           NULL,           "Date & time");
 MENU_ITEM(spsupply,     NULL_MENU,      sdatime,        setts,          spdoff,         NULL,           NULL,           "Power supply");
+//Menu/Settings/Magazine
+MENU_ITEM(smcapacity,   smon,           NULL_MENU,      smag,           NULL_MENU,      NULL,           NULL,           "Capacity");
+MENU_ITEM(smon,         smoff,          smcapacity,     smag,           NULL_MENU,      NULL,           menuParSel,     "Enable");
+MENU_ITEM(smoff,        NULL_MENU,      smon,           smag,           NULL_MENU,      NULL,           menuParSel,     "Disable");
 //Menu/Settings/Chronograph
 MENU_ITEM(scdist,       scir,           NULL_MENU,      schrono,        NULL_MENU,      NULL,           NULL,           "Sensor distance");
 MENU_ITEM(scir,         scbind,         scdist,         schrono,        NULL_MENU,      NULL,           NULL,           "IR protocol");
@@ -66,7 +70,6 @@ MENU_ITEM(spslp,        sppd,           spdoff,         spsupply,       NULL_MEN
 MENU_ITEM(sppd,         NULL_MENU,      spslp,          spsupply,       NULL_MENU,      NULL,           NULL,           "Power off");
 //Menu/About
 MENU_ITEM(service,      NULL_MENU,      NULL_MENU,      about,          NULL_MENU,      NULL,           NULL,           "Service menu");
-
 
 /*!****************************************************************************
 * @brief    Main function
@@ -99,7 +102,7 @@ void main(void){
     meas.sdev = 5.6;
     meas.shots = 100;
     meas.energy = 15.6;
-    sysSettings.magEn = 1;
+    sysSettings.magEn = 0;
     sysSettings.chrDisp = 0;
     sysSettings.comDisp = 1;
     sysSettings.incDisp = 0;
@@ -140,6 +143,47 @@ void main(void){
         trxAccData();
         displayRefresh();
     }
+}
+
+/*!****************************************************************************
+* @brief    Menu parameter edit
+* @param    
+* @retval   
+*/
+void menuParEdit(void){
+    sysSettings.parEdit = 1;
+}
+
+/*!****************************************************************************
+* @brief    Menu parameter select
+* @param    
+* @retval   
+*/
+void menuParSel(void){
+    //Configure corresponding parameter due to selected item
+    if(Menu_GetCurrentMenu() == &mgeneral){
+        sysSettings.comDisp = 1;
+        sysSettings.chrDisp = 0;
+        sysSettings.incDisp = 0;
+    }else
+    if(Menu_GetCurrentMenu() == &mchron){
+        sysSettings.comDisp = 0;
+        sysSettings.chrDisp = 1;
+        sysSettings.incDisp = 0;
+    }else
+    if(Menu_GetCurrentMenu() == &mincline){
+        sysSettings.comDisp = 0;
+        sysSettings.chrDisp = 0;
+        sysSettings.incDisp = 1;
+    }else
+    if(Menu_GetCurrentMenu() == &smon){
+        sysSettings.magEn = 1;
+    }else
+    if(Menu_GetCurrentMenu() == &smoff){
+        sysSettings.magEn = 0;
+    }
+    //Go to main display
+    Menu_Navigate(&display);
 }
 
 /*!****************************************************************************
@@ -290,6 +334,9 @@ void trxAccData(void){
 void displayRefresh(void){
     memset(ssdVideoBff.video, 0, sizeof(ssdVideoBff.video));    //Clear the buffer
     ssd_putBatt(meas.battCharge);                               //Battery symbol with charge percentage
+    if(sysSettings.parEdit != 0){
+        
+    }else
     //Draw screen
     if(Menu_GetCurrentMenu() == &display){
         drawMainScreen();
