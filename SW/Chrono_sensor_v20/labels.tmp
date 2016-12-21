@@ -1,43 +1,43 @@
 <ASSEMBLER_INFO>
  <VERSION>2.1.42</VERSION>
  <DEVICE>ATtiny10</DEVICE>
- <WORKING_DIR>D:\Documents\4eef\AVR\Chrono_sensor_v20</WORKING_DIR>
+ <WORKING_DIR>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20</WORKING_DIR>
  <INCLUDE_PATH>
   <DIR>C:\Program Files (x86)\Atmel\AVR Tools\AvrAssembler2\Appnotes</DIR>
  </INCLUDE_PATH>
- <SOURCE_FILE>D:\Documents\4eef\AVR\Chrono_sensor_v20\Chrono_sensor_v20.asm</SOURCE_FILE>
+ <SOURCE_FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</SOURCE_FILE>
  <INCLUDED_FILES>
   <FILE>C:\Program Files (x86)\Atmel\AVR Tools\AvrAssembler2\Appnotes\tn10def.inc</FILE>
  </INCLUDED_FILES>
  <OBJECT_FILES>
-  <FILE>D:\Documents\4eef\AVR\Chrono_sensor_v20\Chrono_sensor_v20.obj</FILE>
+  <FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.obj</FILE>
  </OBJECT_FILES>
  <HEX_FILES>
-  <FILE>D:\Documents\4eef\AVR\Chrono_sensor_v20\Chrono_sensor_v20.hex</FILE>
+  <FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.hex</FILE>
  </HEX_FILES>
  <OUTPUT_FILES>
-  <FILE>D:\Documents\4eef\AVR\Chrono_sensor_v20\Chrono_sensor_v20.map</FILE>
+  <FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.map</FILE>
  </OUTPUT_FILES>
  <LABELS>
-  <RESET><FILE>D:\Documents\4eef\AVR\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>63</LINE></RESET>
-  <PC0><FILE>D:\Documents\4eef\AVR\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>42</LINE></PC0>
-  <T0CAPT><FILE>D:\Documents\4eef\AVR\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>46</LINE></T0CAPT>
-  <T0CMA><FILE>D:\Documents\4eef\AVR\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>53</LINE></T0CMA>
-  <main><FILE>D:\Documents\4eef\AVR\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>93</LINE></main>
-  <bfrovf><FILE>D:\Documents\4eef\AVR\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>89</LINE></bfrovf>
-  <t0cnt><FILE>D:\Documents\4eef\AVR\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>131</LINE></t0cnt>
-  <smplcp><FILE>D:\Documents\4eef\AVR\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>162</LINE></smplcp>
-  <smplst><FILE>D:\Documents\4eef\AVR\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>156</LINE></smplst>
-  <div32u><FILE>D:\Documents\4eef\AVR\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>286</LINE></div32u>
-  <mpy16u><FILE>D:\Documents\4eef\AVR\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>269</LINE></mpy16u>
-  <irtx><FILE>D:\Documents\4eef\AVR\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>203</LINE></irtx>
-  <byte><FILE>D:\Documents\4eef\AVR\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>206</LINE></byte>
-  <bit><FILE>D:\Documents\4eef\AVR\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>210</LINE></bit>
-  <psw><FILE>D:\Documents\4eef\AVR\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>217</LINE></psw>
-  <m16u_1><FILE>D:\Documents\4eef\AVR\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>274</LINE></m16u_1>
-  <noad16><FILE>D:\Documents\4eef\AVR\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>277</LINE></noad16>
-  <d32u_1><FILE>D:\Documents\4eef\AVR\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>292</LINE></d32u_1>
-  <d32u_2><FILE>D:\Documents\4eef\AVR\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>299</LINE></d32u_2>
-  <d32u_3><FILE>D:\Documents\4eef\AVR\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>314</LINE></d32u_3>
+  <RESET><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>63</LINE></RESET>
+  <PC0><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>42</LINE></PC0>
+  <T0CAPT><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>46</LINE></T0CAPT>
+  <T0CMA><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>53</LINE></T0CMA>
+  <main><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>93</LINE></main>
+  <bfrovf><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>89</LINE></bfrovf>
+  <t0cnt><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>131</LINE></t0cnt>
+  <smplcp><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>162</LINE></smplcp>
+  <smplst><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>156</LINE></smplst>
+  <div32u><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>286</LINE></div32u>
+  <mpy16u><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>269</LINE></mpy16u>
+  <irtx><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>203</LINE></irtx>
+  <byte><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>206</LINE></byte>
+  <bit><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>210</LINE></bit>
+  <psw><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>217</LINE></psw>
+  <m16u_1><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>274</LINE></m16u_1>
+  <noad16><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>277</LINE></noad16>
+  <d32u_1><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>292</LINE></d32u_1>
+  <d32u_2><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>299</LINE></d32u_2>
+  <d32u_3><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>314</LINE></d32u_3>
  </LABELS>
 </ASSEMBLER_INFO>

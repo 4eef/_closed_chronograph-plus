@@ -32,6 +32,7 @@
 #define GPIO_NO_PULL_UP_DOWN                0x00
 #define GPIO_PULL_UP                        0x01
 #define GPIO_PULL_DOWN                      0x02
+#define GPIO_RESERVED                       0x03
 //EXT_I
 #define EXTI_MODE_DISABLE                   0x00
 #define EXTI_MODE_RISE                      0x01
@@ -93,7 +94,7 @@ typedef enum{
 /*3 */  GP_Buzzer,
 /*4 */  GP_LIS3_INT1,
 /*5 */  GP_OLED_RES,
-/*6 */  GP_SW4,
+/*6 */  GP_Dummy,
 /*7 */  GP_VBAT,
 /*8 */  GP_IRR_Data,
 /*9 */  GP_IRR_VCC,
@@ -102,7 +103,7 @@ typedef enum{
 /*11*/  GP_USB_DM,
 /*11*/  GP_USB_DP,
 /*14*/  GP_SW3,
-/*15*/  GP_Dummy,
+/*15*/  GP_SW4,
 GP_NOT_USED
 }GPnum_type;
 

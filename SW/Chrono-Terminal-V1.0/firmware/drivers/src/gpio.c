@@ -82,7 +82,7 @@ void gppin_init(GPIO_TypeDef *port, uint8_t npin, gpioMode_type mode, uint8_t in
     */
     port->MODER         &= ~(0x03 << (2 * npin));
     port->OTYPER        &= ~(1<<npin);
-    port->PUPDR         &= ~(GPIO_PULL_UP << (2*npin));
+    port->PUPDR         &= ~(GPIO_RESERVED << (2*npin));
     port->AFR[npin / 8] &= ~(GPIO_AFRL_AFRL0_Msk << (4*(npin % 8)));
     
     switch(mode){
