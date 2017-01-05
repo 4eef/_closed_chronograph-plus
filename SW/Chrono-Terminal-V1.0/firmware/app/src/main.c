@@ -17,7 +17,7 @@
 extern ssdVideoBff_type     ssdVideoBff;
 extern accel_type           accel;
 extern menu_type            menu;
-kalman_type                 kalman;
+extern kalman_type          kalman;
 buttonCnts_type             buttonCnts;
 Menu_Item_t                 *CurrentMenuItem;
 meas_type                   meas;
@@ -90,6 +90,7 @@ void main(void){
     MX_I2C1_Init();
     ug2864init();
     lis3init();
+    initIRConfig();
     //Initial parameters
     meas.accRollBorder = 5;
     meas.accPitchBorder = 90;
@@ -102,66 +103,67 @@ void main(void){
     kalman.Q = 2;
     kalman.State = 0;
     kalman.Covariance = 0.1;
+    gppin_set(GP_IRR_VCC);
     //Navigate to an absolute menu item entry
     Menu_Navigate(&display);
     
     while(1){
         delay_us(25000);
         //MicroMenu navigation
-        switch(getButtonState()){
-        case UP:
-            if(menu.parEdit == PAR_EDIT_ENABLE){
-                if(menu.parValue <= menu.parBorderMin){
-                    strcpy(menu.message, "Lower limit");
-                    menu.msgCnt = MSG_CNT;
-                }else{
-                    menu.parValue--;
-                }
-            }else{
-                Menu_Navigate(MENU_PREVIOUS);
-            }
-            break;
-        case DOWN:
-            if(menu.parEdit == PAR_EDIT_ENABLE){
-                if(menu.parValue >= menu.parBorderMax){
-                    strcpy(menu.message, "Higher limit");
-                    menu.msgCnt = MSG_CNT;
-                }else{
-                    menu.parValue++;
-                }
-            }else{
-                Menu_Navigate(MENU_NEXT);
-            }
-            break;
-        case OK:
-            if(menu.parEdit == PAR_EDIT_ENABLE){
-                strcpy(menu.message, "Saved");
-                menu.msgCnt = MSG_CNT;
-                menu.parStat = PAR_SAVE;
-            }else{
-                if((MENU_CHILD == &NULL_MENU) || (MENU_CHILD == NULL)){
-                    Menu_EnterCurrentItem();
-                }else{
-                    Menu_Navigate(MENU_CHILD);
-                }
-            }
-            break;
-        case CANCEL:
-            if(menu.parEdit == PAR_EDIT_ENABLE){
-                strcpy(menu.message, "Cancelled");
-                menu.msgCnt = MSG_CNT;
-                menu.parStat = PAR_CANCEL;
-            }else{
-                Menu_Navigate(MENU_PARENT);
-            }
-            break;
-        case HOME:
-            if(menu.parEdit == PAR_EDIT_DISABLE) Menu_Navigate(&display);
-            break;
-        default:
-            menu.parStat = PAR_NONE;
-            break;
-        }
+//        switch(getButtonState()){
+//        case UP:
+//            if(menu.parEdit == PAR_EDIT_ENABLE){
+//                if(menu.parValue <= menu.parBorderMin){
+//                    strcpy(menu.message, "Lower limit");
+//                    menu.msgCnt = MSG_CNT;
+//                }else{
+//                    menu.parValue--;
+//                }
+//            }else{
+//                Menu_Navigate(MENU_PREVIOUS);
+//            }
+//            break;
+//        case DOWN:
+//            if(menu.parEdit == PAR_EDIT_ENABLE){
+//                if(menu.parValue >= menu.parBorderMax){
+//                    strcpy(menu.message, "Higher limit");
+//                    menu.msgCnt = MSG_CNT;
+//                }else{
+//                    menu.parValue++;
+//                }
+//            }else{
+//                Menu_Navigate(MENU_NEXT);
+//            }
+//            break;
+//        case OK:
+//            if(menu.parEdit == PAR_EDIT_ENABLE){
+//                strcpy(menu.message, "Saved");
+//                menu.msgCnt = MSG_CNT;
+//                menu.parStat = PAR_SAVE;
+//            }else{
+//                if((MENU_CHILD == &NULL_MENU) || (MENU_CHILD == NULL)){
+//                    Menu_EnterCurrentItem();
+//                }else{
+//                    Menu_Navigate(MENU_CHILD);
+//                }
+//            }
+//            break;
+//        case CANCEL:
+//            if(menu.parEdit == PAR_EDIT_ENABLE){
+//                strcpy(menu.message, "Cancelled");
+//                menu.msgCnt = MSG_CNT;
+//                menu.parStat = PAR_CANCEL;
+//            }else{
+//                Menu_Navigate(MENU_PARENT);
+//            }
+//            break;
+//        case HOME:
+//            if(menu.parEdit == PAR_EDIT_DISABLE) Menu_Navigate(&display);
+//            break;
+//        default:
+//            menu.parStat = PAR_NONE;
+//            break;
+//        }
         CurrentMenuItem = Menu_GetCurrentMenu();
         trxAccData();
         //Refresh video buffer
@@ -345,23 +347,6 @@ float s16fNorm(int16_t val){
 }
 
 /*!****************************************************************************
-* @brief   Simplified Kalman filter
-* @param    
-* @retval   
-*/
-uint16_t Correct(uint16_t data){
-    //time update - prediction
-    kalman.X0 = kalman.F*kalman.State;
-    kalman.P0 = kalman.F*kalman.Covariance*kalman.F + kalman.Q;
-
-    //measurement update - correction
-    kalman.Kgain = kalman.H*kalman.P0/(kalman.H*kalman.P0*kalman.H + kalman.R);
-    kalman.State = (uint16_t)(kalman.X0 + kalman.Kgain*(data - kalman.H*kalman.X0));
-    kalman.Covariance = (1 - kalman.Kgain*kalman.H)*kalman.P0;
-    return kalman.State;
-}
-
-/*!****************************************************************************
 * @brief    Get tilt data from accelerometer readings
 * @param    
 * @retval   
@@ -485,39 +470,4 @@ void drawMainScreen(void){
     }
 }
 
-/*!****************************************************************************
-* @brief    Damp the value with LPF
-* @param    
-* @retval   
-*/
-int16_t lpfx(int16_t data){
-    static int32_t Dacc = 0;
-    static int16_t Dout = 0;
-    int16_t Din = data;
-    
-    Dacc = Dacc + Din - Dout;
-    Dout = Dacc/(int16_t)K;
-    
-    return Dout;
-}
-int16_t lpfy(int16_t data){
-    static int32_t Dacc = 0;
-    static int16_t Dout = 0;
-    int16_t Din = data;
-    
-    Dacc = Dacc + Din - Dout;
-    Dout = Dacc/(int16_t)K;
-    
-    return Dout;
-}
-int16_t lpfz(int16_t data){
-    static int32_t Dacc = 0;
-    static int16_t Dout = 0;
-    int16_t Din = data;
-    
-    Dacc = Dacc + Din - Dout;
-    Dout = Dacc/(int16_t)K;
-    
-    return Dout;
-}
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

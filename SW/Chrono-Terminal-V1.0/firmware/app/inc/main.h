@@ -22,13 +22,12 @@
 #include "lis3.h"
 #include "math.h"
 #include "MicroMenu.h"
+#include "filter.h"
+#include "IR.h"
 
 /*!****************************************************************************
 * User define
 */
-#define SPS                     800UL
-#define Trc                     0.005f
-#define K                       (SPS*Trc)
 #define accSamples              1
 #define degRad                  57.2958f
 #define BUTTON_UP               GP_SW2
@@ -102,18 +101,6 @@ typedef struct{
     uint8_t     cntCl;
 }buttonCnts_type;
 
-typedef struct{
-    uint16_t F;
-    uint16_t H;
-    uint16_t R;
-    uint16_t Q;
-    uint16_t X0;
-    float P0;
-    float Kgain;
-    float Covariance;
-    uint16_t State;
-}kalman_type;
-
 /*!****************************************************************************
 * Extern viriables
 */
@@ -131,11 +118,7 @@ extern DMA_HandleTypeDef hdma_i2c1_tx;
 void main(void);
 extern void SystemClock_Config(void);
 void convtochar(void);
-int16_t lpfx(int16_t data);
-int16_t lpfy(int16_t data);
-int16_t lpfz(int16_t data);
 void trxAccData(void);
-uint16_t Correct(uint16_t data);
 float s16fNorm(int16_t val);
 float tiltAngCalc(float A, float B, float C);
 void drawMainScreen(void);

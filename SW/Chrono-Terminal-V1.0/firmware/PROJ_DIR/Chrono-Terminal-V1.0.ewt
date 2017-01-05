@@ -2320,6 +2320,12 @@
       <name>$PROJ_DIR$\..\app\src\delay.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\app\src\filter.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\app\src\IR.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\app\src\lis3.c</name>
     </file>
     <file>
