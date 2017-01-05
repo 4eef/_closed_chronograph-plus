@@ -30,11 +30,12 @@
   <smplst><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>152</LINE></smplst>
   <irtx><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>230</LINE></irtx>
   <mkcsgn><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>183</LINE></mkcsgn>
-  <dshft><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>275</LINE></dshft>
+  <dshft><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>282</LINE></dshft>
   <dadd><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>207</LINE></dadd>
-  <prmbl><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>233</LINE></prmbl>
+  <prmbl><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>232</LINE></prmbl>
   <psw><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>246</LINE></psw>
-  <byte><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>238</LINE></byte>
-  <bit><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>240</LINE></bit>
+  <byte><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>237</LINE></byte>
+  <bit><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>239</LINE></bit>
+  <endp><FILE>C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm</FILE><LINE>275</LINE></endp>
  </LABELS>
 </ASSEMBLER_INFO>
