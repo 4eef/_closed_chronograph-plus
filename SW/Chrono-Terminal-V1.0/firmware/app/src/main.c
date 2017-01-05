@@ -108,7 +108,7 @@ void main(void){
     while(1){
         delay_us(25000);
         //MicroMenu navigation
-        switch (getButtonState()){
+        switch(getButtonState()){
         case UP:
             if(menu.parEdit == PAR_EDIT_ENABLE){
                 if(menu.parValue <= menu.parBorderMin){
@@ -164,16 +164,16 @@ void main(void){
         }
         CurrentMenuItem = Menu_GetCurrentMenu();
         trxAccData();
-        //Refresh video buffer with nre data and transmit it
+        //Refresh video buffer
         memset(ssdVideoBff.video, 0, sizeof(ssdVideoBff.video));
         ssd_putBatt(meas.battCharge);
         //Draw screen
-        if(Menu_GetCurrentMenu() == &display){
+        if(CurrentMenuItem == &display){
             drawMainScreen();
         }else{
             drawMenu();
         }
-        //Parameter edit box
+        //Draw parameter edit box
         if(menu.parEdit == PAR_EDIT_ENABLE){
             strcpy(text, CurrentMenuItem->Text);
             ssd_putParBox(&text[0]);
@@ -182,7 +182,7 @@ void main(void){
             offs = SSD1306_LCDWIDTH/2 - (len*6)/2;
             ssd_putString6x8(offs, 28, &par[0]);
         }
-        //Message
+        //Draw message
         if(menu.msgCnt != 0){
             menu.msgCnt--;
             len = strlen(menu.message);

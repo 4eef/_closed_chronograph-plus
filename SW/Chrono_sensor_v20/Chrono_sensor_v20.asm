@@ -3,10 +3,10 @@
 .INCLUDE "tn10def.inc"
 
 ;Переменные
-.equ	DISTHH	= RAMEND-24
-.equ	DISTHL	= RAMEND-25
-.equ	DISTLH	= RAMEND-26
-.equ	DISTLL	= RAMEND-27
+.equ	CSGNHH	= RAMEND-24
+.equ	CSGNHL	= RAMEND-25
+.equ	CSGNLH	= RAMEND-26
+.equ	CSGNLL	= RAMEND-27
 .equ	VELO4H	= RAMEND-22
 .equ	VELO4L	= RAMEND-23
 .equ	VELO3H	= RAMEND-20
@@ -64,16 +64,16 @@ RESET:	ldi	r16,	low(RAMEND-28)
 	out	SPL,	r16
 	ldi	r16,	high(RAMEND-28)
 	out	SPH,	r16
-
+	;IO
 	ldi	r16,	0b00000100		;PB0, PB1, PB3 - in; PB2 - out
 	out	DDRB,	r16
 	ldi	r16,	0b00001010		;PB1, PB3 - PU
 	out	PUEB,	r16
 	out	PORTB,	r16
-
+	;Power consumption
 	ldi	r16,	0b00000010		;Отключить ADC
 	out	PRR,	r16
-
+	;Miscellaneous
 	clr	r16				;Очистить RAM (для отладки)
 	ldi	zl,	low(RAMEND-31)
 	ldi	zh,	high(RAMEND-31)
@@ -81,7 +81,6 @@ RESET:	ldi	r16,	low(RAMEND-28)
 	st	z+,	r16
 	dec	r17
 	brne	PC-2
-
 
 ;************************ГЛАВНЫЙ ЦИКЛ************************
 
@@ -99,11 +98,9 @@ main:	cbi	PORTB,	2
 	ldi	r17,	32			;Когда тушить таймеры (8192)
 	out	OCR0AH,	r17
 	out	OCR0AL,	r16
-	ldi	r17,	0b00000101		;Power Down
-;	ldi	r17,	0b00000001		;Idle
+;	ldi	r17,	0b00000101		;Power Down
+	ldi	r17,	0b00000001		;Idle
 	out	SMCR,	r17
-	sts	NULLH,	r16			;Костыль для корректной работы матана
-	sts	NULLL,	r16
 	ldi	zl,	low(RAMEND-1)		;Загрузка адреса в указатель Z
 	ldi	zh,	high(RAMEND-1)
 	ldi	r17,	0b00000010		;PCINT1
@@ -136,7 +133,6 @@ t0cnt:	sleep
 	in	r18,	TCCR0B
 	sbrc	r18,	0
 	rjmp	t0cnt
-
 	;Нахождение времени пролета пули между сенсорами
 	ld	r17,	z+			;MSB
 	ld	r16,	z+			;LSB
@@ -172,49 +168,82 @@ smplcp:	cp	r16,	r18			;Сравнить с порогом, загрузить следующий, если больше
 	sts	VELOH,	r21
 	sts	SIGNL,	r22
 	sts	SIGNH,	r23
-
-	;Определение скорости пули
-	ldi	r19,	0x01			;Константа - 22000000 (27.5*100000/0,125)
-	ldi	r18,	0x4F
-	ldi	r17,	0xB1
-	ldi	r16,	0x80
-	sts	DISTHH,	r19			;Использовать константу как сигнатуру хронографа
-	sts	DISTHL,	r18
-	sts	DISTLH,	r17
-	sts	DISTLL,	r16
-	rcall	div32u				;V=K/N, [м*100/с]
-	tst	r18				;Верхний предел - 655,36 м/с
-	breq	PC+3
-	ldi	r16,	0xFF
-	ldi	r17,	0xFF
-	sts	VELOL,	r16
-	sts	VELOH,	r17
-	;Определение сигнатуры пули
-	ldi	r17,	0x6B			;Расстояние - l=27500 (27,5 мм)
-	ldi	r16,	0x6C
-	lds	r22,	SIGNL
-	lds	r23,	SIGNH
-	rcall	mpy16u				;L=l*N2/N1, [мкм]
-	rcall	div32u
-	sts	SIGNL,	r16
-	sts	SIGNH,	r17
-
-	;Передать данные по ИК каналу
-irtx:	ldi	xl,	low(RAMEND-11)		;Начало буфера
+	;Sensor signature
+	clr	r20
+	lds	r19,	CSGNHH
+	lds	r18,	CSGNHL
+	lds	r17,	CSGNLH
+	lds	r16,	CSGNLL
+	cp	r20,	r16
+	cpc	r20,	r17
+	cpc	r20,	r18
+	cpc	r20,	r19
+	brcs	irtx
+	;Make particular chronograph signature
+mkcsgn:	lds	r17,	VELO4H			;Check if there is enough data in buffer
+	lds	r16,	VELO4L
+	clr	r31
+	cp	r31,	r16
+	cpc	r31,	r17
+	brcs	PC+2
+	rjmp	dshft
+	lds	r29,	VELO3H			;Load data
+	lds	r28,	VELO3L
+	lds	r27,	VELO2H
+	lds	r26,	VELO2L
+	lds	r25,	VELO1H
+	lds	r24,	VELO1L
+	lds	r23,	VELOH
+	lds	r22,	VELOL
+	lds	r21,	SIGNH
+	lds	r20,	SIGNL
+	clr	r19
+	clr	r18
+	ldi	r30,	5			;Combine data to get a random number
+	lsl	r16
+	rol	r17
+	rol	r18
+	rol	r19
+dadd:	lsl	r16
+	rol	r17
+	rol	r18
+	rol	r19
+	lsl	r16
+	rol	r17
+	rol	r18
+	rol	r19
+	lsl	r16
+	rol	r17
+	rol	r18
+	rol	r19
+	add	r16,	r28
+	adc	r17,	r29
+	adc	r18,	r31
+	adc	r19,	r31
+	dec	r30
+	brne	dadd
+	sts	CSGNLL,	r16			;Store data
+	sts	CSGNLH,	r17
+	sts	CSGNHL,	r18
+	sts	CSGNHH,	r19
+	;NEC IR protocol implementation
+irtx:	ldi	xl,	low(RAMEND-11)		;Buffer beginning
 	ldi	xh,	high(RAMEND-11)
-	ldi	r19,	16			;Счетчик байт (длина передаваемого буфера)
-byte:	ld	r20,	-x			;Подгрузить байт
-	com	r20				;Инвертировать
-	ldi	r18,	10			;Счетчик бит (8N1)
-	rjmp	PC+6
-bit:	clr	r16
-	cpi	r18,	1			;Стоп-бит
-	breq	PC+4
-	ror	r20
+	ldi	r20,	17			;Buffer length (preamble + 16 bytes)
+prmbl:	ldi	r16,	0b00000100
+	ldi	r17,	126			;6.3 ms total
+	ldi	r18,	252			;3.15 ms active
+	ldi	r19,	1			;Send it once
+	rjmp	psw
+byte:	ld	r21,	-x
+	ldi	r19,	8			;Bits
+bit:	ldi	r17,	22			;Active period
+	ldi	r18,	88			;Periods per phase "0"
+	ror	r21
 	brcc	PC+2
-	ldi	r16,	0b00000100		;PB2
-	ldi	r17,	20			;Бодрейт, 40000/r17 = baud/s
-psw:	out	PINB,	r16			;"1", 10 тактов
+	ldi	r18,	44			;"1"
+	ldi	r16,	0b00000100
+psw:	out	PINB,	r16			;"1", 10 clocks
 	nop
 	nop
 	nop
@@ -224,9 +253,9 @@ psw:	out	PINB,	r16			;"1", 10 тактов
 	nop
 	nop
 	nop
-	out	PINB,	r16			;"0", 15 тактов
+	out	PINB,	r16			;"0", 15 clocks
 	nop
-	dec	r17
+	dec	r18
 	breq	PC+11
 	nop
 	nop
@@ -234,17 +263,16 @@ psw:	out	PINB,	r16			;"1", 10 тактов
 	nop
 	nop
 	nop
-	nop
-	nop
-	nop
+	dec	r17				;Shut off the active period
+	brne	PC+2
+	clr	r16
 	rjmp	psw
-	dec	r18
-	brne	bit
 	dec	r19
+	brne	bit
+	dec	r20
 	brne	byte
-
-	;Копировать данные
-	lds	r16,	VELO3L
+	;Shift data
+dshft:	lds	r16,	VELO3L
 	sts	VELO4L,	r16
 	lds	r16,	VELO3H
 	sts	VELO4H,	r16
@@ -260,56 +288,133 @@ psw:	out	PINB,	r16			;"1", 10 тактов
 	sts	VELO1L,	r16
 	lds	r16,	VELOH
 	sts	VELO1H,	r16
-
+	;Clear buffer
+	clr	r16
+	ldi	zl,	low(RAMEND-11)
+	ldi	zh,	high(RAMEND-11)
+	ldi	r17,	12
+	st	z+,	r16
+	dec	r17
+	brne	PC-2
 	rjmp	main
+	
+;************************GARBAGE************************
 
-;************************ПОДПРОГРАММЫ************************
+; ;r19:r18:r17:r16 <- r17:r16 x r23:r22
+; mpy16u:	clr	r18
+	; clr	r19
+	; ldi	r20,	16
+	; lsr	r17
+	; ror	r16
+; m16u_1:	brcc	noad16
+	; add	r18,	r22
+	; adc	r19,	r23
+; noad16:	ror	r19
+	; ror	r18
+	; ror	r17
+	; ror	r16
+	; dec	r20
+	; brne	m16u_1
+	; ret
 
-;r19:r18:r17:r16 <- r17:r16 x r23:r22
-mpy16u:	clr	r18
-	clr	r19
-	ldi	r20,	16
-	lsr	r17
-	ror	r16
-m16u_1:	brcc	noad16
-	add	r18,	r22
-	adc	r19,	r23
-noad16:	ror	r19
-	ror	r18
-	ror	r17
-	ror	r16
-	dec	r20
-	brne	m16u_1
-	ret
+; ;r19:r18:r17:r16 <- r19:r18:r17:r16 / r21:r20
+; div32u:	clr	r22
+	; ldi	r23,	33
+	; clr	r24
+	; clr	r25
+	; clr	r26
+	; sub	r27,	r27
+; d32u_1:	rol	r16
+	; rol	r17
+	; rol	r18
+	; rol	r19
+	; dec	r23
+	; brne	d32u_2
+	; ret
+; d32u_2:	rol	r24
+	; rol	r25
+	; rol	r26
+	; rol	r27
+	; sub	r24,	r20
+	; sbc	r25,	r21
+	; sbc	r26,	r22
+	; sbc	r27,	r22
+	; brcc	d32u_3
+	; add	r24,	r20
+	; adc	r25,	r21
+	; adc	r26,	r22
+	; adc	r27,	r22
+	; clc
+	; rjmp	d32u_1
+; d32u_3:	sec
+	; rjmp	d32u_1
 
-;r19:r18:r17:r16 <- r19:r18:r17:r16 / r21:r20
-div32u:	clr	r22
-	ldi	r23,	33
-	clr	r24
-	clr	r25
-	clr	r26
-	sub	r27,	r27
-d32u_1:	rol	r16
-	rol	r17
-	rol	r18
-	rol	r19
-	dec	r23
-	brne	d32u_2
-	ret
-d32u_2:	rol	r24
-	rol	r25
-	rol	r26
-	rol	r27
-	sub	r24,	r20
-	sbc	r25,	r21
-	sbc	r26,	r22
-	sbc	r27,	r22
-	brcc	d32u_3
-	add	r24,	r20
-	adc	r25,	r21
-	adc	r26,	r22
-	adc	r27,	r22
-	clc
-	rjmp	d32u_1
-d32u_3:	sec
-	rjmp	d32u_1
+	; ;Определение скорости пули
+	; ldi	r19,	0x01			;Константа - 22000000 (27.5*100000/0,125)
+	; ldi	r18,	0x4F
+	; ldi	r17,	0xB1
+	; ldi	r16,	0x80
+	; sts	CSGNHH,	r19			;Использовать константу как сигнатуру хронографа
+	; sts	CSGNHL,	r18
+	; sts	CSGNLH,	r17
+	; sts	CSGNLL,	r16
+	; rcall	div32u				;V=K/N, [м*100/с]
+	; tst	r18				;Верхний предел - 655,36 м/с
+	; breq	PC+3
+	; ldi	r16,	0xFF
+	; ldi	r17,	0xFF
+	; sts	VELOL,	r16
+	; sts	VELOH,	r17
+	; ;Определение сигнатуры пули
+	; ldi	r17,	0x6B			;Расстояние - l=27500 (27,5 мм)
+	; ldi	r16,	0x6C
+	; lds	r22,	SIGNL
+	; lds	r23,	SIGNH
+	; rcall	mpy16u				;L=l*N2/N1, [мкм]
+	; rcall	div32u
+	; sts	SIGNL,	r16
+	; sts	SIGNH,	r17
+	
+	; ;Передать данные по ИК каналу
+; irtx:	ldi	xl,	low(RAMEND-11)		;Начало буфера
+	; ldi	xh,	high(RAMEND-11)
+	; ldi	r19,	16			;Счетчик байт (длина передаваемого буфера)
+; byte:	ld	r20,	-x			;Подгрузить байт
+	; com	r20				;Инвертировать
+	; ldi	r18,	10			;Счетчик бит (8N1)
+	; rjmp	PC+6
+; bit:	clr	r16
+	; cpi	r18,	1			;Стоп-бит
+	; breq	PC+4
+	; ror	r20
+	; brcc	PC+2
+	; ldi	r16,	0b00000100		;PB2
+	; ldi	r17,	20			;Бодрейт, 40000/r17 = baud/s
+; psw:	out	PINB,	r16			;"1", 10 тактов
+	; nop
+	; nop
+	; nop
+	; nop
+	; nop
+	; nop
+	; nop
+	; nop
+	; nop
+	; out	PINB,	r16			;"0", 15 тактов
+	; nop
+	; dec	r17
+	; breq	PC+11
+	; nop
+	; nop
+	; nop
+	; nop
+	; nop
+	; nop
+	; nop
+	; nop
+	; nop
+	; rjmp	psw
+	; dec	r18
+	; brne	bit
+	; dec	r19
+	; brne	byte

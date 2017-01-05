@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.42  C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm Wed Dec 21 13:53:32 2016
+AVRASM ver. 2.1.42  C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm Thu Jan 05 03:32:22 2017
 
 
 EQU  SIGNATURE_000 0000001e
@@ -238,10 +238,10 @@ EQU  WDTaddr      00000008
 EQU  VLMaddr      00000009
 EQU  ADCCaddr     0000000a
 EQU  INT_VECTORS_SIZE 0000000b
-EQU  DISTHH       00000047
-EQU  DISTHL       00000046
-EQU  DISTLH       00000045
-EQU  DISTLL       00000044
+EQU  CSGNHH       00000047
+EQU  CSGNHL       00000046
+EQU  CSGNLH       00000045
+EQU  CSGNLL       00000044
 EQU  VELO4H       00000049
 EQU  VELO4L       00000048
 EQU  VELO3H       0000004b
@@ -264,17 +264,14 @@ CSEG T0CAPT       0000000d
 CSEG T0CMA        00000012
 CSEG main         00000032
 CSEG bfrovf       0000002e
-CSEG t0cnt        00000057
-CSEG smplcp       00000074
-CSEG smplst       0000006e
-CSEG div32u       000000e2
-CSEG mpy16u       000000d3
-CSEG irtx         00000098
-CSEG byte         0000009b
-CSEG bit          0000009f
-CSEG psw          000000a6
-CSEG m16u_1       000000d8
-CSEG noad16       000000db
-CSEG d32u_1       000000e8
-CSEG d32u_2       000000ef
-CSEG d32u_3       000000fe
+CSEG t0cnt        00000055
+CSEG smplcp       00000072
+CSEG smplst       0000006c
+CSEG irtx         000000b7
+CSEG mkcsgn       00000089
+CSEG dshft        000000e3
+CSEG dadd         000000a1
+CSEG prmbl        000000ba
+CSEG psw          000000c7
+CSEG byte         000000bf
+CSEG bit          000000c1
