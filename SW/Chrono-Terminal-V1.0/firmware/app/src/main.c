@@ -103,7 +103,6 @@ void main(void){
     kalman.Q = 2;
     kalman.State = 0;
     kalman.Covariance = 0.1;
-    gppin_set(GP_IRR_VCC);
     //Navigate to an absolute menu item entry
     Menu_Navigate(&display);
     

@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f0xx_ll_rtc.h
   * @author  MCD Application Team
-  * @version V1.4.0
-  * @date    27-May-2016
+  * @version V1.5.0
+  * @date    04-November-2016
   * @brief   Header file of RTC LL module.
   ******************************************************************************
   * @attention
@@ -63,8 +63,8 @@ extern "C" {
   * @{
   */
 /* Masks Definition */
-#define RTC_INIT_MASK                 ((uint32_t)0xFFFFFFFFU)
-#define RTC_RSF_MASK                  ((uint32_t)0xFFFFFF5FU)
+#define RTC_INIT_MASK                 (0xFFFFFFFFU)
+#define RTC_RSF_MASK                  (0xFFFFFF5FU)
 
 /* Write protection defines */
 #define RTC_WRITE_PROTECTION_DISABLE  ((uint8_t)0xFFU)

@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f0xx_ll_gpio.h
   * @author  MCD Application Team
-  * @version V1.4.0
-  * @date    27-May-2016
+  * @version V1.5.0
+  * @date    04-November-2016
   * @brief   Header file of GPIO LL module.
   ******************************************************************************
   * @attention
@@ -174,16 +174,13 @@ typedef struct
   */
 #define LL_GPIO_SPEED_FREQ_LOW             ((uint32_t)0x00000000U) /*!< Select I/O low output speed    */
 #define LL_GPIO_SPEED_FREQ_MEDIUM          GPIO_OSPEEDR_OSPEEDR0_0 /*!< Select I/O medium output speed */
-#define LL_GPIO_SPEED_FREQ_HIGH            GPIO_OSPEEDR_OSPEEDR0_1 /*!< Select I/O fast output speed   */
-#define LL_GPIO_SPEED_FREQ_VERY_HIGH       GPIO_OSPEEDR_OSPEEDR0   /*!< Select I/O high output speed   */
+#define LL_GPIO_SPEED_FREQ_HIGH            GPIO_OSPEEDR_OSPEEDR0   /*!< Select I/O high output speed   */
 /**
   * @}
   */
 #define LL_GPIO_SPEED_LOW                  LL_GPIO_SPEED_FREQ_LOW
 #define LL_GPIO_SPEED_MEDIUM               LL_GPIO_SPEED_FREQ_MEDIUM
-#define LL_GPIO_SPEED_FAST                 LL_GPIO_SPEED_FREQ_HIGH
-#define LL_GPIO_SPEED_HIGH                 LL_GPIO_SPEED_FREQ_VERY_HIGH
-
+#define LL_GPIO_SPEED_HIGH                 LL_GPIO_SPEED_FREQ_HIGH
 
 /** @defgroup GPIO_LL_EC_PULL Pull Up Pull Down
   * @{
@@ -422,7 +419,6 @@ __STATIC_INLINE uint32_t LL_GPIO_GetPinOutputType(GPIO_TypeDef *GPIOx, uint32_t 
   *         @arg @ref LL_GPIO_SPEED_FREQ_LOW
   *         @arg @ref LL_GPIO_SPEED_FREQ_MEDIUM
   *         @arg @ref LL_GPIO_SPEED_FREQ_HIGH
-  *         @arg @ref LL_GPIO_SPEED_FREQ_VERY_HIGH
   * @retval None
   */
 __STATIC_INLINE void LL_GPIO_SetPinSpeed(GPIO_TypeDef *GPIOx, uint32_t Pin, uint32_t  Speed)
@@ -459,7 +455,6 @@ __STATIC_INLINE void LL_GPIO_SetPinSpeed(GPIO_TypeDef *GPIOx, uint32_t Pin, uint
   *         @arg @ref LL_GPIO_SPEED_FREQ_LOW
   *         @arg @ref LL_GPIO_SPEED_FREQ_MEDIUM
   *         @arg @ref LL_GPIO_SPEED_FREQ_HIGH
-  *         @arg @ref LL_GPIO_SPEED_FREQ_VERY_HIGH
   */
 __STATIC_INLINE uint32_t LL_GPIO_GetPinSpeed(GPIO_TypeDef *GPIOx, uint32_t Pin)
 {

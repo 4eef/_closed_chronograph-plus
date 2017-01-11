@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f0xx_ll_tim.c
   * @author  MCD Application Team
-  * @version V1.4.0
-  * @date    27-May-2016
+  * @version V1.5.0
+  * @date    04-November-2016
   * @brief   TIM LL module driver.
   ******************************************************************************
   * @attention
@@ -849,6 +849,7 @@ static ErrorStatus OC3Config(TIM_TypeDef *TIMx, LL_TIM_OC_InitTypeDef *TIM_OCIni
 
     /* Set the complementary output State */
     MODIFY_REG(tmpccer, TIM_CCER_CC3NE, TIM_OCInitStruct->OCNState << 10U);
+
 
     /* Set the Output Idle state */
     MODIFY_REG(tmpcr2, TIM_CR2_OIS3, TIM_OCInitStruct->OCIdleState << 4U);

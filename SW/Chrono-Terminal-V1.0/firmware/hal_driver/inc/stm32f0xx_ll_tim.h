@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f0xx_ll_tim.h
   * @author  MCD Application Team
-  * @version V1.4.0
-  * @date    27-May-2016
+  * @version V1.5.0
+  * @date    04-November-2016
   * @brief   Header file of TIM LL module.
   ******************************************************************************
   * @attention
@@ -677,14 +677,14 @@ typedef struct
 /** @defgroup TIM_LL_EC_TS Trigger Selection
   * @{
   */
-#define LL_TIM_TS_ITR0                         ((uint32_t)0x00000000U)         /*!< Internal Trigger 0 (ITR0) is used as trigger input */
-#define LL_TIM_TS_ITR1                         TIM_SMCR_TS_0                   /*!< Internal Trigger 1 (ITR1) is used as trigger input */
-#define LL_TIM_TS_ITR2                         TIM_SMCR_TS_1                   /*!< Internal Trigger 2 (ITR2) is used as trigger input */
-#define LL_TIM_TS_ITR3                         (TIM_SMCR_TS_0 | TIM_SMCR_TS_1) /*!< Internal Trigger 3 (ITR3) is used as trigger input */
-#define LL_TIM_TS_TI1F_ED                      TIM_SMCR_TS_2                   /*!< TI1 Edge Detector (TI1F_ED) is used as trigger input */
-#define LL_TIM_TS_TI1FP1                       (TIM_SMCR_TS_2 | TIM_SMCR_TS_0) /*!< Filtered Timer Input 1 (TI1FP1) is used as trigger input */
-#define LL_TIM_TS_TI2FP2                       (TIM_SMCR_TS_2 | TIM_SMCR_TS_1) /*!< Filtered Timer Input 2 (TI12P2) is used as trigger input */
-#define LL_TIM_TS_ETRF                         TIM_SMCR_TS                     /*!< Filtered external Trigger (ETRF) is used as trigger input */
+#define LL_TIM_TS_ITR0                         ((uint32_t)0x00000000U)                          /*!< Internal Trigger 0 (ITR0) is used as trigger input */
+#define LL_TIM_TS_ITR1                         TIM_SMCR_TS_0                                    /*!< Internal Trigger 1 (ITR1) is used as trigger input */
+#define LL_TIM_TS_ITR2                         TIM_SMCR_TS_1                                    /*!< Internal Trigger 2 (ITR2) is used as trigger input */
+#define LL_TIM_TS_ITR3                         (TIM_SMCR_TS_0 | TIM_SMCR_TS_1)                  /*!< Internal Trigger 3 (ITR3) is used as trigger input */
+#define LL_TIM_TS_TI1F_ED                      TIM_SMCR_TS_2                                    /*!< TI1 Edge Detector (TI1F_ED) is used as trigger input */
+#define LL_TIM_TS_TI1FP1                       (TIM_SMCR_TS_2 | TIM_SMCR_TS_0)                  /*!< Filtered Timer Input 1 (TI1FP1) is used as trigger input */
+#define LL_TIM_TS_TI2FP2                       (TIM_SMCR_TS_2 | TIM_SMCR_TS_1)                  /*!< Filtered Timer Input 2 (TI12P2) is used as trigger input */
+#define LL_TIM_TS_ETRF                         (TIM_SMCR_TS_2 | TIM_SMCR_TS_1 | TIM_SMCR_TS_0) /*!< Filtered external Trigger (ETRF) is used as trigger input */
 /**
   * @}
   */
@@ -831,7 +831,6 @@ typedef struct
 /**
   * @}
   */
-
 
 /**
   * @}
@@ -2932,15 +2931,14 @@ __STATIC_INLINE void LL_TIM_SetRemap(TIM_TypeDef *TIMx, uint32_t Remap)
   * @}
   */
 
-#if defined(TIM_SMCR_OCCS)
 /** @defgroup TIM_LL_EF_OCREF_Clear OCREF_Clear_Management
   * @{
   */
 /**
-  * @brief  Set the OCREF clear source
+  * @brief  Set the OCREF clear input source
   * @note The OCxREF signal of a given channel can be cleared when a high level is applied on the OCREF_CLR_INPUT
   * @note This function can only be used in Output compare and PWM modes.
-  * @rmtoll SMCR          OCCS           LL_TIM_SetOCRefClearInputSource
+  * @rmtoll SMCR          OCCS                LL_TIM_SetOCRefClearInputSource
   * @param  TIMx Timer instance
   * @param  OCRefClearInputSource This parameter can be one of the following values:
   *         @arg @ref LL_TIM_OCREF_CLR_INT_OCREF_CLR
@@ -2955,7 +2953,6 @@ __STATIC_INLINE void LL_TIM_SetOCRefClearInputSource(TIM_TypeDef *TIMx, uint32_t
   * @}
   */
 
-#endif /* TIM_SMCR_OCCS */
 /** @defgroup TIM_LL_EF_FLAG_Management FLAG-Management
   * @{
   */

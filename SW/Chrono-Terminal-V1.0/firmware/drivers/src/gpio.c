@@ -24,7 +24,7 @@ pinMode_type   const pinsMode[] = {
 /*5 */  makepin(GPIOA,  2,  outPushPull,                0,  0),     //OLED_RES
 /*6 */  makepin(GPIOA,  3,  inputWithPullUp,            0,  0),     //SW4
 /*7 */  makepin(GPIOA,  4,  analogMode,                 0,  0),     //VBAT
-/*8 */  makepin(GPIOA,  5,  inputWithPullUp,            0,  2),     //IRR_Data
+/*8 */  makepin(GPIOA,  5,  alternateFunctionPushPull,  0,  2),     //IRR_Data
 /*9 */  makepin(GPIOA,  6,  outPushPull,                0,  0),     //IRR_VCC
 /*10*/  makepin(GPIOA,  7,  inputWithPullUp,            1,  0),     //SW1
 /*11*/  makepin(GPIOB,  1,  inputWithPullUp,            1,  0),     //SW2

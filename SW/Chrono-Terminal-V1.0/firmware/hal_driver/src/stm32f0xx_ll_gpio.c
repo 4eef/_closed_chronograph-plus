@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f0xx_ll_gpio.c
   * @author  MCD Application Team
-  * @version V1.4.0
-  * @date    27-May-2016
+  * @version V1.5.0
+  * @date    04-November-2016
   * @brief   GPIO LL module driver.
   ******************************************************************************
   * @attention
@@ -74,8 +74,7 @@
 
 #define IS_LL_GPIO_SPEED(__VALUE__)        (((__VALUE__) == LL_GPIO_SPEED_FREQ_LOW)       ||\
                                             ((__VALUE__) == LL_GPIO_SPEED_FREQ_MEDIUM)    ||\
-                                            ((__VALUE__) == LL_GPIO_SPEED_FREQ_HIGH)      ||\
-                                            ((__VALUE__) == LL_GPIO_SPEED_FREQ_VERY_HIGH))
+                                            ((__VALUE__) == LL_GPIO_SPEED_FREQ_HIGH))
 
 #define IS_LL_GPIO_PULL(__VALUE__)         (((__VALUE__) == LL_GPIO_PULL_NO)   ||\
                                             ((__VALUE__) == LL_GPIO_PULL_UP)   ||\
