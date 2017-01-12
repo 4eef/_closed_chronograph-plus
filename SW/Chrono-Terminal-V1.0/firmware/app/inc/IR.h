@@ -28,6 +28,9 @@
 #define IR_READY                            0
 #define IR_BUSY                             1
 #define IR_DATA_READY                       2
+#define IR_DATA_OVERRUN                     3
+#define IR_MAX_BITS                         7
+#define IR_MAX_BYTES                        16
 
 /*!****************************************************************************
 * User enum
@@ -40,7 +43,7 @@ typedef struct{
     uint8_t     rxBitCnt;
     uint8_t     rxBytesCnt;
     uint8_t     rxState;
-    uint8_t     rxByte[20];
+    uint8_t     rxByte[IR_MAX_BYTES];
 }IRRXData_type;
 
 /*!****************************************************************************

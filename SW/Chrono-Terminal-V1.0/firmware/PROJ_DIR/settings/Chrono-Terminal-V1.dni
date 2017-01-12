@@ -120,7 +120,7 @@ TraceBufferSize=0x00000000
 TraceShowTime=0
 TraceShowTimeFreq=1000000
 [DebugChecksum]
-Checksum=-10260577
+Checksum=-781034052
 [CodeCoverage]
 Enabled=_ 0
 [Exceptions]
@@ -177,9 +177,7 @@ ShowTiming=1
 [Disassemble mode]
 mode=0
 [Breakpoints2]
-Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\app\src\IR.c}.25.5" 0 0 1 "" 0 "" 0
-Bp1=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\app\src\IR.c}.49.9" 0 0 1 "" 0 "" 0
-Count=2
+Count=0
 [Aliases]
 Count=0
 SuppressDialog=0

@@ -18,6 +18,7 @@ extern ssdVideoBff_type     ssdVideoBff;
 extern accel_type           accel;
 extern menu_type            menu;
 extern kalman_type          kalman;
+extern IRRXData_type        IRRXData;
 buttonCnts_type             buttonCnts;
 Menu_Item_t                 *CurrentMenuItem;
 meas_type                   meas;
@@ -191,6 +192,7 @@ void main(void){
             offs = SSD1306_LCDWIDTH/2 - (len*6)/2;
             ssd_putString6x8(offs, 28, &menu.message[0]);
         }
+        meas.speed1 = IRRXData.rxBytesCnt;
         //Refresh GDDRAM
         ug2864_refresh();
     }
