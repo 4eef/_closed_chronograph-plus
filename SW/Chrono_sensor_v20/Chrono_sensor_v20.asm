@@ -158,12 +158,12 @@ smplst:	mov	r22,	r20			;Store sample
 smplcp:	cp	r16,	r18			;Compare, load next if larger
 	cpc	r17,	r19
 	brcs	smplst
-	sub	r22,	r20			;Pellet signature (two sensors used)
+	sub	r22,	r20			;Pellet signature (one sensor used)
 	sbc	r23,	r21
-	lds	r18,	FSTSL
-	lds	r19,	FSTSH
-	add	r22,	r18
-	adc	r23,	r19
+;	lds	r18,	FSTSL
+;	lds	r19,	FSTSH
+;	add	r22,	r18
+;	adc	r23,	r19
 	sts	VELOL,	r20
 	sts	VELOH,	r21
 	sts	SIGNL,	r22

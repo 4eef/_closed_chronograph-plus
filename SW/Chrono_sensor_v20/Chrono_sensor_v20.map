@@ -1,5 +1,5 @@
 
-AVRASM ver. 2.1.42  C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm Thu Jan 12 12:37:53 2017
+AVRASM ver. 2.1.42  C:\Users\4eef\Projects\Chronograph+\SW\Chrono_sensor_v20\Chrono_sensor_v20.asm Thu Jan 12 16:11:29 2017
 
 
 EQU  SIGNATURE_000 0000001e
@@ -267,12 +267,12 @@ CSEG bfrovf       0000002e
 CSEG t0cnt        00000055
 CSEG smplcp       00000072
 CSEG smplst       0000006c
-CSEG irtx         000000b7
-CSEG mkcsgn       00000089
-CSEG dshft        000000ea
-CSEG dadd         000000a1
-CSEG prmbl        000000b9
-CSEG psw          000000c7
-CSEG byte         000000be
-CSEG bit          000000c0
-CSEG endp         000000e4
+CSEG irtx         000000b3
+CSEG mkcsgn       00000085
+CSEG dshft        000000e6
+CSEG dadd         0000009d
+CSEG prmbl        000000b5
+CSEG psw          000000c3
+CSEG byte         000000ba
+CSEG bit          000000bc
+CSEG endp         000000e0
