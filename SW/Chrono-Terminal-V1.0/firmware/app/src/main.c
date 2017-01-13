@@ -37,13 +37,13 @@ const char *pellets[2] = {
 //Main screen
 MENU_ITEM(display,      NULL_MENU,      NULL_MENU,      NULL_MENU,      mode,           NULL,           NULL,           "Menu");
 //Menu
-MENU_ITEM(mode,         stats,          NULL_MENU,      display,        mgeneral,       NULL,           NULL,           "Display mode");
+MENU_ITEM(mode,         stats,          NULL_MENU,      display,        mcommon,        NULL,           NULL,           "Display mode");
 MENU_ITEM(stats,        setts,          mode,           display,        NULL_MENU,      NULL,           NULL,           "Statistics");
 MENU_ITEM(setts,        about,          stats,          display,        smag,           NULL,           NULL,           "Settings");
 MENU_ITEM(about,        NULL_MENU,      setts,          display,        service,        NULL,           NULL,           "About");
 //Menu/Display mode
-MENU_ITEM(mgeneral,     mchron,         NULL_MENU,      mode,           NULL_MENU,      NULL,           modeEdit,       "General");
-MENU_ITEM(mchron,       mincline,       mgeneral,       mode,           NULL_MENU,      NULL,           modeEdit,       "Chronograph");
+MENU_ITEM(mcommon,      mchron,         NULL_MENU,      mode,           NULL_MENU,      NULL,           modeEdit,       "Common");
+MENU_ITEM(mchron,       mincline,       mcommon,        mode,           NULL_MENU,      NULL,           modeEdit,       "Chronograph");
 MENU_ITEM(mincline,     NULL_MENU,      mchron,         mode,           NULL_MENU,      NULL,           modeEdit,       "Inclinometer");
 //Menu/Settings
 MENU_ITEM(smag,         schrono,        NULL_MENU,      setts,          NULL_MENU,      NULL,           parEditRedir,   "Magazine capacity");
@@ -166,6 +166,7 @@ void main(void){
         trxAccData();
         //Magazine
         if(meas.chron.magCapacity > 1){
+            meas.chron.magCurrent = meas.chron.magCapacity;
             sysSettings.magEn = 1;
         }else{
             sysSettings.magEn = 0;
@@ -314,7 +315,7 @@ int16_t parEdit(int16_t param){
 * @retval   
 */
 void modeEdit(void){
-    if(CurrentMenuItem == &mgeneral)sysSettings.dispMode = MODE_COM;
+    if(CurrentMenuItem == &mcommon)sysSettings.dispMode = MODE_COM;
     else if(CurrentMenuItem == &mchron)sysSettings.dispMode = MODE_CHR;
     else if(CurrentMenuItem == &mincline)sysSettings.dispMode = MODE_INC;
     strcpy(menu.message, "OK");
