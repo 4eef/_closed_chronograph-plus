@@ -45,6 +45,7 @@ typedef struct{
     uint8_t     parEdit;
     uint8_t     parSign;
     uint8_t     parStat;
+    uint8_t     parFract;
 }menu_type;
 
 /** Type define for a menu item. Menu items should be initialized via the helper

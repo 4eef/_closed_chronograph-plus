@@ -34,7 +34,8 @@
 #define BUTTON_DOWN             GP_SW1
 #define BUTTON_OK               GP_SW4
 #define BUTTON_CANCEL           GP_SW3
-#define MSG_CNT                 20
+#define MSG_CNT                 30
+#define MSG_CNT_BIND            200
 #define PAR_NONE                0
 #define PAR_SAVE                1
 #define PAR_CANCEL              2
@@ -46,11 +47,19 @@
 #define MODE_CHR                1
 #define MODE_INC                2
 #define PELLETS_MAX             99
-#define PELLETS_MIN             2
+#define PELLETS_MIN             1
 #define INC_BORDER_MAX          90
 #define INC_BORDER_MIN          1
 #define MAG_DISABLE             0
 #define MAG_ENABLE              1
+#define CHR_DIST_DEFAULT        275
+#define CHR_DIST_MPLY           100000
+#define CHR_TCK_NS              125
+#define CHR_DIST_MIN            100
+#define CHR_DIST_MAX            999
+#define CHR_SPD_MAX             65535
+#define FRACT_TENTHS            10
+#define FRACT_HUNDREDTHS        100
 
 /*!****************************************************************************
 * User enum
@@ -68,26 +77,34 @@ enum buttonValues{
 * User typedef
 */
 typedef struct{
-    uint8_t     reserv      :3;
+    uint8_t     reserv      :4;
+    uint8_t     chrBind     :1;
     uint8_t     dispMode    :2;
     uint8_t     magEn       :1;
 }sysSettings_type;
 
 typedef struct{
     uint16_t    pellet;
-    uint8_t     currPellets;
-    uint8_t     numPellets;
-    uint16_t    shots;
-    uint8_t     battCharge;
-    uint16_t    battVolt;
-    float       speed0;
+    uint8_t     magCurrent;
+    uint8_t     magCapacity;
+    uint16_t    currShots;
+    uint16_t    speed0;
     uint16_t    speed1;
     uint16_t    speed2;
     uint16_t    speed3;
     uint16_t    speed4;
-    float       energy;
-    float       mean;
-    float       sdev;
+    uint16_t    pelSgntr;
+    uint32_t    chrSgntr;
+    uint16_t    sensDist;
+    uint16_t    energy;
+    uint16_t    mean;
+    uint16_t    sdev;
+}chron_type;
+
+typedef struct{
+    uint8_t     battCharge;
+    uint16_t    battVolt;
+    chron_type  chron;
     float       accRoll;
     float       accPitch;
     uint16_t    accRollBorder;

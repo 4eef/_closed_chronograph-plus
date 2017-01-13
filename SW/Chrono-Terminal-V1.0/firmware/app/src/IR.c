@@ -25,7 +25,6 @@ void initIRConfig(void){
     RCC->APB1ENR    |= RCC_APB1ENR_TIM2EN;                      //Enable clock
     RCC->APB1RSTR   |= RCC_APB1RSTR_TIM2RST;                    //Reset peripheral
     RCC->APB1RSTR   &= ~RCC_APB1RSTR_TIM2RST;
-    TIM2->CNT = 0;                                              //Clear the timer
     TIM2->PSC       = F_APB1/1000000+1;                         //Count in microseconds
     TIM2->ARR       = IR_MAX_TIM_US;                            //Max count value
     gppin_set(GP_IRR_VCC);                                      //Enable Vcc for IR receiver
@@ -73,12 +72,19 @@ __irq void TIM2_IRQHandler(void){
         TIM2->SR &= ~TIM_SR_CC1OF;                              //RX failed, set receiver
         TIM2->SR &= ~TIM_SR_CC1IF;
         TIM2->CR1 &= ~TIM_CR1_CEN;
-        IRRXData.rxBitCnt = 0;
-        IRRXData.rxBytesCnt = 0;
-        IRRXData.rxState = IR_READY;
+        if(IRRXData.rxState == IR_DATA_READY){                  //Avoid data overrun
+            return;
+        }else{
+            IRRXData.rxBitCnt = 0;
+            IRRXData.rxBytesCnt = 0;
+            IRRXData.rxState = IR_READY;
+        }
     }else if((TIM2->SR & TIM_SR_CC1IF) != 0){
         TIM2->SR &= ~TIM_SR_CC1IF;
-        if((GPIOA->IDR & GPIO_IDR_5) != 0){                     //Rising edge
+        if(IRRXData.rxState == IR_DATA_READY){
+            TIM2->CR1 &= ~TIM_CR1_CEN;
+            return;
+        }else if((GPIOA->IDR & GPIO_IDR_5) != 0){               //Rising edge
             if((TIM2->CCR1 <= (IR_STOPBIT_TIME+IR_STOPBIT_TIME/10)) && (TIM2->CCR1 >= (IR_STOPBIT_TIME-IR_STOPBIT_TIME/10))){
                 TIM2->CR1 &= ~TIM_CR1_CEN;
                 IRRXData.rxBitCnt = 0;
@@ -94,7 +100,7 @@ __irq void TIM2_IRQHandler(void){
         }else{                                                  //Falling edge
             if((TIM2->CR1 & TIM_CR1_CEN) != 0){
                 TIM2->CR1 &= ~TIM_CR1_CEN;
-                if((TIM2->CCR1 <= (IR_PREAMBLE_TIME+IR_PREAMBLE_TIME/5)) && (TIM2->CCR1 >= (IR_PREAMBLE_TIME-IR_PREAMBLE_TIME/5))){
+                if((TIM2->CCR1 <= (IR_PREAMBLE_TIME+IR_PREAMBLE_TIME/5)) && (TIM2->CCR1 >= (IR_PREAMBLE_TIME-IR_PREAMBLE_TIME/5)) && (IRRXData.rxState == IR_READY)){
                     IRRXData.rxBitCnt = 0;
                     IRRXData.rxBytesCnt = 0;
                     IRRXData.rxState = IR_BUSY;
@@ -128,16 +134,19 @@ __irq void TIM2_IRQHandler(void){
                     return;
                 }
             }
-            TIM2->CCR1 = 0;
             TIM2->CNT = 0;
             TIM2->CR1 |= TIM_CR1_CEN;
         }
     }else if((TIM2->SR & TIM_SR_UIF) != 0){
         TIM2->SR &= ~TIM_SR_UIF;
         TIM2->CR1 &= ~TIM_CR1_CEN;
-        IRRXData.rxBitCnt = 0;
-        IRRXData.rxBytesCnt = 0;
-        IRRXData.rxState = IR_READY;
+        if(IRRXData.rxState == IR_DATA_READY){
+            return;
+        }else{
+            IRRXData.rxBitCnt = 0;
+            IRRXData.rxBytesCnt = 0;
+            IRRXData.rxState = IR_READY;
+        }
     }
 }
 
