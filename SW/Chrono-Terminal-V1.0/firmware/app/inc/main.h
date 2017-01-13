@@ -60,6 +60,8 @@
 #define CHR_SPD_MAX             65535
 #define FRACT_TENTHS            10
 #define FRACT_HUNDREDTHS        100
+#define STAT_SHOTS_MAX          255
+#define STAT_ENERGY_DIV_COEFF   10000
 
 /*!****************************************************************************
 * User enum
@@ -77,34 +79,47 @@ enum buttonValues{
 * User typedef
 */
 typedef struct{
+    uint32_t    shotsTotal;
+    uint16_t    prefPellet;
+    uint32_t    shotsPPellet;
+    uint16_t    avgRoll;
+    uint32_t    uptime;
+}stats_type;
+
+typedef struct{
     uint8_t     reserv      :4;
     uint8_t     chrBind     :1;
     uint8_t     dispMode    :2;
-    uint8_t     magEn       :1;
+    uint8_t     clipEn      :1;
 }sysSettings_type;
 
 typedef struct{
     uint16_t    pellet;
-    uint8_t     magCurrent;
-    uint8_t     magCapacity;
-    uint16_t    currShots;
+    uint8_t     clipCurrent;
+    uint8_t     clipCapacity;
     uint16_t    speed0;
     uint16_t    speed1;
     uint16_t    speed2;
     uint16_t    speed3;
     uint16_t    speed4;
     uint16_t    pelSgntr;
+    uint16_t    pelWeight;
     uint32_t    chrSgntr;
     uint16_t    sensDist;
-    uint16_t    energy;
-    uint16_t    mean;
-    uint16_t    sdev;
+    uint16_t    statSpeeds[STAT_SHOTS_MAX];
+    uint32_t    statSpeedsSum;
+    uint32_t    statDevsSum;
+    uint16_t    statShots;
+    uint16_t    statEnergy;
+    uint16_t    statMean;
+    uint16_t    statSdev;
 }chron_type;
 
 typedef struct{
     uint8_t     battCharge;
     uint16_t    battVolt;
     chron_type  chron;
+    stats_type  stats;
     float       accRoll;
     float       accPitch;
     uint16_t    accRollBorder;

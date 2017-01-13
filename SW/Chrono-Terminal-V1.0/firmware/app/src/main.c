@@ -39,15 +39,16 @@ MENU_ITEM(display,      NULL_MENU,      NULL_MENU,      NULL_MENU,      mode,   
 //Menu
 MENU_ITEM(mode,         stats,          NULL_MENU,      display,        mcommon,        NULL,           NULL,           "Display mode");
 MENU_ITEM(stats,        setts,          mode,           display,        NULL_MENU,      NULL,           NULL,           "Statistics");
-MENU_ITEM(setts,        about,          stats,          display,        smag,           NULL,           NULL,           "Settings");
-MENU_ITEM(about,        NULL_MENU,      setts,          display,        service,        NULL,           NULL,           "About");
+MENU_ITEM(setts,        about,          stats,          display,        sclipc,         NULL,           NULL,           "Settings");
+MENU_ITEM(about,        service,        setts,          display,        NULL_MENU,      NULL,           NULL,           "About");
+MENU_ITEM(service,      NULL_MENU,      about,          display,        NULL_MENU,      NULL,           NULL,           "Service info");
 //Menu/Display mode
 MENU_ITEM(mcommon,      mchron,         NULL_MENU,      mode,           NULL_MENU,      NULL,           modeEdit,       "Common");
 MENU_ITEM(mchron,       mincline,       mcommon,        mode,           NULL_MENU,      NULL,           modeEdit,       "Chronograph");
 MENU_ITEM(mincline,     NULL_MENU,      mchron,         mode,           NULL_MENU,      NULL,           modeEdit,       "Inclinometer");
 //Menu/Settings
-MENU_ITEM(smag,         schrono,        NULL_MENU,      setts,          NULL_MENU,      NULL,           parEditRedir,   "Magazine capacity");
-MENU_ITEM(schrono,      sincline,       smag,           setts,          scdist,         NULL,           NULL,           "Chronograph");
+MENU_ITEM(sclipc,       schrono,        NULL_MENU,      setts,          NULL_MENU,      NULL,           parEditRedir,   "Clip capacity");
+MENU_ITEM(schrono,      sincline,       sclipc,         setts,          scdist,         NULL,           NULL,           "Chronograph");
 MENU_ITEM(sincline,     sdisplay,       schrono,        setts,          sibrdr,         NULL,           NULL,           "Inclinometer");
 MENU_ITEM(sdisplay,     ssleep,         sincline,       setts,          sdcntr,         NULL,           NULL,           "Display");
 MENU_ITEM(ssleep,       swusrc,         sdisplay,       setts,          NULL_MENU,      NULL,           NULL,           "Sleep");
@@ -59,10 +60,8 @@ MENU_ITEM(scbind,       NULL_MENU,      scdist,         schrono,        NULL_MEN
 MENU_ITEM(sibrdr,       sical,          NULL_MENU,      sincline,       NULL_MENU,      NULL,           parEditRedir,   "Roll level border");
 MENU_ITEM(sical,        NULL_MENU,      sibrdr,         sincline,       NULL_MENU,      NULL,           NULL,           "Calibration");
 //Menu/Settings/Display
-MENU_ITEM(sdcntr,       sdfreq,         NULL_MENU,      sdisplay,       NULL_MENU,      NULL,           NULL,           "Contrast");
-MENU_ITEM(sdfreq,       NULL_MENU,      sdcntr,         sdisplay,       NULL_MENU,      NULL,           NULL,           "Power off timeout");
-//Menu/About
-MENU_ITEM(service,      NULL_MENU,      NULL_MENU,      about,          NULL_MENU,      NULL,           NULL,           "Service menu");
+MENU_ITEM(sdcntr,       sdpoff,         NULL_MENU,      sdisplay,       NULL_MENU,      NULL,           NULL,           "Contrast");
+MENU_ITEM(sdpoff,       NULL_MENU,      sdcntr,         sdisplay,       NULL_MENU,      NULL,           NULL,           "Power off timeout");
 
 /*!****************************************************************************
 * @brief    Main function
@@ -70,7 +69,7 @@ MENU_ITEM(service,      NULL_MENU,      NULL_MENU,      about,          NULL_MEN
 * @retval   
 */
 void main(void){
-    uint8_t offs, len;
+    uint8_t i, offs, len;
     uint16_t val1, val2;
     uint32_t dist, sgn, spd0, spd1, spd2, spd3, spd4;
     char text[20], par[6];
@@ -86,11 +85,8 @@ void main(void){
     //Initial parameters
     meas.accRollBorder = 5;
     meas.accPitchBorder = 90;
-    meas.chron.magCapacity = PELLETS_MIN;
+    meas.chron.clipCapacity = PELLETS_MIN;
     meas.chron.sensDist = CHR_DIST_DEFAULT;
-    sysSettings.magEn = 0;
-    sysSettings.dispMode = MODE_COM;
-    sysSettings.chrBind = 0;
     kalman.F = 1;
     kalman.H = 1;
     kalman.R = 15;
@@ -152,10 +148,19 @@ void main(void){
             }
             break;
         case HOME:
-            if((Menu_GetCurrentMenu() == &display) && (sysSettings.magEn != 0)){
-                meas.chron.magCurrent = meas.chron.magCapacity;
-                strcpy(menu.message, "Clip replaced");
-                menu.msgCnt = MSG_CNT;
+            if(Menu_GetCurrentMenu() == &display){
+                if((sysSettings.clipEn != 0) && (meas.chron.clipCurrent != meas.chron.clipCapacity)){
+                    meas.chron.clipCurrent = meas.chron.clipCapacity;
+                    strcpy(menu.message, "Clip replaced");
+                    menu.msgCnt = MSG_CNT;
+                }else if((meas.chron.statShots != 0) && (sysSettings.dispMode == MODE_CHR)){
+                    meas.chron.statShots = 0;
+                    meas.chron.statSpeedsSum = 0;
+                    meas.chron.statSdev = 0;
+                    meas.chron.statMean = 0;
+                    strcpy(menu.message, "Stats cleared");
+                    menu.msgCnt = MSG_CNT;
+                }
             }else if(menu.parEdit == PAR_EDIT_DISABLE) Menu_Navigate(&display);
             break;
         default:
@@ -165,11 +170,10 @@ void main(void){
         CurrentMenuItem = Menu_GetCurrentMenu();
         trxAccData();
         //Magazine
-        if(meas.chron.magCapacity > 1){
-            meas.chron.magCurrent = meas.chron.magCapacity;
-            sysSettings.magEn = 1;
+        if(meas.chron.clipCapacity > 1){
+            sysSettings.clipEn = 1;
         }else{
-            sysSettings.magEn = 0;
+            sysSettings.clipEn = 0;
         }
         //Data received via IR channel
         if(IRRXData.rxState == IR_DATA_READY){
@@ -181,6 +185,7 @@ void main(void){
                     strcpy(menu.message, "Binded");
                     menu.msgCnt = MSG_CNT;
                 }
+                meas.stats.shotsTotal++;
                 //Measurements
                 dist = meas.chron.sensDist*CHR_DIST_MPLY;
                 spd0 = dist/(((IRRXData.rxByte[0]<<8 | IRRXData.rxByte[1])*CHR_TCK_NS)/100);
@@ -199,20 +204,45 @@ void main(void){
                 if(spd3 >= CHR_SPD_MAX) meas.chron.speed3 = CHR_SPD_MAX;
                 meas.chron.speed4 = spd4;
                 if(spd4 >= CHR_SPD_MAX) meas.chron.speed4 = CHR_SPD_MAX;
-                //Insert there calculation of magazine pellet number
-                if(sysSettings.magEn != 0){
-                    if(meas.chron.magCurrent == 0){
-                        meas.chron.magCurrent = meas.chron.magCapacity;
+                //Ñalculate clip status
+                if(sysSettings.clipEn != 0){
+                    if(meas.chron.clipCurrent == 0){
+                        meas.chron.clipCurrent = meas.chron.clipCapacity;
                         strcpy(menu.message, "Clip replaced");
                         menu.msgCnt = MSG_CNT;
-                    }else if(meas.chron.magCurrent == 1){
+                    }else if(meas.chron.clipCurrent == 1){
                         strcpy(menu.message, "Replace clip");
                         menu.msgCnt = MSG_CNT;
                     }
-                    meas.chron.magCurrent--;
+                    meas.chron.clipCurrent--;
                 }
                 //Insert pellet signature filtering
-                //Insert statistics calculation
+                //Statistics calculation
+                if(sysSettings.dispMode == MODE_CHR){
+                    if(meas.chron.statShots >= STAT_SHOTS_MAX){
+                        strcpy(menu.message, "Buffer is full");
+                        menu.msgCnt = MSG_CNT;
+                    }else{
+                        meas.chron.statSpeeds[meas.chron.statShots] = meas.chron.speed0;
+                        meas.chron.statSpeedsSum += meas.chron.statSpeeds[meas.chron.statShots];
+                        meas.chron.statShots++;
+                        if(meas.chron.statShots >= 2){
+                            meas.chron.statMean = meas.chron.statSpeedsSum/meas.chron.statShots;
+                            meas.chron.statDevsSum = 0;
+                            for(i = 0; i < meas.chron.statShots; i++){
+                                if(meas.chron.statMean >= meas.chron.statSpeeds[i]){
+                                    meas.chron.statDevsSum += meas.chron.statMean - meas.chron.statSpeeds[i];
+                                }else{
+                                    meas.chron.statDevsSum += meas.chron.statSpeeds[i] - meas.chron.statMean;
+                                }
+                            }
+                            meas.chron.statSdev = meas.chron.statDevsSum/meas.chron.statShots;
+                        }
+                        if((meas.chron.pellet != 0) && (meas.chron.pelWeight != 0)){
+                            meas.chron.statEnergy = (((meas.chron.speed0*meas.chron.speed0)/STAT_ENERGY_DIV_COEFF)*meas.chron.pelWeight)/STAT_ENERGY_DIV_COEFF/2;
+                        }
+                    }
+                }
             }
             IRRXData.rxState = IR_READY;                        //Release receiver
         }
@@ -264,10 +294,11 @@ void main(void){
 * @retval   
 */
 void parEditRedir(void){
-    if(CurrentMenuItem == &smag){                               //Magazine capacity
+    if(CurrentMenuItem == &sclipc){                             //Magazine capacity
         menu.parBorderMax = PELLETS_MAX;
         menu.parBorderMin = PELLETS_MIN;
-        meas.chron.magCapacity = parEdit(meas.chron.magCapacity);
+        meas.chron.clipCapacity = parEdit(meas.chron.clipCapacity);
+        meas.chron.clipCurrent = meas.chron.clipCapacity;
     }else if(CurrentMenuItem == &sibrdr){                       //Inclinometer roll level border
         menu.parBorderMax = INC_BORDER_MAX;
         menu.parBorderMin = INC_BORDER_MIN;
@@ -488,13 +519,14 @@ void drawMainScreen(void){
     //Display settings
     if(sysSettings.dispMode == MODE_COM || sysSettings.dispMode == MODE_CHR){
         val1 = meas.chron.speed0/FRACT_HUNDREDTHS;
-        val2 = meas.chron.speed0%val1;
-        sprintf(speed0, "%u.%.2u%c", val1, val2, 47);             //Speed 0
+        val2 = meas.chron.speed0-(val1*FRACT_HUNDREDTHS);
+        if(val1 == 0) val2 = meas.chron.speed0;
+        sprintf(speed0, "%u.%.2u%c", val1, val2, 47);           //Speed 0
         sprintf(speed1, "%u", meas.chron.speed1/100);           //Speed 1
         sprintf(speed2, "%u", meas.chron.speed2/100);           //Speed 2
         sprintf(speed3, "%u", meas.chron.speed3/100);           //Speed 3
-        if(sysSettings.magEn == 1){                             //Magazine status/Speed4
-            sprintf(magStat, "%u/%u", meas.chron.magCurrent, meas.chron.magCapacity);
+        if(sysSettings.clipEn == 1){                            //Magazine status/Speed4
+            sprintf(magStat, "%u/%u", meas.chron.clipCurrent, meas.chron.clipCapacity);
             ssd_putString6x8(92, 45, &magStat[0]);
         }else{
             sprintf(speed4, "%u", meas.chron.speed4/100);
@@ -513,19 +545,22 @@ void drawMainScreen(void){
             ssd_putRollBar(meas.accRoll, meas.accRollBorder, ROLL_LOW_Y, ROLL_LOW_HEIGHT);
             ssd_putPitchBar(meas.accPitch, meas.accPitchBorder);
         }else{
-            sprintf(currShots, "%u", meas.chron.currShots);   //Number of shots per measurement
-            val1 = meas.chron.mean/FRACT_HUNDREDTHS;
-            val2 = meas.chron.mean%val1;
-            sprintf(mean, "%c%u.%.2u", 230, val1, val2);      //Mean of current measurement
-            val1 = meas.chron.sdev/FRACT_HUNDREDTHS;
-            val2 = meas.chron.sdev%val1;
-            sprintf(sdev, "%c%u.%.2u", 229, val1, val2);      //Standard deviation
-            val1 = meas.chron.energy/FRACT_HUNDREDTHS;
-            val2 = meas.chron.energy%val1;
-            sprintf(energy, "%u.%.2u%c", val1, val2, 58);   //Calculated energy
+            sprintf(currShots, "%u", meas.chron.statShots);     //Number of shots per measurement
+            val1 = meas.chron.statMean/FRACT_HUNDREDTHS;
+            val2 = meas.chron.statMean-(val1*FRACT_HUNDREDTHS);
+            if(val1 == 0) val2 = meas.chron.statMean;
+            sprintf(mean, "%c%u.%.2u", 230, val1, val2);        //Mean of current measurement
+            val1 = meas.chron.statSdev/FRACT_HUNDREDTHS;
+            val2 = meas.chron.statSdev-(val1*FRACT_HUNDREDTHS);
+            if(val1 == 0) val2 = meas.chron.statSdev;
+            sprintf(sdev, "%c%u.%.2u", 229, val1, val2);        //Standard deviation
+            val1 = meas.chron.statEnergy/FRACT_HUNDREDTHS;
+            val2 = meas.chron.statEnergy-(val1*FRACT_HUNDREDTHS);
+            if(val1 == 0) val2 = meas.chron.statEnergy;
+            sprintf(energy, "%u.%.2u%c", val1, val2, 58);       //Calculated energy
             ssd_putString6x8(98, 55, &currShots[0]);
             ssd_putString6x8(0, 36, &mean[0]);
-            ssd_putString6x8(48, 36, &sdev[0]);
+            ssd_putString6x8(49, 36, &sdev[0]);
             ssd_putString12x16(0, 56, &energy[0]);
         }
     }else if(sysSettings.dispMode == MODE_INC){
