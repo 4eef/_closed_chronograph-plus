@@ -62,6 +62,7 @@
 #define FRACT_HUNDREDTHS        100
 #define STAT_SHOTS_MAX          255
 #define STAT_ENERGY_DIV_COEFF   10000
+#define PELLETS_DB_NUM          16
 
 /*!****************************************************************************
 * User enum
@@ -78,6 +79,15 @@ enum buttonValues{
 /*!****************************************************************************
 * User typedef
 */
+typedef struct{
+    char        pelStrings[PELLETS_DB_NUM][18];
+    uint16_t    pelWghts[PELLETS_DB_NUM];
+    uint16_t    pelSgntrs[PELLETS_DB_NUM];
+    uint32_t    newPelSgnSum;
+    uint8_t     newPelCnt;
+    uint8_t     matchedSgn;
+}pellets_type;
+
 typedef struct{
     uint32_t    shotsTotal;
     uint16_t    prefPellet;

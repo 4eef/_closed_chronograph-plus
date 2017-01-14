@@ -25,12 +25,7 @@ meas_type                   meas;
 sysSettings_type            sysSettings;
 lis3Settings_type           lis3Settings;
 ssdSettings_type            ssdSettings;
-
-//Known pellets database
-const char *pellets[2] = {
-    "<unknown pellet>",
-    "JSB Exact 0.547",
-};
+pellets_type                pellets;
 
 //Menu implementation
 //        Name          Next            Previous        Parent          Child           SelectFunc      EnterFunc       Text
@@ -82,6 +77,11 @@ void main(void){
     ug2864init();
     lis3init();
     initIRConfig();
+    //Pellets database primary config
+    strcpy(pellets.pelStrings[0], "<unknown pellet>");
+    for(i = 1; i < PELLETS_DB_NUM; i++){
+        sprintf(pellets.pelStrings[i], "Default pelet %u", i);
+    }
     //Initial parameters
     meas.accRollBorder = 5;
     meas.accPitchBorder = 90;
@@ -532,7 +532,7 @@ void drawMainScreen(void){
             sprintf(speed4, "%u", meas.chron.speed4/100);
             ssd_putString6x8(98, 45, &speed4[0]);
         }
-        ssd_putString6x8(0, 0, pellets[meas.chron.pellet]);     //Detected pellet
+        ssd_putString6x8(0, 0, &pellets.pelStrings[meas.chron.pellet][0]);//Detected pellet
         ssd_putString12x16(0, 24, &speed0[0]);                  //Measured speed
         ssd_putString6x8(98, 15, &speed1[0]);                   //Previous measurements
         ssd_putString6x8(98, 25, &speed2[0]);
