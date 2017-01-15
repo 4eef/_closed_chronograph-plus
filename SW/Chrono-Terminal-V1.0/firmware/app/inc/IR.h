@@ -31,6 +31,7 @@
 #define IR_DATA_OVERRUN                     3
 #define IR_MAX_BITS                         7
 #define IR_MAX_BYTES                        16
+#define CHR_TOLERANCE                       10
 
 /*!****************************************************************************
 * User enum

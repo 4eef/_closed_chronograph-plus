@@ -63,6 +63,14 @@
 #define STAT_SHOTS_MAX          255
 #define STAT_ENERGY_DIV_COEFF   10000
 #define PELLETS_DB_NUM          16
+#define PELLET_SGN_TOLERANCE    10
+#define PELLET_CHANGE_THR       5
+#define PELLET_NEW_SGN_THR      10
+#define PELLET_NEW_SGN_BOUND    PELLET_NEW_SGN_THR*1.5
+#define PELLET_OK               0
+#define PELLET_NEW              1
+#define PELLET_CONFIRM          2
+#define PELLET_ERR_NEW          3
 
 /*!****************************************************************************
 * User enum
@@ -83,9 +91,12 @@ typedef struct{
     char        pelStrings[PELLETS_DB_NUM][18];
     uint16_t    pelWghts[PELLETS_DB_NUM];
     uint16_t    pelSgntrs[PELLETS_DB_NUM];
-    uint32_t    newPelSgnSum;
-    uint8_t     newPelCnt;
-    uint8_t     matchedSgn;
+    uint8_t     matchedSgnNum;
+    uint16_t    newSgn;
+    uint32_t    newSgnSum;
+    uint8_t     newSgnCnt;
+    uint8_t     newSgnErrCnt;
+    uint8_t     pelStat;
 }pellets_type;
 
 typedef struct{

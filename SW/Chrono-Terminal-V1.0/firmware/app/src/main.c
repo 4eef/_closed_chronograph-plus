@@ -178,7 +178,7 @@ void main(void){
         //Data received via IR channel
         if(IRRXData.rxState == IR_DATA_READY){
             sgn = (IRRXData.rxByte[IR_MAX_BYTES-1]) | (IRRXData.rxByte[IR_MAX_BYTES-2])<<8 | (IRRXData.rxByte[IR_MAX_BYTES-3])<<16 | (IRRXData.rxByte[IR_MAX_BYTES-4])<<24;
-            if((meas.chron.chrSgntr == sgn) | (sysSettings.chrBind != 0)){
+            if((sysSettings.dispMode != MODE_INC) && ((meas.chron.chrSgntr == sgn) || (sysSettings.chrBind != 0))){
                 if(sysSettings.chrBind != 0){
                     sysSettings.chrBind = 0;
                     meas.chron.chrSgntr = sgn;
@@ -216,7 +216,50 @@ void main(void){
                     }
                     meas.chron.clipCurrent--;
                 }
-                //Insert pellet signature filtering
+                //Pellet recognition by signature
+                if(pellets.pelStat == PELLET_OK){
+                    val1 = meas.chron.pelSgntr-meas.chron.pelSgntr/PELLET_SGN_TOLERANCE;
+                    val2 = meas.chron.pelSgntr+meas.chron.pelSgntr/PELLET_SGN_TOLERANCE;
+                    //Compare current signature with existing in database
+                    if((pellets.pelSgntrs[meas.chron.pellet] >= val1) && (pellets.pelSgntrs[meas.chron.pellet] <= val2) && (pellets.matchedSgnNum != 0)){
+                        pellets.newSgnCnt = 0;
+                    }else if(pellets.matchedSgnNum != 0){
+                        pellets.newSgnCnt++;
+                        if(pellets.newSgnCnt > PELLET_CHANGE_THR){
+                            pellets.newSgnCnt = 0;
+                            pellets.matchedSgnNum = 0;
+                            pellets.newSgn = meas.chron.pelSgntr;
+                            for(i = 1; i < PELLETS_DB_NUM; i++){
+                                if(pellets.pelSgntrs[i] >= val1 && pellets.pelSgntrs[i] <= val2){
+                                    pellets.matchedSgnNum = i;
+                                    pellets.pelStat = PELLET_CONFIRM;
+                                    break;
+                                }
+                            }
+                        }
+                    }else{                                      //No existing pellet found
+                        pellets.newSgnErrCnt++;
+                        if((pellets.newSgn >= val1) && (pellets.newSgn <= val2)){
+                            pellets.newSgnCnt++;
+                            pellets.newSgnSum += meas.chron.pelSgntr;
+                        }else{
+                            pellets.newSgn = meas.chron.pelSgntr;
+                            pellets.newSgnCnt = 0;
+                            pellets.newSgnSum = 0;
+                        }
+                        if(pellets.newSgnCnt > PELLET_NEW_SGN_THR){
+                            pellets.newSgn = pellets.newSgnSum/pellets.newSgnCnt;
+                            pellets.pelStat = PELLET_NEW;
+                            pellets.newSgnCnt = 0;
+                            pellets.newSgnSum = 0;
+                        }else if(pellets.newSgnErrCnt > PELLET_NEW_SGN_BOUND){
+                            pellets.pelStat = PELLET_ERR_NEW;
+                            pellets.newSgnErrCnt = 0;
+                            pellets.newSgnCnt = 0;
+                            pellets.newSgnSum = 0;
+                        }
+                    }
+                }
                 //Statistics calculation
                 if(sysSettings.dispMode == MODE_CHR){
                     if(meas.chron.statShots >= STAT_SHOTS_MAX){

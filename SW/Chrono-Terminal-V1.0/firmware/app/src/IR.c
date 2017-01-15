@@ -100,11 +100,11 @@ __irq void TIM2_IRQHandler(void){
         }else{                                                  //Falling edge
             if((TIM2->CR1 & TIM_CR1_CEN) != 0){
                 TIM2->CR1 &= ~TIM_CR1_CEN;
-                if((TIM2->CCR1 <= (IR_PREAMBLE_TIME+IR_PREAMBLE_TIME/5)) && (TIM2->CCR1 >= (IR_PREAMBLE_TIME-IR_PREAMBLE_TIME/5)) && (IRRXData.rxState == IR_READY)){
+                if((TIM2->CCR1 <= (IR_PREAMBLE_TIME+IR_PREAMBLE_TIME/CHR_TOLERANCE)) && (TIM2->CCR1 >= (IR_PREAMBLE_TIME-IR_PREAMBLE_TIME/CHR_TOLERANCE)) && (IRRXData.rxState == IR_READY)){
                     IRRXData.rxBitCnt = 0;
                     IRRXData.rxBytesCnt = 0;
                     IRRXData.rxState = IR_BUSY;
-                }else if((TIM2->CCR1 <= (IR_LOG_ZERO_TIME+IR_LOG_ZERO_TIME/10)) && (TIM2->CCR1 >= (IR_LOG_ZERO_TIME-IR_LOG_ZERO_TIME/10)) && (IRRXData.rxState == IR_BUSY)){
+                }else if((TIM2->CCR1 <= (IR_LOG_ZERO_TIME+IR_LOG_ZERO_TIME/CHR_TOLERANCE)) && (TIM2->CCR1 >= (IR_LOG_ZERO_TIME-IR_LOG_ZERO_TIME/CHR_TOLERANCE)) && (IRRXData.rxState == IR_BUSY)){
                     IRRXData.rxByte[IRRXData.rxBytesCnt] &= ~(1 << IRRXData.rxBitCnt);
                     IRRXData.rxBitCnt++;
                     if(IRRXData.rxBitCnt > IR_MAX_BITS){
@@ -115,7 +115,7 @@ __irq void TIM2_IRQHandler(void){
                             IRRXData.rxBytesCnt = 0;
                         }
                     }
-                }else if((TIM2->CCR1 <= (IR_LOG_ONE_TIME+IR_LOG_ONE_TIME/10)) && (TIM2->CCR1 >= (IR_LOG_ONE_TIME-IR_LOG_ONE_TIME/10)) && (IRRXData.rxState == IR_BUSY)){
+                }else if((TIM2->CCR1 <= (IR_LOG_ONE_TIME+IR_LOG_ONE_TIME/CHR_TOLERANCE)) && (TIM2->CCR1 >= (IR_LOG_ONE_TIME-IR_LOG_ONE_TIME/CHR_TOLERANCE)) && (IRRXData.rxState == IR_BUSY)){
                     IRRXData.rxByte[IRRXData.rxBytesCnt] |= (1 << IRRXData.rxBitCnt);
                     IRRXData.rxBitCnt++;
                     if(IRRXData.rxBitCnt > IR_MAX_BITS){
