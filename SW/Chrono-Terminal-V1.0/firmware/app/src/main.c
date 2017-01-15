@@ -102,23 +102,6 @@ void main(void){
         switch(getButtonState()){
         case UP:
             if(menu.parEdit == PAR_EDIT_ENABLE){
-                if(menu.parValue >= menu.parBorderMax){
-                    menu.parValue = menu.parBorderMin;
-                }else{
-                    menu.parValue++;
-                }
-            }else if((pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
-                if(pellets.matchedSgnNum >= PELLETS_DB_NUM-1){
-                    pellets.matchedSgnNum = PELLETS_DB_NULL;
-                }else{
-                    pellets.matchedSgnNum++;
-                }
-            }else{
-                Menu_Navigate(MENU_NEXT);
-            }
-            break;
-        case DOWN:
-            if(menu.parEdit == PAR_EDIT_ENABLE){
                 if(menu.parValue <= menu.parBorderMin){
                     menu.parValue = menu.parBorderMax;
                 }else{
@@ -129,6 +112,23 @@ void main(void){
                     pellets.matchedSgnNum = PELLETS_DB_NUM-1;
                 }else{
                     pellets.matchedSgnNum--;
+                }
+            }else{
+                Menu_Navigate(MENU_NEXT);
+            }
+            break;
+        case DOWN:
+            if(menu.parEdit == PAR_EDIT_ENABLE){
+                if(menu.parValue >= menu.parBorderMax){
+                    menu.parValue = menu.parBorderMin;
+                }else{
+                    menu.parValue++;
+                }
+            }else if((pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
+                if(pellets.matchedSgnNum >= PELLETS_DB_NUM-1){
+                    pellets.matchedSgnNum = PELLETS_DB_NULL;
+                }else{
+                    pellets.matchedSgnNum++;
                 }
             }else{
                 Menu_Navigate(MENU_PREVIOUS);

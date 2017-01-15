@@ -40,8 +40,8 @@ void ssd_putParBox(char *text){
     }
     //Put text
     ssd_putString6x8(10, 10, text);
-    ssd_putString6x8(46, 46, &dArrow[0]);
-    ssd_putString6x8(76, 46, &uArrow[0]);
+    ssd_putString6x8(46, 46, &uArrow[0]);
+    ssd_putString6x8(76, 46, &dArrow[0]);
     strcpy(tmp, "Back");
     ssd_putString6x8(10, 46, &tmp[0]);
     strcpy(tmp, "Save");

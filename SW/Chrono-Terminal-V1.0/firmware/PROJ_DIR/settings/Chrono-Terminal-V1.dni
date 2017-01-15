@@ -120,7 +120,7 @@ TraceBufferSize=0x00000000
 TraceShowTime=0
 TraceShowTimeFreq=1000000
 [DebugChecksum]
-Checksum=-1240934914
+Checksum=518454347
 [CodeCoverage]
 Enabled=_ 0
 [Exceptions]
