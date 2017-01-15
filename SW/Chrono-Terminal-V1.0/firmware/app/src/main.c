@@ -65,8 +65,7 @@ MENU_ITEM(sdpoff,       NULL_MENU,      sdcntr,         sdisplay,       NULL_MEN
 */
 void main(void){
     uint8_t i, offs, len;
-    uint16_t val1, val2;
-    uint32_t dist, sgn, spd0, spd1, spd2, spd3, spd4;
+    uint32_t dist, sgn, spd0, spd1, spd2, spd3, spd4, val1, val2, val3, val4;
     char text[20], par[6];
     //Initialize hardware
     HAL_Init();
@@ -98,37 +97,54 @@ void main(void){
     
     while(1){
         delay_us(25000);
+        CurrentMenuItem = Menu_GetCurrentMenu();
         //MicroMenu navigation
         switch(getButtonState()){
         case UP:
             if(menu.parEdit == PAR_EDIT_ENABLE){
-                if(menu.parValue <= menu.parBorderMin){
-                    strcpy(menu.message, "Lower limit");
-                    menu.msgCnt = MSG_CNT;
-                }else{
-                    menu.parValue--;
-                }
-            }else{
-                Menu_Navigate(MENU_PREVIOUS);
-            }
-            break;
-        case DOWN:
-            if(menu.parEdit == PAR_EDIT_ENABLE){
                 if(menu.parValue >= menu.parBorderMax){
-                    strcpy(menu.message, "Higher limit");
-                    menu.msgCnt = MSG_CNT;
+                    menu.parValue = menu.parBorderMin;
                 }else{
                     menu.parValue++;
+                }
+            }else if((pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
+                if(pellets.matchedSgnNum >= PELLETS_DB_NUM-1){
+                    pellets.matchedSgnNum = PELLETS_DB_NULL;
+                }else{
+                    pellets.matchedSgnNum++;
                 }
             }else{
                 Menu_Navigate(MENU_NEXT);
             }
             break;
-        case OK:
+        case DOWN:
             if(menu.parEdit == PAR_EDIT_ENABLE){
+                if(menu.parValue <= menu.parBorderMin){
+                    menu.parValue = menu.parBorderMax;
+                }else{
+                    menu.parValue--;
+                }
+            }else if((pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
+                if(pellets.matchedSgnNum <= PELLETS_DB_NULL){
+                    pellets.matchedSgnNum = PELLETS_DB_NUM-1;
+                }else{
+                    pellets.matchedSgnNum--;
+                }
+            }else{
+                Menu_Navigate(MENU_PREVIOUS);
+            }
+            break;
+        case OK:
+            if((menu.parEdit == PAR_EDIT_ENABLE) || (pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
                 strcpy(menu.message, "Saved");
                 menu.msgCnt = MSG_CNT;
-                menu.parStat = PAR_SAVE;
+                if(menu.parEdit == PAR_EDIT_ENABLE){
+                    menu.parStat = PAR_SAVE;
+                }else{
+                    pellets.pelSgntrs[pellets.matchedSgnNum] = pellets.newSgn;
+                    meas.chron.pellet = pellets.matchedSgnNum;
+                    pellets.pelStat = PELLET_OK;
+                }
             }else{
                 if((MENU_CHILD == &NULL_MENU) || (MENU_CHILD == NULL)){
                     Menu_EnterCurrentItem();
@@ -138,20 +154,26 @@ void main(void){
             }
             break;
         case CANCEL:
-            if(menu.parEdit == PAR_EDIT_ENABLE){
+            if((menu.parEdit == PAR_EDIT_ENABLE) || (pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
                 sysSettings.chrBind = 0;
                 strcpy(menu.message, "Cancelled");
                 menu.msgCnt = MSG_CNT;
-                menu.parStat = PAR_CANCEL;
+                if(menu.parEdit == PAR_EDIT_ENABLE){
+                    menu.parStat = PAR_CANCEL;
+                }else{
+                    meas.chron.pellet = 0;
+                    pellets.matchedSgnNum = 0;
+                    pellets.pelStat = PELLET_OK;
+                }
             }else{
                 Menu_Navigate(MENU_PARENT);
             }
             break;
         case HOME:
-            if(Menu_GetCurrentMenu() == &display){
+            if(CurrentMenuItem == &display){
                 if((sysSettings.clipEn != 0) && (meas.chron.clipCurrent != meas.chron.clipCapacity)){
                     meas.chron.clipCurrent = meas.chron.clipCapacity;
-                    strcpy(menu.message, "Clip replaced");
+                    strcpy(menu.message, "Clip reloaded");
                     menu.msgCnt = MSG_CNT;
                 }else if((meas.chron.statShots != 0) && (sysSettings.dispMode == MODE_CHR)){
                     meas.chron.statShots = 0;
@@ -168,7 +190,6 @@ void main(void){
             break;
         }
         CurrentMenuItem = Menu_GetCurrentMenu();
-        trxAccData();
         //Magazine
         if(meas.chron.clipCapacity > 1){
             sysSettings.clipEn = 1;
@@ -208,10 +229,10 @@ void main(void){
                 if(sysSettings.clipEn != 0){
                     if(meas.chron.clipCurrent == 0){
                         meas.chron.clipCurrent = meas.chron.clipCapacity;
-                        strcpy(menu.message, "Clip replaced");
+                        strcpy(menu.message, "Clip reloaded");
                         menu.msgCnt = MSG_CNT;
                     }else if(meas.chron.clipCurrent == 1){
-                        strcpy(menu.message, "Replace clip");
+                        strcpy(menu.message, "Reload clip");
                         menu.msgCnt = MSG_CNT;
                     }
                     meas.chron.clipCurrent--;
@@ -222,15 +243,20 @@ void main(void){
                     val2 = meas.chron.pelSgntr+meas.chron.pelSgntr/PELLET_SGN_TOLERANCE;
                     //Compare current signature with existing in database
                     if((pellets.pelSgntrs[meas.chron.pellet] >= val1) && (pellets.pelSgntrs[meas.chron.pellet] <= val2) && (pellets.matchedSgnNum != 0)){
+                        pellets.newSgnSum = 0;
                         pellets.newSgnCnt = 0;
+                        pellets.newSgnErrCnt = 0;
                     }else if(pellets.matchedSgnNum != 0){
+                        pellets.newSgnSum += meas.chron.pelSgntr;
                         pellets.newSgnCnt++;
-                        if(pellets.newSgnCnt > PELLET_CHANGE_THR){
-                            pellets.newSgnCnt = 0;
+                        pellets.newSgnErrCnt++;
+                        if(pellets.newSgnCnt >= PELLET_CHANGE_THR){
+                            pellets.newSgn = pellets.newSgnSum/pellets.newSgnCnt;
                             pellets.matchedSgnNum = 0;
-                            pellets.newSgn = meas.chron.pelSgntr;
+                            val3 = pellets.newSgn-pellets.newSgn/PELLET_SGN_TOLERANCE;
+                            val4 = pellets.newSgn+pellets.newSgn/PELLET_SGN_TOLERANCE;
                             for(i = 1; i < PELLETS_DB_NUM; i++){
-                                if(pellets.pelSgntrs[i] >= val1 && pellets.pelSgntrs[i] <= val2){
+                                if(pellets.pelSgntrs[i] >= val3 && pellets.pelSgntrs[i] <= val4){
                                     pellets.matchedSgnNum = i;
                                     pellets.pelStat = PELLET_CONFIRM;
                                     break;
@@ -244,15 +270,17 @@ void main(void){
                             pellets.newSgnSum += meas.chron.pelSgntr;
                         }else{
                             pellets.newSgn = meas.chron.pelSgntr;
-                            pellets.newSgnCnt = 0;
-                            pellets.newSgnSum = 0;
+                            pellets.newSgnCnt = 1;
+                            pellets.newSgnSum = meas.chron.pelSgntr;
                         }
-                        if(pellets.newSgnCnt > PELLET_NEW_SGN_THR){
+                        if(pellets.newSgnCnt >= PELLET_NEW_SGN_THR){
                             pellets.newSgn = pellets.newSgnSum/pellets.newSgnCnt;
                             pellets.pelStat = PELLET_NEW;
+                            pellets.matchedSgnNum = 1;
+                            pellets.newSgnErrCnt = 0;
                             pellets.newSgnCnt = 0;
                             pellets.newSgnSum = 0;
-                        }else if(pellets.newSgnErrCnt > PELLET_NEW_SGN_BOUND){
+                        }else if(pellets.newSgnErrCnt >= PELLET_NEW_SGN_BOUND){
                             pellets.pelStat = PELLET_ERR_NEW;
                             pellets.newSgnErrCnt = 0;
                             pellets.newSgnCnt = 0;
@@ -281,14 +309,16 @@ void main(void){
                             }
                             meas.chron.statSdev = meas.chron.statDevsSum/meas.chron.statShots;
                         }
-                        if((meas.chron.pellet != 0) && (meas.chron.pelWeight != 0)){
-                            meas.chron.statEnergy = (((meas.chron.speed0*meas.chron.speed0)/STAT_ENERGY_DIV_COEFF)*meas.chron.pelWeight)/STAT_ENERGY_DIV_COEFF/2;
+                        if((meas.chron.pellet != 0) && (pellets.pelWghts[meas.chron.pellet] != 0)){
+                            meas.chron.statEnergy = (((meas.chron.speed0*meas.chron.speed0)/STAT_ENERGY_DIV_COEFF)*pellets.pelWghts[meas.chron.pellet])/STAT_ENERGY_DIV_COEFF/2;
                         }
                     }
                 }
             }
             IRRXData.rxState = IR_READY;                        //Release receiver
         }
+        //Perform data transmition with accelerometer
+        trxAccData();
         //Refresh video buffer
         memset(ssdVideoBff.video, 0, sizeof(ssdVideoBff.video));
         ssd_putBatt(meas.battCharge);
@@ -312,6 +342,17 @@ void main(void){
             len = strlen(par);
             offs = SSD1306_LCDWIDTH/2 - (len*6)/2;
             ssd_putString6x8(offs, 28, &par[0]);
+        }else if((pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
+            strcpy(text, "Choose pellet...");
+            ssd_putParBox(&text[0]);
+            sprintf(text, pellets.pelStrings[pellets.matchedSgnNum]);
+            len = strlen(text);
+            offs = SSD1306_LCDWIDTH/2 - (len*6)/2;
+            ssd_putString6x8(offs, 28, &text[0]);
+        }else if(pellets.pelStat == PELLET_ERR_NEW){
+            strcpy(menu.message, "Error pellet ID");
+            menu.msgCnt = MSG_CNT;
+            pellets.pelStat = PELLET_OK;
         }
         //Draw message
         if(menu.msgCnt != 0){
@@ -394,6 +435,7 @@ void modeEdit(void){
     else if(CurrentMenuItem == &mincline)sysSettings.dispMode = MODE_INC;
     strcpy(menu.message, "OK");
     menu.msgCnt = MSG_CNT;
+    if(CurrentMenuItem->Parent == &mode) Menu_Navigate(&display);
 }
 
 /*!****************************************************************************

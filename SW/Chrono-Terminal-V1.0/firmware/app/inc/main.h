@@ -30,8 +30,8 @@
 */
 #define accSamples              1
 #define degRad                  57.2958f
-#define BUTTON_UP               GP_SW2
-#define BUTTON_DOWN             GP_SW1
+#define BUTTON_UP               GP_SW1
+#define BUTTON_DOWN             GP_SW2
 #define BUTTON_OK               GP_SW4
 #define BUTTON_CANCEL           GP_SW3
 #define MSG_CNT                 30
@@ -62,14 +62,15 @@
 #define FRACT_HUNDREDTHS        100
 #define STAT_SHOTS_MAX          255
 #define STAT_ENERGY_DIV_COEFF   10000
+#define PELLETS_DB_NULL         1
 #define PELLETS_DB_NUM          16
 #define PELLET_SGN_TOLERANCE    10
 #define PELLET_CHANGE_THR       5
 #define PELLET_NEW_SGN_THR      10
 #define PELLET_NEW_SGN_BOUND    PELLET_NEW_SGN_THR*1.5
 #define PELLET_OK               0
-#define PELLET_NEW              1
-#define PELLET_CONFIRM          2
+#define PELLET_CONFIRM          1
+#define PELLET_NEW              2
 #define PELLET_ERR_NEW          3
 
 /*!****************************************************************************
@@ -124,7 +125,6 @@ typedef struct{
     uint16_t    speed3;
     uint16_t    speed4;
     uint16_t    pelSgntr;
-    uint16_t    pelWeight;
     uint32_t    chrSgntr;
     uint16_t    sensDist;
     uint16_t    statSpeeds[STAT_SHOTS_MAX];

@@ -42,7 +42,7 @@ void initIRConfig(void){
     IRRXData.rxBytesCnt = 0;
     IRRXData.rxState = IR_READY;
     NVIC_EnableIRQ(TIM2_IRQn);
-    NVIC_SetPriority(TIM2_IRQn, 1);
+    NVIC_SetPriority(TIM2_IRQn, 15);
     TIM2->EGR       |= TIM_EGR_UG;                              //Debug
     TIM2->EGR       |= TIM_EGR_CC1G;
 }
