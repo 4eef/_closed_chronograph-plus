@@ -382,7 +382,6 @@ void ug2864init(void){
     ug2864_com(0x8d);                           //Set Charge Pump enable
     ug2864_com(0x14);                           //0x10 for disable
     ug2864_com(0xaf);                           //Turn on oled panel
-    memset(ssdVideoBff.video, 0, sizeof(ssdVideoBff.video));
     ug2864_refresh();
 }
 

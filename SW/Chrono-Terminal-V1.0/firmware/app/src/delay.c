@@ -16,8 +16,8 @@
 */
 
 /*!****************************************************************************
-* @brief   Delay in microseconds
-* @param   Time with microsecond discrete
+* @brief    Delay in microseconds
+* @param    Time in microseconds
 * @retval   
 */
 void delay_us(uint16_t time){

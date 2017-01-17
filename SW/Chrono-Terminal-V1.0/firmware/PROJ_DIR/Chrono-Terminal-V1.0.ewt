@@ -2317,6 +2317,9 @@
   <group>
     <name>app</name>
     <file>
+      <name>$PROJ_DIR$\..\app\src\adc.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\app\src\delay.c</name>
     </file>
     <file>
@@ -2339,6 +2342,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\app\src\ssdGraph.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\app\src\sync.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\app\src\ug2864.c</name>

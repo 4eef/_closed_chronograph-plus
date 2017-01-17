@@ -19,6 +19,7 @@ extern accel_type           accel;
 extern menu_type            menu;
 extern kalman_type          kalman;
 extern IRRXData_type        IRRXData;
+extern adcData_type         adcData;
 buttonCnts_type             buttonCnts;
 Menu_Item_t                 *CurrentMenuItem;
 meas_type                   meas;
@@ -76,10 +77,12 @@ void main(void){
     ug2864init();
     lis3init();
     initIRConfig();
+    syncInit();
+    adcInit();
     //Pellets database primary config
     strcpy(pellets.pelStrings[0], "<unknown pellet>");
     for(i = 1; i < PELLETS_DB_NUM; i++){
-        sprintf(pellets.pelStrings[i], "Default pelet %u", i);
+        sprintf(pellets.pelStrings[i], "Default pellet %u", i);
     }
     //Initial parameters
     meas.accRollBorder = 5;
@@ -96,99 +99,100 @@ void main(void){
     Menu_Navigate(&display);
     
     while(1){
-        delay_us(25000);
+        //Syncronize cycle
+        sync();
         CurrentMenuItem = Menu_GetCurrentMenu();
         //MicroMenu navigation
-        switch(getButtonState()){
-        case UP:
-            if(menu.parEdit == PAR_EDIT_ENABLE){
-                if(menu.parValue <= menu.parBorderMin){
-                    menu.parValue = menu.parBorderMax;
-                }else{
-                    menu.parValue--;
-                }
-            }else if((pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
-                if(pellets.matchedSgnNum <= PELLETS_DB_NULL){
-                    pellets.matchedSgnNum = PELLETS_DB_NUM-1;
-                }else{
-                    pellets.matchedSgnNum--;
-                }
-            }else{
-                Menu_Navigate(MENU_NEXT);
-            }
-            break;
-        case DOWN:
-            if(menu.parEdit == PAR_EDIT_ENABLE){
-                if(menu.parValue >= menu.parBorderMax){
-                    menu.parValue = menu.parBorderMin;
-                }else{
-                    menu.parValue++;
-                }
-            }else if((pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
-                if(pellets.matchedSgnNum >= PELLETS_DB_NUM-1){
-                    pellets.matchedSgnNum = PELLETS_DB_NULL;
-                }else{
-                    pellets.matchedSgnNum++;
-                }
-            }else{
-                Menu_Navigate(MENU_PREVIOUS);
-            }
-            break;
-        case OK:
-            if((menu.parEdit == PAR_EDIT_ENABLE) || (pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
-                strcpy(menu.message, "Saved");
-                menu.msgCnt = MSG_CNT;
-                if(menu.parEdit == PAR_EDIT_ENABLE){
-                    menu.parStat = PAR_SAVE;
-                }else{
-                    pellets.pelSgntrs[pellets.matchedSgnNum] = pellets.newSgn;
-                    meas.chron.pellet = pellets.matchedSgnNum;
-                    pellets.pelStat = PELLET_OK;
-                }
-            }else{
-                if((MENU_CHILD == &NULL_MENU) || (MENU_CHILD == NULL)){
-                    Menu_EnterCurrentItem();
-                }else{
-                    Menu_Navigate(MENU_CHILD);
-                }
-            }
-            break;
-        case CANCEL:
-            if((menu.parEdit == PAR_EDIT_ENABLE) || (pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
-                sysSettings.chrBind = 0;
-                strcpy(menu.message, "Cancelled");
-                menu.msgCnt = MSG_CNT;
-                if(menu.parEdit == PAR_EDIT_ENABLE){
-                    menu.parStat = PAR_CANCEL;
-                }else{
-                    meas.chron.pellet = 0;
-                    pellets.matchedSgnNum = 0;
-                    pellets.pelStat = PELLET_OK;
-                }
-            }else{
-                Menu_Navigate(MENU_PARENT);
-            }
-            break;
-        case HOME:
-            if(CurrentMenuItem == &display){
-                if((sysSettings.clipEn != 0) && (meas.chron.clipCurrent != meas.chron.clipCapacity)){
-                    meas.chron.clipCurrent = meas.chron.clipCapacity;
-                    strcpy(menu.message, "Clip reloaded");
-                    menu.msgCnt = MSG_CNT;
-                }else if((meas.chron.statShots != 0) && (sysSettings.dispMode == MODE_CHR)){
-                    meas.chron.statShots = 0;
-                    meas.chron.statSpeedsSum = 0;
-                    meas.chron.statSdev = 0;
-                    meas.chron.statMean = 0;
-                    strcpy(menu.message, "Stats cleared");
-                    menu.msgCnt = MSG_CNT;
-                }
-            }else if(menu.parEdit == PAR_EDIT_DISABLE) Menu_Navigate(&display);
-            break;
-        default:
-            menu.parStat = PAR_NONE;
-            break;
-        }
+//        switch(getButtonState()){
+//        case UP:
+//            if(menu.parEdit == PAR_EDIT_ENABLE){
+//                if(menu.parValue <= menu.parBorderMin){
+//                    menu.parValue = menu.parBorderMax;
+//                }else{
+//                    menu.parValue--;
+//                }
+//            }else if((pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
+//                if(pellets.matchedSgnNum <= PELLETS_DB_NULL){
+//                    pellets.matchedSgnNum = PELLETS_DB_NUM-1;
+//                }else{
+//                    pellets.matchedSgnNum--;
+//                }
+//            }else{
+//                Menu_Navigate(MENU_NEXT);
+//            }
+//            break;
+//        case DOWN:
+//            if(menu.parEdit == PAR_EDIT_ENABLE){
+//                if(menu.parValue >= menu.parBorderMax){
+//                    menu.parValue = menu.parBorderMin;
+//                }else{
+//                    menu.parValue++;
+//                }
+//            }else if((pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
+//                if(pellets.matchedSgnNum >= PELLETS_DB_NUM-1){
+//                    pellets.matchedSgnNum = PELLETS_DB_NULL;
+//                }else{
+//                    pellets.matchedSgnNum++;
+//                }
+//            }else{
+//                Menu_Navigate(MENU_PREVIOUS);
+//            }
+//            break;
+//        case OK:
+//            if((menu.parEdit == PAR_EDIT_ENABLE) || (pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
+//                strcpy(menu.message, "Saved");
+//                menu.msgCnt = MSG_CNT;
+//                if(menu.parEdit == PAR_EDIT_ENABLE){
+//                    menu.parStat = PAR_SAVE;
+//                }else{
+//                    pellets.pelSgntrs[pellets.matchedSgnNum] = pellets.newSgn;
+//                    meas.chron.pellet = pellets.matchedSgnNum;
+//                    pellets.pelStat = PELLET_OK;
+//                }
+//            }else{
+//                if((MENU_CHILD == &NULL_MENU) || (MENU_CHILD == NULL)){
+//                    Menu_EnterCurrentItem();
+//                }else{
+//                    Menu_Navigate(MENU_CHILD);
+//                }
+//            }
+//            break;
+//        case CANCEL:
+//            if((menu.parEdit == PAR_EDIT_ENABLE) || (pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
+//                sysSettings.chrBind = 0;
+//                strcpy(menu.message, "Cancelled");
+//                menu.msgCnt = MSG_CNT;
+//                if(menu.parEdit == PAR_EDIT_ENABLE){
+//                    menu.parStat = PAR_CANCEL;
+//                }else{
+//                    meas.chron.pellet = 0;
+//                    pellets.matchedSgnNum = 0;
+//                    pellets.pelStat = PELLET_OK;
+//                }
+//            }else{
+//                Menu_Navigate(MENU_PARENT);
+//            }
+//            break;
+//        case HOME:
+//            if(CurrentMenuItem == &display){
+//                if((sysSettings.clipEn != 0) && (meas.chron.clipCurrent != meas.chron.clipCapacity)){
+//                    meas.chron.clipCurrent = meas.chron.clipCapacity;
+//                    strcpy(menu.message, "Clip reloaded");
+//                    menu.msgCnt = MSG_CNT;
+//                }else if((meas.chron.statShots != 0) && (sysSettings.dispMode == MODE_CHR)){
+//                    meas.chron.statShots = 0;
+//                    meas.chron.statSpeedsSum = 0;
+//                    meas.chron.statSdev = 0;
+//                    meas.chron.statMean = 0;
+//                    strcpy(menu.message, "Stats cleared");
+//                    menu.msgCnt = MSG_CNT;
+//                }
+//            }else if(menu.parEdit == PAR_EDIT_DISABLE) Menu_Navigate(&display);
+//            break;
+//        default:
+//            menu.parStat = PAR_NONE;
+//            break;
+//        }
         CurrentMenuItem = Menu_GetCurrentMenu();
         //Magazine
         if(meas.chron.clipCapacity > 1){

@@ -24,6 +24,8 @@
 #include "MicroMenu.h"
 #include "filter.h"
 #include "IR.h"
+#include "adc.h"
+#include "sync.h"
 
 /*!****************************************************************************
 * User define
