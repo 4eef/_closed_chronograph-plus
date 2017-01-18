@@ -37,6 +37,7 @@
 #define BUTTON_OK               GP_SW4
 #define BUTTON_CANCEL           GP_SW3
 #define MSG_CNT                 30
+#define MSG_CNT_LONG            60
 #define MSG_CNT_BIND            200
 #define PAR_NONE                0
 #define PAR_SAVE                1
@@ -74,6 +75,11 @@
 #define PELLET_CONFIRM          1
 #define PELLET_NEW              2
 #define PELLET_ERR_NEW          3
+#define BATT_CHG_ARR_PTS        11
+#define BATT_CHG_VMPLY_COEFF    10
+#define BATT_ADD_PERC_MIN       0
+#define BATT_ADD_PERC_MAX       9
+#define BATT_MSG_PERIOD         2400
 
 /*!****************************************************************************
 * User enum
@@ -91,70 +97,75 @@ enum buttonValues{
 * User typedef
 */
 typedef struct{
-    char        pelStrings[PELLETS_DB_NUM][18];
-    uint16_t    pelWghts[PELLETS_DB_NUM];
-    uint16_t    pelSgntrs[PELLETS_DB_NUM];
-    uint8_t     matchedSgnNum;
-    uint16_t    newSgn;
-    uint32_t    newSgnSum;
-    uint8_t     newSgnCnt;
-    uint8_t     newSgnErrCnt;
-    uint8_t     pelStat;
+    char            pelStrings[PELLETS_DB_NUM][18];
+    uint16_t        pelWghts[PELLETS_DB_NUM];
+    uint16_t        pelSgntrs[PELLETS_DB_NUM];
+    uint8_t         matchedSgnNum;
+    uint16_t        newSgn;
+    uint32_t        newSgnSum;
+    uint8_t         newSgnCnt;
+    uint8_t         newSgnErrCnt;
+    uint8_t         pelStat;
 }pellets_type;
 
 typedef struct{
-    uint32_t    shotsTotal;
-    uint16_t    prefPellet;
-    uint32_t    shotsPPellet;
-    uint16_t    avgRoll;
-    uint32_t    uptime;
+    uint32_t        shotsTotal;
+    uint16_t        prefPellet;
+    uint32_t        shotsPPellet;
+    uint16_t        avgRoll;
+    uint32_t        uptime;
 }stats_type;
 
 typedef struct{
-    uint8_t     reserv      :4;
-    uint8_t     chrBind     :1;
-    uint8_t     dispMode    :2;
-    uint8_t     clipEn      :1;
-}sysSettings_type;
+    uint8_t         __reserv        :4;
+    uint8_t         chrBind         :1;
+    uint8_t         dispMode        :2;
+    uint8_t         clipEn          :1;
+}sysStngs_type;
 
 typedef struct{
-    uint16_t    pellet;
-    uint8_t     clipCurrent;
-    uint8_t     clipCapacity;
-    uint16_t    speed0;
-    uint16_t    speed1;
-    uint16_t    speed2;
-    uint16_t    speed3;
-    uint16_t    speed4;
-    uint16_t    pelSgntr;
-    uint32_t    chrSgntr;
-    uint16_t    sensDist;
-    uint16_t    statSpeeds[STAT_SHOTS_MAX];
-    uint32_t    statSpeedsSum;
-    uint32_t    statDevsSum;
-    uint16_t    statShots;
-    uint16_t    statEnergy;
-    uint16_t    statMean;
-    uint16_t    statSdev;
+    uint16_t        pellet;
+    uint8_t         clipCurrent;
+    uint8_t         clipCapacity;
+    uint16_t        speed0;
+    uint16_t        speed1;
+    uint16_t        speed2;
+    uint16_t        speed3;
+    uint16_t        speed4;
+    uint16_t        pelSgntr;
+    uint32_t        chrSgntr;
+    uint16_t        sensDist;
+    uint16_t        statSpeeds[STAT_SHOTS_MAX];
+    uint32_t        statSpeedsSum;
+    uint32_t        statDevsSum;
+    uint16_t        statShots;
+    uint16_t        statEnergy;
+    uint16_t        statMean;
+    uint16_t        statSdev;
 }chron_type;
 
 typedef struct{
-    uint8_t     battCharge;
-    uint16_t    battVolt;
-    chron_type  chron;
-    stats_type  stats;
-    float       accRoll;
-    float       accPitch;
-    uint16_t    accRollBorder;
-    uint16_t    accPitchBorder;
+    uint8_t         battCharge;
+    uint16_t        battVolt;
+    chron_type      chron;
+    stats_type      stats;
+    float           accRoll;
+    float           accPitch;
+    uint16_t        accRollBorder;
+    uint16_t        accPitchBorder;
 }meas_type;
 
 typedef struct{
-    uint8_t     cntUp;
-    uint8_t     cntDn;
-    uint8_t     cntOK;
-    uint8_t     cntCl;
+    uint8_t         cntUp;
+    uint8_t         cntDn;
+    uint8_t         cntOK;
+    uint8_t         cntCl;
 }buttonCnts_type;
+
+typedef struct{
+    uint16_t        battDplMsgPer;
+    sysStngs_type   sysSettings;
+}sysPars_type;
 
 /*!****************************************************************************
 * Extern viriables

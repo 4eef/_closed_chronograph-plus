@@ -48,14 +48,14 @@ __irq void ADC1_IRQHandler(void){
             adcData.adcStat = ADC_DATA_READY;
         }else if((ADC1->ISR & ADC_ISR_OVR) != 0){
             ADC1->ISR |= ADC_ISR_OVR;
-            adcData.adcStat = ADC_OVERUN;
+            adcData.adcStat = ADC_READY;
         }
     }else{
         ADC1->CR |= ADC_CR_ADSTP;
         while(ADC1->CR & ADC_CR_ADSTP) __NOP();
         ADC1->ISR |= ADC_ISR_EOS;
         ADC1->ISR |= ADC_ISR_OVR;
-        adcData.adcStat = ADC_OVERUN;
+        adcData.adcStat = ADC_READY;
     }
 }
 

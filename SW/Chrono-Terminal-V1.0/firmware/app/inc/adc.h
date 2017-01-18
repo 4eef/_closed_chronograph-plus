@@ -16,10 +16,9 @@
 /*!****************************************************************************
 * User define
 */
-#define ADC_N_TO_MV                         1026
-#define ADC_READY                           0
-#define ADC_DATA_READY                      1
-#define ADC_OVERUN                          2
+#define ADC_N_TO_UV             1026
+#define ADC_READY               0
+#define ADC_DATA_READY          1
 
 /*!****************************************************************************
 * User enum
@@ -29,8 +28,8 @@
 * User typedef
 */
 typedef struct{
-    uint8_t     adcStat;
     uint16_t    adcRawData;
+    uint8_t     adcStat;
 }adcData_type;
 
 /*!****************************************************************************

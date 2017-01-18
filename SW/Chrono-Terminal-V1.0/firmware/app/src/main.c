@@ -23,10 +23,10 @@ extern adcData_type         adcData;
 buttonCnts_type             buttonCnts;
 Menu_Item_t                 *CurrentMenuItem;
 meas_type                   meas;
-sysSettings_type            sysSettings;
 lis3Settings_type           lis3Settings;
 ssdSettings_type            ssdSettings;
 pellets_type                pellets;
+sysPars_type                sysPars;
 
 //Menu implementation
 //        Name          Next            Previous        Parent          Child           SelectFunc      EnterFunc       Text
@@ -65,9 +65,22 @@ MENU_ITEM(sdpoff,       NULL_MENU,      sdcntr,         sdisplay,       NULL_MEN
 * @retval   
 */
 void main(void){
-    uint8_t i, offs, len;
     uint32_t dist, sgn, spd0, spd1, spd2, spd3, spd4, val1, val2, val3, val4;
+    uint16_t battChgArr[BATT_CHG_ARR_PTS], volt;
+    uint8_t i, j, offs, len, perc, tmp;
     char text[20], par[6];
+    //Battery discharge graph points
+    battChgArr[0] = 4175;
+    battChgArr[1] = 4075;
+    battChgArr[2] = 3995;
+    battChgArr[3] = 3930;
+    battChgArr[4] = 3890;
+    battChgArr[5] = 3810;
+    battChgArr[6] = 3790;
+    battChgArr[7] = 3775;
+    battChgArr[8] = 3766;
+    battChgArr[9] = 3730;
+    battChgArr[10] = 3620;
     //Initialize hardware
     HAL_Init();
     SystemClock_Config();
@@ -103,109 +116,109 @@ void main(void){
         sync();
         CurrentMenuItem = Menu_GetCurrentMenu();
         //MicroMenu navigation
-//        switch(getButtonState()){
-//        case UP:
-//            if(menu.parEdit == PAR_EDIT_ENABLE){
-//                if(menu.parValue <= menu.parBorderMin){
-//                    menu.parValue = menu.parBorderMax;
-//                }else{
-//                    menu.parValue--;
-//                }
-//            }else if((pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
-//                if(pellets.matchedSgnNum <= PELLETS_DB_NULL){
-//                    pellets.matchedSgnNum = PELLETS_DB_NUM-1;
-//                }else{
-//                    pellets.matchedSgnNum--;
-//                }
-//            }else{
-//                Menu_Navigate(MENU_NEXT);
-//            }
-//            break;
-//        case DOWN:
-//            if(menu.parEdit == PAR_EDIT_ENABLE){
-//                if(menu.parValue >= menu.parBorderMax){
-//                    menu.parValue = menu.parBorderMin;
-//                }else{
-//                    menu.parValue++;
-//                }
-//            }else if((pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
-//                if(pellets.matchedSgnNum >= PELLETS_DB_NUM-1){
-//                    pellets.matchedSgnNum = PELLETS_DB_NULL;
-//                }else{
-//                    pellets.matchedSgnNum++;
-//                }
-//            }else{
-//                Menu_Navigate(MENU_PREVIOUS);
-//            }
-//            break;
-//        case OK:
-//            if((menu.parEdit == PAR_EDIT_ENABLE) || (pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
-//                strcpy(menu.message, "Saved");
-//                menu.msgCnt = MSG_CNT;
-//                if(menu.parEdit == PAR_EDIT_ENABLE){
-//                    menu.parStat = PAR_SAVE;
-//                }else{
-//                    pellets.pelSgntrs[pellets.matchedSgnNum] = pellets.newSgn;
-//                    meas.chron.pellet = pellets.matchedSgnNum;
-//                    pellets.pelStat = PELLET_OK;
-//                }
-//            }else{
-//                if((MENU_CHILD == &NULL_MENU) || (MENU_CHILD == NULL)){
-//                    Menu_EnterCurrentItem();
-//                }else{
-//                    Menu_Navigate(MENU_CHILD);
-//                }
-//            }
-//            break;
-//        case CANCEL:
-//            if((menu.parEdit == PAR_EDIT_ENABLE) || (pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
-//                sysSettings.chrBind = 0;
-//                strcpy(menu.message, "Cancelled");
-//                menu.msgCnt = MSG_CNT;
-//                if(menu.parEdit == PAR_EDIT_ENABLE){
-//                    menu.parStat = PAR_CANCEL;
-//                }else{
-//                    meas.chron.pellet = 0;
-//                    pellets.matchedSgnNum = 0;
-//                    pellets.pelStat = PELLET_OK;
-//                }
-//            }else{
-//                Menu_Navigate(MENU_PARENT);
-//            }
-//            break;
-//        case HOME:
-//            if(CurrentMenuItem == &display){
-//                if((sysSettings.clipEn != 0) && (meas.chron.clipCurrent != meas.chron.clipCapacity)){
-//                    meas.chron.clipCurrent = meas.chron.clipCapacity;
-//                    strcpy(menu.message, "Clip reloaded");
-//                    menu.msgCnt = MSG_CNT;
-//                }else if((meas.chron.statShots != 0) && (sysSettings.dispMode == MODE_CHR)){
-//                    meas.chron.statShots = 0;
-//                    meas.chron.statSpeedsSum = 0;
-//                    meas.chron.statSdev = 0;
-//                    meas.chron.statMean = 0;
-//                    strcpy(menu.message, "Stats cleared");
-//                    menu.msgCnt = MSG_CNT;
-//                }
-//            }else if(menu.parEdit == PAR_EDIT_DISABLE) Menu_Navigate(&display);
-//            break;
-//        default:
-//            menu.parStat = PAR_NONE;
-//            break;
-//        }
+        switch(getButtonState()){
+        case UP:
+            if(menu.parEdit == PAR_EDIT_ENABLE){
+                if(menu.parValue <= menu.parBorderMin){
+                    menu.parValue = menu.parBorderMax;
+                }else{
+                    menu.parValue--;
+                }
+            }else if((pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
+                if(pellets.matchedSgnNum <= PELLETS_DB_NULL){
+                    pellets.matchedSgnNum = PELLETS_DB_NUM-1;
+                }else{
+                    pellets.matchedSgnNum--;
+                }
+            }else{
+                Menu_Navigate(MENU_NEXT);
+            }
+            break;
+        case DOWN:
+            if(menu.parEdit == PAR_EDIT_ENABLE){
+                if(menu.parValue >= menu.parBorderMax){
+                    menu.parValue = menu.parBorderMin;
+                }else{
+                    menu.parValue++;
+                }
+            }else if((pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
+                if(pellets.matchedSgnNum >= PELLETS_DB_NUM-1){
+                    pellets.matchedSgnNum = PELLETS_DB_NULL;
+                }else{
+                    pellets.matchedSgnNum++;
+                }
+            }else{
+                Menu_Navigate(MENU_PREVIOUS);
+            }
+            break;
+        case OK:
+            if((menu.parEdit == PAR_EDIT_ENABLE) || (pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
+                strcpy(menu.message, "Saved");
+                menu.msgCnt = MSG_CNT;
+                if(menu.parEdit == PAR_EDIT_ENABLE){
+                    menu.parStat = PAR_SAVE;
+                }else{
+                    pellets.pelSgntrs[pellets.matchedSgnNum] = pellets.newSgn;
+                    meas.chron.pellet = pellets.matchedSgnNum;
+                    pellets.pelStat = PELLET_OK;
+                }
+            }else{
+                if((MENU_CHILD == &NULL_MENU) || (MENU_CHILD == NULL)){
+                    Menu_EnterCurrentItem();
+                }else{
+                    Menu_Navigate(MENU_CHILD);
+                }
+            }
+            break;
+        case CANCEL:
+            if((menu.parEdit == PAR_EDIT_ENABLE) || (pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
+                sysPars.sysSettings.chrBind = 0;
+                strcpy(menu.message, "Cancelled");
+                menu.msgCnt = MSG_CNT;
+                if(menu.parEdit == PAR_EDIT_ENABLE){
+                    menu.parStat = PAR_CANCEL;
+                }else{
+                    meas.chron.pellet = 0;
+                    pellets.matchedSgnNum = 0;
+                    pellets.pelStat = PELLET_OK;
+                }
+            }else{
+                Menu_Navigate(MENU_PARENT);
+            }
+            break;
+        case HOME:
+            if(CurrentMenuItem == &display){
+                if((sysPars.sysSettings.clipEn != 0) && (meas.chron.clipCurrent != meas.chron.clipCapacity)){
+                    meas.chron.clipCurrent = meas.chron.clipCapacity;
+                    strcpy(menu.message, "Clip reloaded");
+                    menu.msgCnt = MSG_CNT;
+                }else if((meas.chron.statShots != 0) && (sysPars.sysSettings.dispMode == MODE_CHR)){
+                    meas.chron.statShots = 0;
+                    meas.chron.statSpeedsSum = 0;
+                    meas.chron.statSdev = 0;
+                    meas.chron.statMean = 0;
+                    strcpy(menu.message, "Stats cleared");
+                    menu.msgCnt = MSG_CNT;
+                }
+            }else if(menu.parEdit == PAR_EDIT_DISABLE) Menu_Navigate(&display);
+            break;
+        default:
+            menu.parStat = PAR_NONE;
+            break;
+        }
         CurrentMenuItem = Menu_GetCurrentMenu();
         //Magazine
         if(meas.chron.clipCapacity > 1){
-            sysSettings.clipEn = 1;
+            sysPars.sysSettings.clipEn = 1;
         }else{
-            sysSettings.clipEn = 0;
+            sysPars.sysSettings.clipEn = 0;
         }
         //Data received via IR channel
         if(IRRXData.rxState == IR_DATA_READY){
             sgn = (IRRXData.rxByte[IR_MAX_BYTES-1]) | (IRRXData.rxByte[IR_MAX_BYTES-2])<<8 | (IRRXData.rxByte[IR_MAX_BYTES-3])<<16 | (IRRXData.rxByte[IR_MAX_BYTES-4])<<24;
-            if((sysSettings.dispMode != MODE_INC) && ((meas.chron.chrSgntr == sgn) || (sysSettings.chrBind != 0))){
-                if(sysSettings.chrBind != 0){
-                    sysSettings.chrBind = 0;
+            if((sysPars.sysSettings.dispMode != MODE_INC) && ((meas.chron.chrSgntr == sgn) || (sysPars.sysSettings.chrBind != 0))){
+                if(sysPars.sysSettings.chrBind != 0){
+                    sysPars.sysSettings.chrBind = 0;
                     meas.chron.chrSgntr = sgn;
                     strcpy(menu.message, "Binded");
                     menu.msgCnt = MSG_CNT;
@@ -230,7 +243,7 @@ void main(void){
                 meas.chron.speed4 = spd4;
                 if(spd4 >= CHR_SPD_MAX) meas.chron.speed4 = CHR_SPD_MAX;
                 //Ñalculate clip status
-                if(sysSettings.clipEn != 0){
+                if(sysPars.sysSettings.clipEn != 0){
                     if(meas.chron.clipCurrent == 0){
                         meas.chron.clipCurrent = meas.chron.clipCapacity;
                         strcpy(menu.message, "Clip reloaded");
@@ -293,7 +306,7 @@ void main(void){
                     }
                 }
                 //Statistics calculation
-                if(sysSettings.dispMode == MODE_CHR){
+                if(sysPars.sysSettings.dispMode == MODE_CHR){
                     if(meas.chron.statShots >= STAT_SHOTS_MAX){
                         strcpy(menu.message, "Buffer is full");
                         menu.msgCnt = MSG_CNT;
@@ -323,6 +336,41 @@ void main(void){
         }
         //Perform data transmition with accelerometer
         trxAccData();
+        //Calculate battery charge level
+        if(adcData.adcStat == ADC_DATA_READY){
+            adcData.adcStat = ADC_READY;
+            volt = adcData.adcRawData;
+            volt = lpf((volt*ADC_N_TO_UV)/1000);
+            meas.battVolt = volt;
+            if(volt >= battChgArr[0]){
+                perc = 100;
+            }else if(volt <= battChgArr[BATT_CHG_ARR_PTS-1]){
+                perc = 0;
+                //Put message and blink battery
+                if(sysPars.battDplMsgPer == 0){
+                    strcpy(menu.message, "Battery depleted");
+                    menu.msgCnt = MSG_CNT_LONG;
+                    sysPars.battDplMsgPer = BATT_MSG_PERIOD;
+                }
+            }else{
+                for(i = BATT_CHG_ARR_PTS-1; i > 0; i--){
+                    if(volt >= battChgArr[i]){
+                        perc = 100-i*10;
+                        j = i;
+                    }
+                }
+                tmp = battChgArr[j-1] - battChgArr[j];
+                volt -= battChgArr[j];
+                tmp = (volt*BATT_CHG_VMPLY_COEFF)/tmp;
+                if((tmp > BATT_ADD_PERC_MIN) && (tmp <= BATT_ADD_PERC_MAX)){
+                    perc += tmp;
+                }
+            }
+            meas.battCharge = perc;
+            if(sysPars.battDplMsgPer != 0){
+                sysPars.battDplMsgPer--;
+            }
+        }
         //Refresh video buffer
         memset(ssdVideoBff.video, 0, sizeof(ssdVideoBff.video));
         ssd_putBatt(meas.battCharge);
@@ -361,8 +409,8 @@ void main(void){
         //Draw message
         if(menu.msgCnt != 0){
             menu.msgCnt--;
-            if((sysSettings.chrBind != 0) && (menu.msgCnt == 0)){
-                sysSettings.chrBind = 0;
+            if((sysPars.sysSettings.chrBind != 0) && (menu.msgCnt == 0)){
+                sysPars.sysSettings.chrBind = 0;
                 strcpy(menu.message, "Failed");
                 menu.msgCnt = MSG_CNT;
             }
@@ -394,7 +442,7 @@ void parEditRedir(void){
     }else if(CurrentMenuItem == &scbind){                       //Bind new chronograph
         strcpy(menu.message, "Waiting...");
         menu.msgCnt = MSG_CNT_BIND;
-        sysSettings.chrBind = 1;
+        sysPars.sysSettings.chrBind = 1;
     }else if(CurrentMenuItem == &scdist){                       //Edit sensor distance
         menu.parBorderMax = CHR_DIST_MAX;
         menu.parBorderMin = CHR_DIST_MIN;
@@ -434,9 +482,9 @@ int16_t parEdit(int16_t param){
 * @retval   
 */
 void modeEdit(void){
-    if(CurrentMenuItem == &mcommon)sysSettings.dispMode = MODE_COM;
-    else if(CurrentMenuItem == &mchron)sysSettings.dispMode = MODE_CHR;
-    else if(CurrentMenuItem == &mincline)sysSettings.dispMode = MODE_INC;
+    if(CurrentMenuItem == &mcommon)sysPars.sysSettings.dispMode = MODE_COM;
+    else if(CurrentMenuItem == &mchron)sysPars.sysSettings.dispMode = MODE_CHR;
+    else if(CurrentMenuItem == &mincline)sysPars.sysSettings.dispMode = MODE_INC;
     strcpy(menu.message, "OK");
     menu.msgCnt = MSG_CNT;
     if(CurrentMenuItem->Parent == &mode) Menu_Navigate(&display);
@@ -552,13 +600,13 @@ void trxAccData(void){
     }
     lis3_write(0x20, 0x00);                                     //Off
     //Data filtering
-    accel.corrX = lpfx(accel.rawX);
-    accel.corrY = lpfy(accel.rawY);
-    accel.corrZ = lpfz(accel.rawZ);
+//    accel.corrX = lpfx(accel.rawX);
+//    accel.corrY = lpfy(accel.rawY);
+//    accel.corrZ = lpfz(accel.rawZ);
     //Normalize values
-    X = s16fNorm(accel.corrX);//rawX);
-    Y = s16fNorm(accel.corrY);//rawY);
-    Z = s16fNorm(accel.corrZ);//rawZ);
+    X = s16fNorm(accel.rawX);
+    Y = s16fNorm(accel.rawY);
+    Z = s16fNorm(accel.rawZ);
     //Roll calculation
     meas.accRoll = tiltAngCalc(Y, X, Z);
     //Pitch calculation
@@ -606,7 +654,7 @@ void drawMainScreen(void){
     uint16_t val1, val2;
     sprintf(pitchAng, "%c%.1f%c", 232, fabs(meas.accPitch), 248);
     //Display settings
-    if(sysSettings.dispMode == MODE_COM || sysSettings.dispMode == MODE_CHR){
+    if(sysPars.sysSettings.dispMode == MODE_COM || sysPars.sysSettings.dispMode == MODE_CHR){
         val1 = meas.chron.speed0/FRACT_HUNDREDTHS;
         val2 = meas.chron.speed0-(val1*FRACT_HUNDREDTHS);
         if(val1 == 0) val2 = meas.chron.speed0;
@@ -614,7 +662,7 @@ void drawMainScreen(void){
         sprintf(speed1, "%u", meas.chron.speed1/100);           //Speed 1
         sprintf(speed2, "%u", meas.chron.speed2/100);           //Speed 2
         sprintf(speed3, "%u", meas.chron.speed3/100);           //Speed 3
-        if(sysSettings.clipEn == 1){                            //Magazine status/Speed4
+        if(sysPars.sysSettings.clipEn == 1){                    //Magazine status/Speed4
             sprintf(magStat, "%u/%u", meas.chron.clipCurrent, meas.chron.clipCapacity);
             ssd_putString6x8(92, 45, &magStat[0]);
         }else{
@@ -627,7 +675,7 @@ void drawMainScreen(void){
         ssd_putString6x8(98, 25, &speed2[0]);
         ssd_putString6x8(98, 35, &speed3[0]);
         //Select the info to display
-        if(sysSettings.dispMode == MODE_COM){
+        if(sysPars.sysSettings.dispMode == MODE_COM){
             sprintf(rollAng, "%c%.1f%c", 226, fabs(meas.accRoll), 248);
             ssd_putString6x8(0, 40, &rollAng[0]);
             ssd_putString6x8(42, 40, &pitchAng[0]);
@@ -652,7 +700,7 @@ void drawMainScreen(void){
             ssd_putString6x8(49, 36, &sdev[0]);
             ssd_putString12x16(0, 56, &energy[0]);
         }
-    }else if(sysSettings.dispMode == MODE_INC){
+    }else if(sysPars.sysSettings.dispMode == MODE_INC){
         sprintf(rollAng, "%c%.1f%c", 59, fabs(meas.accRoll), 61);//Roll angle
         sprintf(border, "%c%u%c", 241, meas.accRollBorder, 248);//Roll border
         ssd_putString12x16(0, 8, &rollAng[0]);

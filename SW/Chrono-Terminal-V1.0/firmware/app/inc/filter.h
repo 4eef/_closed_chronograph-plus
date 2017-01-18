@@ -16,8 +16,8 @@
 /*!****************************************************************************
 * User define
 */
-#define SPS                     800UL
-#define Trc                     0.005f
+#define SPS                     40UL
+#define Trc                     1.0f
 #define K                       (SPS*Trc)
 
 /*!****************************************************************************
@@ -53,6 +53,7 @@ typedef struct{
 int16_t lpfx(int16_t data);
 int16_t lpfy(int16_t data);
 int16_t lpfz(int16_t data);
+int16_t lpf(int16_t data);
 uint16_t Correct(uint16_t data);
 
 #endif //filter_H

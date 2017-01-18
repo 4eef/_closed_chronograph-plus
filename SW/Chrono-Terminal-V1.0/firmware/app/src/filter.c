@@ -21,6 +21,16 @@ kalman_type                 kalman;
 * @param    
 * @retval   
 */
+int16_t lpf(int16_t data){
+    static int32_t Dacc = 0;
+    static int16_t Dout = 0;
+    int16_t Din = data;
+    
+    Dacc = Dacc + Din - Dout;
+    Dout = Dacc/(int16_t)K;
+    
+    return Dout;
+}
 int16_t lpfx(int16_t data){
     static int32_t Dacc = 0;
     static int16_t Dout = 0;
