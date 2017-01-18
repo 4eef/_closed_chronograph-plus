@@ -38,6 +38,7 @@
 /*!****************************************************************************
 * Prototypes for the functions
 */
+void initClocks(void);
 void SystemClock_Cofig(void);
 void Error_Handler(void);
 

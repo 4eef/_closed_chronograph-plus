@@ -17,8 +17,8 @@
 */
 pinMode_type   const pinsMode[] = {
 /*0 */  makepin(GPIOB,  8,  floatingInput,              0,  0),     //ChrgStatus
-/*1 */  makepin(GPIOF,  0,  alternateFunctionOpenDrain, 0,  1),     //I2C1_SDA
-/*2 */  makepin(GPIOF,  1,  alternateFunctionOpenDrain, 0,  1),     //I2C1_SCL
+/*1 */  makepin(GPIOF,  0,  alternateFunctionOpenDrain, 1,  1),     //I2C1_SDA
+/*2 */  makepin(GPIOF,  1,  alternateFunctionOpenDrain, 1,  1),     //I2C1_SCL
 /*3 */  makepin(GPIOA,  0,  outPushPull,                0,  0),     //Buzzer
 /*4 */  makepin(GPIOA,  1,  floatingInput,              0,  0),     //LIS3_INT1
 /*5 */  makepin(GPIOA,  2,  outPushPull,                0,  0),     //OLED_RES
@@ -30,8 +30,8 @@ pinMode_type   const pinsMode[] = {
 /*11*/  makepin(GPIOB,  1,  inputWithPullUp,            1,  0),     //SW2
 /*11*/  makepin(GPIOA,  11, floatingInput,              0,  0),     //USB_DM
 /*11*/  makepin(GPIOA,  12, floatingInput,              0,  0),     //USB_DP
-/*14*/  makepin(GPIOA,  13, inputWithPullUp,            1,  0),     //SW3
-/*15*/  makepin(GPIOA,  14, inputWithPullUp,            1,  0),     //SW4
+///*14*/  makepin(GPIOA,  13, inputWithPullUp,            1,  0),     //SW3
+///*15*/  makepin(GPIOA,  14, inputWithPullUp,            1,  0),     //SW4
 };
 uint32_t pinNum = sizeof(pinsMode) / sizeof(pinMode_type);
 
