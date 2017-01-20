@@ -13,10 +13,21 @@
 */
 #include "stm32f0xx.h"
 #include "clock.h"
+#include "stdio.h"
+#include "stdlib.h"
+#include "string.h"
 
 /*!****************************************************************************
 * User define
 */
+#define I2C_NBYTES_MAX          255
+#define I2C_WRITE               0
+#define I2C_READ                1
+#define I2C_STAT_OK             0
+#define I2C_STAT_BUSY           1
+#define I2C_STAT_TC             2
+#define I2C_STAT_NACK           3
+#define I2C_STAT_STOP           4
 
 /*!****************************************************************************
 * User enum
@@ -42,12 +53,13 @@
 /*!****************************************************************************
 * Prototypes for the functions
 */
-void I2C_read(uint8_t sadd, uint8_t rgadd, uint8_t *dst, uint8_t len);
-void I2C_read_DMA(uint8_t sadd, uint8_t rgadd, uint8_t *dst, uint8_t len);
-void I2C_write(uint8_t sadd, uint8_t *src, uint8_t len);
+void I2CRxInit(uint8_t sadd, uint16_t len);
+uint8_t I2CRx(uint8_t sadd, uint8_t *dst, uint16_t len);
+uint8_t I2CRxDma(uint8_t sadd, uint8_t *dst, uint16_t len);
+void I2CTxInit(uint8_t sadd, uint16_t len);
+uint8_t I2CTx(uint8_t sadd, uint8_t *src, uint16_t len);
+uint8_t I2CTxDma(uint8_t sadd, uint8_t *src, uint16_t len);
 void initI2C1(void);
-void MX_DMA_Init(void);
-void MX_I2C1_Init(void);
 
 #endif //i2c_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

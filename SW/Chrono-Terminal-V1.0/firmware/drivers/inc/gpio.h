@@ -12,9 +12,7 @@
 * Include
 */
 #include "stm32f0xx.h"
-//#include "bitbanding.h"
 #include "stdint.h"
-//#include "board.h"
 
 /*!****************************************************************************
 * User define

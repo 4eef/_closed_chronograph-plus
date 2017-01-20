@@ -66,9 +66,6 @@ typedef struct{
 /*!****************************************************************************
 * Extern viriables
 */
-extern I2C_HandleTypeDef hi2c1;
-extern DMA_HandleTypeDef hdma_i2c1_rx;
-extern DMA_HandleTypeDef hdma_i2c1_tx;
 
 /*!****************************************************************************
 * Macro functions

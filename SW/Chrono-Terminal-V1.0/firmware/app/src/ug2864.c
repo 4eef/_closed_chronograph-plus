@@ -393,8 +393,8 @@ void ug2864init(void){
 void ug2864_com(uint8_t com){
     uint8_t sadd = 0x78;
     uint8_t data[] = {0, com};
-    while (HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY);
-    HAL_I2C_Master_Transmit(&hi2c1, (sadd | 0x1), data, 2, 1000);
+    while(I2C1->ISR & I2C_ISR_BUSY) __NOP();
+    I2CTx(sadd | 1, data, 2);
 }
 
 /*!****************************************************************************
@@ -405,6 +405,7 @@ void ug2864_com(uint8_t com){
 void ug2864_refresh(void){
     uint8_t sadd = 0x78;
     ssdVideoBff.data = 0x40;
-    HAL_I2C_Master_Transmit_DMA(&hi2c1, (sadd | 0x1), &ssdVideoBff.data, 1025);
+    while(I2C1->ISR & I2C_ISR_BUSY) __NOP();
+    I2CTx(sadd | 1, &ssdVideoBff.data, 1025);
 }
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

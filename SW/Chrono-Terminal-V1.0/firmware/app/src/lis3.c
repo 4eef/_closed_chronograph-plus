@@ -14,7 +14,7 @@
 /*!****************************************************************************
 * MEMORY
 */
-accel_type accel;
+accel_type              accel;
 
 /*!****************************************************************************
 * @brief   Initialize the LIS3DSH
@@ -39,9 +39,10 @@ void lis3init(void){
 * @retval   
 */
 void lis3_write(uint8_t reg, uint8_t com){
-    uint8_t sadd = 0x3A, data[] = {reg, com};
-    while (HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY);
-    HAL_I2C_Master_Transmit(&hi2c1, sadd, data, 2, 1000);
+    uint8_t sadd = 0x3A, data[2] = {reg, com};
+    while(I2C1->ISR & I2C_ISR_BUSY) __NOP();
+    delay_us(100);
+    I2CTx(sadd, &data[0], 2);
 }
 
 /*!****************************************************************************
@@ -51,12 +52,10 @@ void lis3_write(uint8_t reg, uint8_t com){
 */
 uint8_t lis3_read(uint8_t reg){
     uint8_t sadd = 0x3A, rdata;
-    while (HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY);
-    HAL_I2C_Master_Transmit(&hi2c1, sadd, &reg, 1, 1000);
-    
-    while (HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY);
-    HAL_I2C_Master_Receive(&hi2c1, (sadd | 1), &rdata, 1, 1000);
-    
+    while(I2C1->ISR & I2C_ISR_BUSY) __NOP();
+    I2CTx(sadd, &reg, 1);
+    while(I2C1->ISR & I2C_ISR_BUSY) __NOP();
+    I2CRx(sadd | 1, &rdata, 1);
     return rdata;
 }
 
@@ -67,11 +66,10 @@ uint8_t lis3_read(uint8_t reg){
 */
 void lis3_getXYZ(void){
     uint8_t sadd = 0x3A, reg = 0x28;
-    while (HAL_I2C_GetState(&hi2c1) != HAL_I2C_STATE_READY);
-    HAL_I2C_Master_Transmit(&hi2c1, sadd, &reg, 1, 1000);
-    
-    HAL_I2C_Master_Receive(&hi2c1, (sadd | 1), &accel.rawXL, 6, 1000);
-    
+    while(I2C1->ISR & I2C_ISR_BUSY) __NOP();
+    I2CTx(sadd, &reg, 1);
+    while(I2C1->ISR & I2C_ISR_BUSY) __NOP();
+    I2CRx(sadd | 1, &accel.rawXL, 6);
     accel.rawX = (int16_t)(accel.rawXL | (accel.rawXH<<8));
     accel.rawY = (int16_t)(accel.rawYL | (accel.rawYH<<8));
     accel.rawZ = (int16_t)(accel.rawZL | (accel.rawZH<<8));
