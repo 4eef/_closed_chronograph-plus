@@ -41,7 +41,6 @@ void lis3init(void){
 void lis3_write(uint8_t reg, uint8_t com){
     uint8_t sadd = 0x3A, data[2] = {reg, com};
     while(I2C1->ISR & I2C_ISR_BUSY) __NOP();
-    delay_us(100);
     I2CTx(sadd, &data[0], 2);
 }
 

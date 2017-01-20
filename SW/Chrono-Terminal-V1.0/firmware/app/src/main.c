@@ -70,17 +70,17 @@ void main(void){
     uint8_t i, j, offs, len, perc, tmp;
     char text[20], par[6];
     //Battery discharge graph points
-    battChgArr[0] = 4175;
-    battChgArr[1] = 4075;
-    battChgArr[2] = 3995;
-    battChgArr[3] = 3930;
-    battChgArr[4] = 3890;
-    battChgArr[5] = 3810;
-    battChgArr[6] = 3790;
-    battChgArr[7] = 3775;
-    battChgArr[8] = 3766;
-    battChgArr[9] = 3730;
-    battChgArr[10] = 3620;
+    battChgArr[0] = 4150;
+    battChgArr[1] = 4050;
+    battChgArr[2] = 3970;
+    battChgArr[3] = 3905;
+    battChgArr[4] = 3865;
+    battChgArr[5] = 3785;
+    battChgArr[6] = 3765;
+    battChgArr[7] = 3750;
+    battChgArr[8] = 3741;
+    battChgArr[9] = 3705;
+    battChgArr[10] = 3595;
     //Initialize hardware
     initClocks();
     initGpios();
