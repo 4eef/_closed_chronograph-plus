@@ -14,15 +14,16 @@
 /*!****************************************************************************
 * MEMORY
 */
-ssdVideoBff_type    ssdVideoBff;
 extern menu_type    menu;
+ssdVideoBff_type    ssdVideoBff;
+ssdSettings_type    ssdSettings;
 
 /*!****************************************************************************
 * @brief    Put box for text at the center of display
 * @param    
 * @retval   
 */
-void ssd_putParBox(char *text){
+void ssd_putParBox(char *text, uint8_t enArrows){
     uint8_t i, j, x, y;
     char tmp[20], uArrow[2]={24, 0}, dArrow[2]={25, 0};
     //Parameters
@@ -40,8 +41,10 @@ void ssd_putParBox(char *text){
     }
     //Put text
     ssd_putString6x8(10, 10, text);
-    ssd_putString6x8(46, 46, &uArrow[0]);
-    ssd_putString6x8(76, 46, &dArrow[0]);
+    if(enArrows == PAR_BOX_ARROWS_EN){
+        ssd_putString6x8(46, 46, &uArrow[0]);
+        ssd_putString6x8(76, 46, &dArrow[0]);
+    }
     strcpy(tmp, "Back");
     ssd_putString6x8(10, 46, &tmp[0]);
     strcpy(tmp, "Save");
@@ -379,10 +382,11 @@ void ug2864init(void){
     ug2864_com(0x12);
     ug2864_com(0xdb);                           //Set VCOMH
     ug2864_com(0x40);
-    ug2864_com(0x8d);                           //Set Charge Pump enable
-    ug2864_com(0x14);                           //0x10 for disable
-    ug2864_com(0xaf);                           //Turn on oled panel
-    ug2864_refresh();
+//    ug2864_com(0x8d);                           //Set Charge Pump enable
+//    ug2864_com(0x14);                           //0x10 for disable
+//    ug2864_com(0xaf);                           //Turn on oled panel
+    ssdVideoBff.data = 0x40;
+//    ug2864_refresh();
 }
 
 /*!****************************************************************************
@@ -404,8 +408,23 @@ void ug2864_com(uint8_t com){
 */
 void ug2864_refresh(void){
     uint8_t sadd = 0x78;
-    ssdVideoBff.data = 0x40;
-    while(I2C1->ISR & I2C_ISR_BUSY) __NOP();
-    I2CTx(sadd | 1, &ssdVideoBff.data, 1025);
+    if(ssdSettings.status != ssdSettings.enable){
+        if(ssdSettings.enable == DISPLAY_ENABLE){
+            ug2864_com(0x8D);
+            ug2864_com(0x14);
+            ug2864_com(0xAF);
+            ssdSettings.enable = DISPLAY_ENABLE;
+        }else{
+            ug2864_com(0xAE);
+            ug2864_com(0x8D);
+            ug2864_com(0x10);
+            ssdSettings.enable = DISPLAY_DISABLE;
+        }
+        ssdSettings.status = ssdSettings.enable;
+    }
+    if(ssdSettings.status == DISPLAY_ENABLE){
+        while(I2C1->ISR & I2C_ISR_BUSY) __NOP();
+        I2CTx(sadd | 1, &ssdVideoBff.data, 1025);
+    }
 }
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

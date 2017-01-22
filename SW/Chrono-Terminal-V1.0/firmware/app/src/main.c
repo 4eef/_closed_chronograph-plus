@@ -20,11 +20,11 @@ extern menu_type            menu;
 extern kalman_type          kalman;
 extern IRRXData_type        IRRXData;
 extern adcData_type         adcData;
+extern ssdSettings_type     ssdSettings;
+extern lis3AxisCal_type     lis3AxisCal;
 buttonCnts_type             buttonCnts;
 Menu_Item_t                 *CurrentMenuItem;
 meas_type                   meas;
-lis3Settings_type           lis3Settings;
-ssdSettings_type            ssdSettings;
 pellets_type                pellets;
 sysPars_type                sysPars;
 
@@ -45,9 +45,8 @@ MENU_ITEM(mincline,     NULL_MENU,      mchron,         mode,           NULL_MEN
 //Menu/Settings
 MENU_ITEM(sclipc,       schrono,        NULL_MENU,      setts,          NULL_MENU,      NULL,           parEditRedir,   "Clip capacity");
 MENU_ITEM(schrono,      sincline,       sclipc,         setts,          scdist,         NULL,           NULL,           "Chronograph");
-MENU_ITEM(sincline,     sdisplay,       schrono,        setts,          sibrdr,         NULL,           NULL,           "Inclinometer");
-MENU_ITEM(sdisplay,     ssleep,         sincline,       setts,          sdcntr,         NULL,           NULL,           "Display");
-MENU_ITEM(ssleep,       swusrc,         sdisplay,       setts,          NULL_MENU,      NULL,           NULL,           "Sleep");
+MENU_ITEM(sincline,     ssleep,         schrono,        setts,          sibrdr,         NULL,           NULL,           "Inclinometer");
+MENU_ITEM(ssleep,       swusrc,         sincline,       setts,          NULL_MENU,      NULL,           NULL,           "Sleep & power off");
 MENU_ITEM(swusrc,       NULL_MENU,      ssleep,         setts,          NULL_MENU,      NULL,           NULL,           "Wake-up source");
 //Menu/Settings/Chronograph
 MENU_ITEM(scdist,       scbind,         NULL_MENU,      schrono,        NULL_MENU,      NULL,           parEditRedir,   "Sensor distance");
@@ -55,9 +54,6 @@ MENU_ITEM(scbind,       NULL_MENU,      scdist,         schrono,        NULL_MEN
 //Menu/Settings/Inclinometer
 MENU_ITEM(sibrdr,       sical,          NULL_MENU,      sincline,       NULL_MENU,      NULL,           parEditRedir,   "Roll level border");
 MENU_ITEM(sical,        NULL_MENU,      sibrdr,         sincline,       NULL_MENU,      NULL,           NULL,           "Calibration");
-//Menu/Settings/Display
-MENU_ITEM(sdcntr,       sdpoff,         NULL_MENU,      sdisplay,       NULL_MENU,      NULL,           NULL,           "Contrast");
-MENU_ITEM(sdpoff,       NULL_MENU,      sdcntr,         sdisplay,       NULL_MENU,      NULL,           NULL,           "Power off timeout");
 
 /*!****************************************************************************
 * @brief    Main function
@@ -100,6 +96,7 @@ void main(void){
     meas.accPitchBorder = 90;
     meas.chron.clipCapacity = PELLETS_MIN;
     meas.chron.sensDist = CHR_DIST_DEFAULT;
+    ssdSettings.enable = DISPLAY_ENABLE;
     kalman.F = 1;
     kalman.H = 1;
     kalman.R = 15;
@@ -296,7 +293,9 @@ void main(void){
                             pellets.newSgnCnt = 0;
                             pellets.newSgnSum = 0;
                         }else if(pellets.newSgnErrCnt >= PELLET_NEW_SGN_BOUND){
-                            pellets.pelStat = PELLET_ERR_NEW;
+                            strcpy(menu.message, "Error pellet ID");
+                            menu.msgCnt = MSG_CNT;
+                            pellets.pelStat = PELLET_OK;
                             pellets.newSgnErrCnt = 0;
                             pellets.newSgnCnt = 0;
                             pellets.newSgnSum = 0;
@@ -380,29 +379,29 @@ void main(void){
         }
         //Draw parameter edit box
         if(menu.parEdit == PAR_EDIT_ENABLE){
-            strcpy(text, CurrentMenuItem->Text);
-            ssd_putParBox(&text[0]);
-            if(menu.parFract != 0){
-                val1 = menu.parValue/menu.parFract;
-                val2 = menu.parValue%val1;
-                sprintf(par, "%u.%u", val1, val2);
+            if(lis3AxisCal.calState == ACCEL_CAL_START){
+                
             }else{
-                sprintf(par, "%u", menu.parValue);
+                strcpy(text, CurrentMenuItem->Text);
+                ssd_putParBox(&text[0], PAR_BOX_ARROWS_EN);
+                if(menu.parFract != 0){
+                    val1 = menu.parValue/menu.parFract;
+                    val2 = menu.parValue%val1;
+                    sprintf(par, "%u.%u", val1, val2);
+                }else{
+                    sprintf(par, "%u", menu.parValue);
+                }
+                len = strlen(par);
+                offs = SSD1306_LCDWIDTH/2 - (len*6)/2;
+                ssd_putString6x8(offs, 28, &par[0]);
             }
-            len = strlen(par);
-            offs = SSD1306_LCDWIDTH/2 - (len*6)/2;
-            ssd_putString6x8(offs, 28, &par[0]);
         }else if((pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
             strcpy(text, "Choose pellet...");
-            ssd_putParBox(&text[0]);
+            ssd_putParBox(&text[0], PAR_BOX_ARROWS_EN);
             sprintf(text, pellets.pelStrings[pellets.matchedSgnNum]);
             len = strlen(text);
             offs = SSD1306_LCDWIDTH/2 - (len*6)/2;
             ssd_putString6x8(offs, 28, &text[0]);
-        }else if(pellets.pelStat == PELLET_ERR_NEW){
-            strcpy(menu.message, "Error pellet ID");
-            menu.msgCnt = MSG_CNT;
-            pellets.pelStat = PELLET_OK;
         }
         //Draw message
         if(menu.msgCnt != 0){
@@ -444,8 +443,8 @@ void parEditRedir(void){
     }else if(CurrentMenuItem == &scdist){                       //Edit sensor distance
         menu.parBorderMax = CHR_DIST_MAX;
         menu.parBorderMin = CHR_DIST_MIN;
-        menu.parFract = FRACT_TENTHS;
         meas.chron.sensDist = parEdit(meas.chron.sensDist);
+        menu.parFract = FRACT_TENTHS;
     }
 }
 
@@ -489,7 +488,7 @@ void modeEdit(void){
 }
 
 /*!****************************************************************************
-* @brief    Get button state routine
+* @brief    Get button state routine (revise: use timer to eliminate bounce)
 * @param    
 * @retval   enum button value
 */
@@ -581,11 +580,14 @@ float s16fNorm(int16_t val){
 */
 void trxAccData(void){
     float X, Y, Z;
-    uint8_t reg, tmp, numSamples = 1;
+    uint8_t reg, tmp, numSamples = ACC_N_SAMPLES;
     accel.rawX = 0;
     accel.rawY = 0;
     accel.rawZ = 0;
     //Settings
+    lis3_write(0x10, accel.offsetX);                            //Offsets
+    lis3_write(0x11, accel.offsetY);
+    lis3_write(0x12, accel.offsetZ);
     lis3_write(0x20, 0x87);                                     //800 Hz sample rate
     //Get the samples
     tmp = numSamples;

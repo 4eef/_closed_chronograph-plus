@@ -18,6 +18,10 @@
 /*!****************************************************************************
 * User define
 */
+#define ACCEL_CAL_OK            0
+#define ACCEL_CAL_START         1
+#define ACCEL_CAL_CANCEL        2
+#define ACCEL_CAL_SAVE          3
 
 /*!****************************************************************************
 * User enum
@@ -45,8 +49,14 @@ typedef struct{
 }accel_type;
 
 typedef struct{
-    uint8_t     dummy;
-}lis3Settings_type;
+    int16_t     calTmpX;
+    int16_t     calTmpY;
+    int16_t     calTmpZ;
+    uint8_t     calXState;
+    uint8_t     calYState;
+    uint8_t     calZState;
+    uint8_t     calState;
+}lis3AxisCal_type;
 
 /*!****************************************************************************
 * Extern viriables

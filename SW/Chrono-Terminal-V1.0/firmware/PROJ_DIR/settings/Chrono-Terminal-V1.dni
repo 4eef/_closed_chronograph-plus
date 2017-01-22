@@ -120,7 +120,7 @@ TraceBufferSize=0x00000000
 TraceShowTime=0
 TraceShowTimeFreq=1000000
 [DebugChecksum]
-Checksum=-515786797
+Checksum=1255393900
 [CodeCoverage]
 Enabled=_ 0
 [Exceptions]
@@ -154,6 +154,10 @@ Stop=1
 [Simulator]
 Freq=10000000
 MultiCoreRunAll=1
+[struct_types]
+Fmt0=accel_type-offsetX	3	0
+Fmt1=accel_type-offsetY	3	0
+Fmt2=accel_type-offsetZ	3	0
 [Trace1]
 Enabled=0
 ShowSource=1

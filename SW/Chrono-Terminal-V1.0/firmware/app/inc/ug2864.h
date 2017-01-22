@@ -46,6 +46,10 @@
 #define MSG_BOX_HEIGHT                  16
 #define PAR_BOX_WIDTH                   111
 #define PAR_BOX_HEIGHT                  47
+#define DISPLAY_DISABLE                 0
+#define DISPLAY_ENABLE                  1
+#define PAR_BOX_ARROWS_DIS              0
+#define PAR_BOX_ARROWS_EN               1
 
 /*!****************************************************************************
 * User enum
@@ -60,7 +64,8 @@ typedef struct{
 }ssdVideoBff_type;
 
 typedef struct{
-    uint8_t     contrast;
+    uint8_t     status;
+    uint8_t     enable;
 }ssdSettings_type;
 
 /*!****************************************************************************
@@ -88,7 +93,7 @@ void ssd_putMenuFolder(void);
 void ssd_putMenuScroll(void);
 void ssd_putRollBar(float aabs, uint16_t border, uint8_t y, uint8_t hgt);
 void ssd_putMsgBox(uint8_t len);
-void ssd_putParBox(char *text);
+void ssd_putParBox(char *text, uint8_t enArrows);
 
 #endif //ug9616_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

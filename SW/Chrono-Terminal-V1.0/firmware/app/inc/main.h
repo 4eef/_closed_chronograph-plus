@@ -80,6 +80,7 @@
 #define BATT_ADD_PERC_MIN       0
 #define BATT_ADD_PERC_MAX       9
 #define BATT_MSG_PERIOD         2400
+#define ACC_N_SAMPLES           1
 
 /*!****************************************************************************
 * User enum

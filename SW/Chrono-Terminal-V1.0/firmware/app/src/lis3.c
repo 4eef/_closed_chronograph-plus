@@ -14,6 +14,7 @@
 /*!****************************************************************************
 * MEMORY
 */
+lis3AxisCal_type        lis3AxisCal;
 accel_type              accel;
 
 /*!****************************************************************************
@@ -28,9 +29,6 @@ void lis3init(void){
     lis3_write(0x23, 0x00);                         //All is disabled
     lis3_write(0x24, 0x00);                         //AAF BW 800Hz, 2G, no self-test
     lis3_write(0x25, 0x10);                         //Enable address increment
-    lis3_write(0x10, 0x00);                         //Output(X) = Measurement(X) - OFFSET(X) * 32;
-    lis3_write(0x11, 0x00);
-    lis3_write(0x12, 0x00);
 }
 
 /*!****************************************************************************
@@ -69,8 +67,8 @@ void lis3_getXYZ(void){
     I2CTx(sadd, &reg, 1);
     while(I2C1->ISR & I2C_ISR_BUSY) __NOP();
     I2CRx(sadd | 1, &accel.rawXL, 6);
-    accel.rawX = (int16_t)(accel.rawXL | (accel.rawXH<<8));
-    accel.rawY = (int16_t)(accel.rawYL | (accel.rawYH<<8));
-    accel.rawZ = (int16_t)(accel.rawZL | (accel.rawZH<<8));
+    accel.rawX |= (int16_t)(accel.rawXL | (accel.rawXH<<8));
+    accel.rawY |= (int16_t)(accel.rawYL | (accel.rawYH<<8));
+    accel.rawZ |= (int16_t)(accel.rawZL | (accel.rawZH<<8));
 }
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/
