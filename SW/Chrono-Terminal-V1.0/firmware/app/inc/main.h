@@ -38,14 +38,7 @@
 #define BUTTON_CANCEL           GP_SW3
 #define MSG_CNT                 30
 #define MSG_CNT_LONG            60
-#define MSG_CNT_BIND            200
-#define PAR_NONE                0
-#define PAR_SAVE                1
-#define PAR_CANCEL              2
-#define PAR_EDIT_DISABLE        0
-#define PAR_EDIT_ENABLE         1
-#define PAR_UNSIGNED            0
-#define PAR_SIGNED              1
+#define MSG_CNT_BIND            100
 #define MODE_COM                0
 #define MODE_CHR                1
 #define MODE_INC                2

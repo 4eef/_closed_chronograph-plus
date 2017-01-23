@@ -53,7 +53,7 @@ MENU_ITEM(scdist,       scbind,         NULL_MENU,      schrono,        NULL_MEN
 MENU_ITEM(scbind,       NULL_MENU,      scdist,         schrono,        NULL_MENU,      NULL,           parEditRedir,   "Bind");
 //Menu/Settings/Inclinometer
 MENU_ITEM(sibrdr,       sical,          NULL_MENU,      sincline,       NULL_MENU,      NULL,           parEditRedir,   "Roll level border");
-MENU_ITEM(sical,        NULL_MENU,      sibrdr,         sincline,       NULL_MENU,      NULL,           NULL,           "Calibration");
+MENU_ITEM(sical,        NULL_MENU,      sibrdr,         sincline,       NULL_MENU,      NULL,           parEditRedir,   "Calibration");
 
 /*!****************************************************************************
 * @brief    Main function
@@ -64,7 +64,7 @@ void main(void){
     uint32_t dist, sgn, spd0, spd1, spd2, spd3, spd4, val1, val2, val3, val4;
     uint16_t battChgArr[BATT_CHG_ARR_PTS], volt;
     uint8_t i, j, offs, len, perc, tmp;
-    char text[20], par[6];
+    char text[20], par[6], axis1[10], axis2[10], axis3[10], dir[2];
     //Battery discharge graph points
     battChgArr[0] = 4150;
     battChgArr[1] = 4050;
@@ -116,7 +116,7 @@ void main(void){
             if(menu.parEdit == PAR_EDIT_ENABLE){
                 if(menu.parValue <= menu.parBorderMin){
                     menu.parValue = menu.parBorderMax;
-                }else{
+                }else if(lis3AxisCal.calState == ACCEL_CAL_OK){
                     menu.parValue--;
                 }
             }else if((pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
@@ -133,7 +133,7 @@ void main(void){
             if(menu.parEdit == PAR_EDIT_ENABLE){
                 if(menu.parValue >= menu.parBorderMax){
                     menu.parValue = menu.parBorderMin;
-                }else{
+                }else if(lis3AxisCal.calState == ACCEL_CAL_OK){
                     menu.parValue++;
                 }
             }else if((pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
@@ -151,7 +151,11 @@ void main(void){
                 strcpy(menu.message, "Saved");
                 menu.msgCnt = MSG_CNT;
                 if(menu.parEdit == PAR_EDIT_ENABLE){
-                    menu.parStat = PAR_SAVE;
+                    if(lis3AxisCal.calState != ACCEL_CAL_OK){
+                        lis3AxisCal.calState = ACCEL_CAL_SAVE;
+                    }else{
+                        menu.parStat = PAR_SAVE;
+                    }
                 }else{
                     pellets.pelSgntrs[pellets.matchedSgnNum] = pellets.newSgn;
                     meas.chron.pellet = pellets.matchedSgnNum;
@@ -171,7 +175,11 @@ void main(void){
                 strcpy(menu.message, "Cancelled");
                 menu.msgCnt = MSG_CNT;
                 if(menu.parEdit == PAR_EDIT_ENABLE){
-                    menu.parStat = PAR_CANCEL;
+                    if(lis3AxisCal.calState != ACCEL_CAL_OK){
+                        lis3AxisCal.calState = ACCEL_CAL_CANCEL;
+                    }else{
+                        menu.parStat = PAR_CANCEL;
+                    }
                 }else{
                     meas.chron.pellet = 0;
                     pellets.matchedSgnNum = 0;
@@ -377,10 +385,48 @@ void main(void){
         }else{
             drawMenu();
         }
+        //Edit function
+        if(menu.parEdit == PAR_EDIT_ENABLE && menu.parStat != PAR_NONE) parEditRedir();
+        if(lis3AxisCal.calState != ACCEL_CAL_OK) accAxisCal();
         //Draw parameter edit box
         if(menu.parEdit == PAR_EDIT_ENABLE){
-            if(lis3AxisCal.calState == ACCEL_CAL_START){
-                
+            if(lis3AxisCal.calState != ACCEL_CAL_OK){
+                if(lis3AxisCal.calXState == ACCEL_CAL_EN){
+                    strcpy(text, "1/2 X axis...");
+                    sprintf(dir, "%c", 24);
+                }else if(lis3AxisCal.calXState == ACCEL_CAL_SAVE_HALF){
+                    strcpy(text, "2/2 X axis...");
+                    sprintf(dir, "%c", 25);
+                }else if(lis3AxisCal.calYState == ACCEL_CAL_EN){
+                    strcpy(text, "1/2 Y axis...");
+                    sprintf(dir, "%c", 26);
+                }else if(lis3AxisCal.calYState == ACCEL_CAL_SAVE_HALF){
+                    strcpy(text, "2/2 Y axis...");
+                    sprintf(dir, "%c", 27);
+                }else if(lis3AxisCal.calZState == ACCEL_CAL_EN){
+                    strcpy(text, "1/2 Z axis...");
+                    sprintf(dir, "%c", 4);
+                }else if(lis3AxisCal.calZState == ACCEL_CAL_SAVE_HALF){
+                    strcpy(text, "2/2 Z axis...");
+                    sprintf(dir, "%c", 158);
+                }
+                sprintf(axis1, "X:%d", lis3AxisCal.calFiltX);
+                sprintf(axis2, "Y:%d", lis3AxisCal.calFiltY);
+                sprintf(axis3, "Z:%d", lis3AxisCal.calFiltZ);
+                ssd_putParBox(&text[0], PAR_BOX_ARROWS_DIS);
+                //Axis raws
+                len = strlen(axis1);
+                offs = SSD1306_LCDWIDTH/2 - (len*6)/2;
+                ssd_putString6x8(offs, 22, &axis1[0]);
+                len = strlen(axis2);
+                offs = SSD1306_LCDWIDTH/2 - (len*6)/2;
+                ssd_putString6x8(offs, 32, &axis2[0]);
+                len = strlen(axis3);
+                offs = SSD1306_LCDWIDTH/2 - (len*6)/2;
+                ssd_putString6x8(offs, 42, &axis3[0]);
+                //Direction arrows
+                ssd_putString6x8(20, 28, &dir[0]);
+                ssd_putString6x8(101, 28, &dir[0]);
             }else{
                 strcpy(text, CurrentMenuItem->Text);
                 ssd_putParBox(&text[0], PAR_BOX_ARROWS_EN);
@@ -445,6 +491,12 @@ void parEditRedir(void){
         menu.parBorderMin = CHR_DIST_MIN;
         meas.chron.sensDist = parEdit(meas.chron.sensDist);
         menu.parFract = FRACT_TENTHS;
+    }else if(CurrentMenuItem == &sical){
+        menu.parEdit = PAR_EDIT_ENABLE;
+        lis3AxisCal.calXState = ACCEL_CAL_EN;
+        lis3AxisCal.calYState = ACCEL_CAL_EN;
+        lis3AxisCal.calZState = ACCEL_CAL_EN;
+        lis3AxisCal.calState = ACCEL_CAL_EN;
     }
 }
 
@@ -599,14 +651,36 @@ void trxAccData(void){
         }
     }
     lis3_write(0x20, 0x00);                                     //Off
+    //Data proccessed by LPF
+    if(lis3AxisCal.calState != ACCEL_CAL_OK){
+        lis3AxisCal.calFiltX = lpfx(accel.rawX);
+        lis3AxisCal.calFiltY = lpfy(accel.rawY);
+        lis3AxisCal.calFiltZ = lpfz(accel.rawZ);
+    }
+    //Normalizing data
+    if(accel.rawX >= 0){
+        accel.corrX = (accel.rawX*ACCEL_MAX)/lis3AxisCal.calMaxX;
+    }else{
+        accel.corrX = (accel.rawX*ACCEL_MIN)/lis3AxisCal.calMinX;
+    }
+    if(accel.rawY >= 0){
+        accel.corrY = (accel.rawY*ACCEL_MAX)/lis3AxisCal.calMaxY;
+    }else{
+        accel.corrY = (accel.rawY*ACCEL_MIN)/lis3AxisCal.calMinY;
+    }
+    if(accel.rawZ >= 0){
+        accel.corrZ = (accel.rawZ*ACCEL_MAX)/lis3AxisCal.calMaxZ;
+    }else{
+        accel.corrZ = (accel.rawZ*ACCEL_MIN)/lis3AxisCal.calMinZ;
+    }
     //Data filtering
-//    accel.corrX = lpfx(accel.rawX);
-//    accel.corrY = lpfy(accel.rawY);
-//    accel.corrZ = lpfz(accel.rawZ);
+//    accel.corrX = accel.rawX;
+//    accel.corrY = accel.rawY;
+//    accel.corrZ = accel.rawZ;
     //Normalize values
-    X = s16fNorm(accel.rawX);
-    Y = s16fNorm(accel.rawY);
-    Z = s16fNorm(accel.rawZ);
+    X = s16fNorm(accel.corrX);
+    Y = s16fNorm(accel.corrY);
+    Z = s16fNorm(accel.corrZ);
     //Roll calculation
     meas.accRoll = tiltAngCalc(Y, X, Z);
     //Pitch calculation
@@ -639,8 +713,6 @@ void drawMenu(void){
     for(i = 0; i < MENU_POSITIONS; i++){
         ssd_putString6x8(8, MENU_START+MENU_INTERVAL*i, &menu.child[offs+i][0]);
     }
-    //Edit function
-    if(menu.parEdit == PAR_EDIT_ENABLE || menu.parStat != PAR_NONE) parEditRedir();
 }
 
 /*!****************************************************************************

@@ -37,7 +37,7 @@ int16_t lpfx(int16_t data){
     int16_t Din = data;
     
     Dacc = Dacc + Din - Dout;
-    Dout = Dacc/(int16_t)K;
+    Dout = Dacc/(int16_t)ACC_K;
     
     return Dout;
 }
@@ -47,7 +47,7 @@ int16_t lpfy(int16_t data){
     int16_t Din = data;
     
     Dacc = Dacc + Din - Dout;
-    Dout = Dacc/(int16_t)K;
+    Dout = Dacc/(int16_t)ACC_K;
     
     return Dout;
 }
@@ -57,7 +57,7 @@ int16_t lpfz(int16_t data){
     int16_t Din = data;
     
     Dacc = Dacc + Din - Dout;
-    Dout = Dacc/(int16_t)K;
+    Dout = Dacc/(int16_t)ACC_K;
     
     return Dout;
 }

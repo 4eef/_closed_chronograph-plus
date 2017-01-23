@@ -16,9 +16,11 @@
 /*!****************************************************************************
 * User define
 */
-#define SPS                     40UL
-#define Trc                     1.0f
+#define SPS                     20UL
+#define Trc                     5.0f
 #define K                       (SPS*Trc)
+#define ACC_Trc                 0.75f
+#define ACC_K                   (SPS*ACC_Trc)
 
 /*!****************************************************************************
 * User enum

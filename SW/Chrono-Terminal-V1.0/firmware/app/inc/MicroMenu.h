@@ -22,6 +22,13 @@
 #define MENU_POSITIONS          5
 #define MENU_INTERVAL           10
 #define MENU_START              12
+#define PAR_NONE                0
+#define PAR_SAVE                1
+#define PAR_CANCEL              2
+#define PAR_EDIT_DISABLE        0
+#define PAR_EDIT_ENABLE         1
+#define PAR_UNSIGNED            0
+#define PAR_SIGNED              1
 
 /*!****************************************************************************
 * User enum
@@ -35,6 +42,7 @@ typedef struct{
     char        child[10][20];
     char        message[20];
     char        parName[20];
+    char        parText[20];
     uint8_t     currItem;
     uint8_t     totItems;
     uint8_t     offs;
