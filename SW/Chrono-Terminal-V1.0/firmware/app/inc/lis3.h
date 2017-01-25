@@ -25,7 +25,8 @@
 #define ACCEL_CAL_SAVE_HALF     3
 #define ACCEL_CAL_SAVE          4
 #define ACCEL_MAX               16383
-#define ACCEL_MIN               -16384
+#define ACCEL_OFF_MIN           -4096
+#define ACCEL_OFF_MAX           4095
 
 /*!****************************************************************************
 * User enum
@@ -38,6 +39,9 @@ typedef struct{
     int8_t      offsetX;
     int8_t      offsetY;
     int8_t      offsetZ;
+    int16_t     gainX;
+    int16_t     gainY;
+    int16_t     gainZ;
     int16_t     corrX;
     int16_t     corrY;
     int16_t     corrZ;
@@ -56,12 +60,9 @@ typedef struct{
     int16_t     calFiltX;
     int16_t     calFiltY;
     int16_t     calFiltZ;
-    int16_t     calMinX;
-    int16_t     calMaxX;
-    int16_t     calMinY;
-    int16_t     calMaxY;
-    int16_t     calMinZ;
-    int16_t     calMaxZ;
+    int16_t     calGainX;
+    int16_t     calGainY;
+    int16_t     calGainZ;
     int16_t     calOffX;
     int16_t     calOffY;
     int16_t     calOffZ;

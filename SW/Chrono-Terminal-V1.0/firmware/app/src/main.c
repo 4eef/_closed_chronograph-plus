@@ -651,32 +651,20 @@ void trxAccData(void){
         }
     }
     lis3_write(0x20, 0x00);                                     //Off
+    //Normalizing data
+    accel.corrX = (accel.rawX*ACCEL_MAX)/accel.gainX;
+    accel.corrY = (accel.rawY*ACCEL_MAX)/accel.gainY;
+    accel.corrZ = (accel.rawZ*ACCEL_MAX)/accel.gainZ;
+    //Data filtering
+//    accel.corrX = accel.rawX;
+//    accel.corrY = accel.rawY;
+//    accel.corrZ = accel.rawZ;
     //Data proccessed by LPF
     if(lis3AxisCal.calState != ACCEL_CAL_OK){
         lis3AxisCal.calFiltX = lpfx(accel.rawX);
         lis3AxisCal.calFiltY = lpfy(accel.rawY);
         lis3AxisCal.calFiltZ = lpfz(accel.rawZ);
     }
-    //Normalizing data
-    if(accel.rawX >= 0){
-        accel.corrX = (accel.rawX*ACCEL_MAX)/lis3AxisCal.calMaxX;
-    }else{
-        accel.corrX = (accel.rawX*ACCEL_MIN)/lis3AxisCal.calMinX;
-    }
-    if(accel.rawY >= 0){
-        accel.corrY = (accel.rawY*ACCEL_MAX)/lis3AxisCal.calMaxY;
-    }else{
-        accel.corrY = (accel.rawY*ACCEL_MIN)/lis3AxisCal.calMinY;
-    }
-    if(accel.rawZ >= 0){
-        accel.corrZ = (accel.rawZ*ACCEL_MAX)/lis3AxisCal.calMaxZ;
-    }else{
-        accel.corrZ = (accel.rawZ*ACCEL_MIN)/lis3AxisCal.calMinZ;
-    }
-    //Data filtering
-//    accel.corrX = accel.rawX;
-//    accel.corrY = accel.rawY;
-//    accel.corrZ = accel.rawZ;
     //Normalize values
     X = s16fNorm(accel.corrX);
     Y = s16fNorm(accel.corrY);

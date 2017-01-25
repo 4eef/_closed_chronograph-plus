@@ -30,12 +30,9 @@ void lis3init(void){
     lis3_write(0x23, 0x00);                         //All is disabled
     lis3_write(0x24, 0x00);                         //AAF BW 800Hz, 2G, no self-test
     lis3_write(0x25, 0x10);                         //Enable address increment
-    lis3AxisCal.calMaxX = ACCEL_MAX;
-    lis3AxisCal.calMaxY = ACCEL_MAX;
-    lis3AxisCal.calMaxZ = ACCEL_MAX;
-    lis3AxisCal.calMinX = ACCEL_MIN;
-    lis3AxisCal.calMinY = ACCEL_MIN;
-    lis3AxisCal.calMinZ = ACCEL_MIN;
+    accel.gainX = ACCEL_MAX;
+    accel.gainY = ACCEL_MAX;
+    accel.gainZ = ACCEL_MAX;
 }
 
 /*!****************************************************************************
@@ -111,8 +108,28 @@ void accAxisCal(void){
                 lis3AxisCal.calYState = ACCEL_CAL_OK;
                 lis3AxisCal.calZState = ACCEL_CAL_OK;
                 lis3AxisCal.calState = ACCEL_CAL_OK;
-                //Arithmetics there too, bro
                 lis3AxisCal.calTmpMinZ = lis3AxisCal.calFiltZ;
+                //Gain calculation
+                lis3AxisCal.calGainX = (lis3AxisCal.calTmpMaxX-lis3AxisCal.calTmpMinX)/2;
+                lis3AxisCal.calGainY = (lis3AxisCal.calTmpMaxY-lis3AxisCal.calTmpMinY)/2;
+                lis3AxisCal.calGainZ = (lis3AxisCal.calTmpMaxZ-lis3AxisCal.calTmpMinZ)/2;
+                //Offset calculation
+                lis3AxisCal.calOffX = (lis3AxisCal.calTmpMaxX+lis3AxisCal.calTmpMinX)/2;
+                lis3AxisCal.calOffY = (lis3AxisCal.calTmpMaxY+lis3AxisCal.calTmpMinY)/2;
+                lis3AxisCal.calOffZ = (lis3AxisCal.calTmpMaxZ+lis3AxisCal.calTmpMinZ)/2;
+                //Protection
+                if((lis3AxisCal.calOffX < ACCEL_OFF_MIN) || (lis3AxisCal.calOffX > ACCEL_OFF_MAX) ||
+                   (lis3AxisCal.calOffY < ACCEL_OFF_MIN) || (lis3AxisCal.calOffY > ACCEL_OFF_MAX) ||
+                   (lis3AxisCal.calOffZ < ACCEL_OFF_MIN) || (lis3AxisCal.calOffZ > ACCEL_OFF_MAX)){
+                    strcpy(menu.message, "Offset off range");
+                    return;
+                }
+                accel.gainX = lis3AxisCal.calGainX;
+                accel.gainY = lis3AxisCal.calGainY;
+                accel.gainZ = lis3AxisCal.calGainZ;
+                accel.offsetX += lis3AxisCal.calOffX/32;
+                accel.offsetY += lis3AxisCal.calOffY/32;
+                accel.offsetZ += lis3AxisCal.calOffZ/32;
             }else{
                 lis3AxisCal.calZState = ACCEL_CAL_SAVE_HALF;
                 lis3AxisCal.calTmpMaxZ = lis3AxisCal.calFiltZ;
