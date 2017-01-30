@@ -166,8 +166,8 @@ smplcp:	cp	r16,	r18			;Compare, load next if larger
 ;	adc	r23,	r19
 	sts	VELOL,	r20
 	sts	VELOH,	r21
-	sts	SIGNL,	r22
-	sts	SIGNH,	r23
+;	sts	SIGNL,	r22
+;	sts	SIGNH,	r23
 	;Sensor signature
 	clr	r20
 	lds	r19,	CSGNHH
