@@ -54,6 +54,7 @@
 #define CHR_DIST_MIN            100
 #define CHR_DIST_MAX            999
 #define CHR_SPD_MAX             65535
+#define FRACT_NOFRACT           0
 #define FRACT_TENTHS            10
 #define FRACT_HUNDREDTHS        100
 #define STAT_SHOTS_MAX          255

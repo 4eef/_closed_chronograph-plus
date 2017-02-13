@@ -97,12 +97,18 @@ void main(void){
     meas.chron.clipCapacity = PELLETS_MIN;
     meas.chron.sensDist = CHR_DIST_DEFAULT;
     ssdSettings.enable = DISPLAY_ENABLE;
-    kalman.F = 1;
+    kalman.x.F = 0.5;
+    kalman.x.covariance = 0.1;
+    kalman.x.gain = 0.5;
+    kalman.y.F = 0.5;
+    kalman.y.covariance = 0.1;
+    kalman.y.gain = 0.5;
+    kalman.z.F = 0.5;
+    kalman.z.covariance = 0.1;
+    kalman.z.gain = 0.5;
     kalman.H = 1;
-    kalman.R = 15;
     kalman.Q = 2;
-    kalman.State = 0;
-    kalman.Covariance = 0.1;
+    kalman.R = 15;
     //Navigate to an absolute menu item entry
     Menu_Navigate(&display);
     
@@ -386,7 +392,7 @@ void main(void){
             drawMenu();
         }
         //Edit function
-        if(menu.parEdit == PAR_EDIT_ENABLE && menu.parStat != PAR_NONE) parEditRedir();
+        if(menu.parStat != PAR_NONE) parEditRedir();
         if(lis3AxisCal.calState != ACCEL_CAL_OK) accAxisCal();
         //Draw parameter edit box
         if(menu.parEdit == PAR_EDIT_ENABLE){
@@ -473,6 +479,7 @@ void main(void){
 * @retval   
 */
 void parEditRedir(void){
+    menu.parFract = FRACT_NOFRACT;
     if(CurrentMenuItem == &sclipc){                             //Magazine capacity
         menu.parBorderMax = PELLETS_MAX;
         menu.parBorderMin = PELLETS_MIN;
@@ -511,11 +518,9 @@ int16_t parEdit(int16_t param){
         if(menu.parStat == PAR_SAVE){
             retVal = menu.parValue;
             menu.parEdit = PAR_EDIT_DISABLE;
-            menu.parFract = 0;
             return retVal;
         }else if(menu.parStat == PAR_CANCEL){
             menu.parEdit = PAR_EDIT_DISABLE;
-            menu.parFract = 0;
             return retVal;
         }
     }else{
@@ -656,14 +661,14 @@ void trxAccData(void){
     accel.corrY = (accel.rawY*ACCEL_MAX)/accel.gainY;
     accel.corrZ = (accel.rawZ*ACCEL_MAX)/accel.gainZ;
     //Data filtering
-//    accel.corrX = accel.rawX;
-//    accel.corrY = accel.rawY;
-//    accel.corrZ = accel.rawZ;
+    accel.corrX = kalmanAccCorr(&kalman.x, accel.corrX);
+    accel.corrY = kalmanAccCorr(&kalman.y, accel.corrY);
+    accel.corrZ = kalmanAccCorr(&kalman.z, accel.corrZ);
     //Data proccessed by LPF
     if(lis3AxisCal.calState != ACCEL_CAL_OK){
-        lis3AxisCal.calFiltX = lpfx(accel.rawX);
-        lis3AxisCal.calFiltY = lpfy(accel.rawY);
-        lis3AxisCal.calFiltZ = lpfz(accel.rawZ);
+        lis3AxisCal.calFiltX = accel.corrX;
+        lis3AxisCal.calFiltY = accel.corrY;
+        lis3AxisCal.calFiltZ = accel.corrZ;
     }
     //Normalize values
     X = s16fNorm(accel.corrX);
