@@ -45,9 +45,9 @@ MENU_ITEM(mincline,     NULL_MENU,      mchron,         mode,           NULL_MEN
 //Menu/Settings
 MENU_ITEM(sclipc,       schrono,        NULL_MENU,      setts,          NULL_MENU,      NULL,           parEditRedir,   "Clip capacity");
 MENU_ITEM(schrono,      sincline,       sclipc,         setts,          scdist,         NULL,           NULL,           "Chronograph");
-MENU_ITEM(sincline,     ssleep,         schrono,        setts,          sibrdr,         NULL,           NULL,           "Inclinometer");
-MENU_ITEM(ssleep,       swusrc,         sincline,       setts,          NULL_MENU,      NULL,           NULL,           "Sleep & power off");
-MENU_ITEM(swusrc,       NULL_MENU,      ssleep,         setts,          NULL_MENU,      NULL,           NULL,           "Wake-up source");
+MENU_ITEM(sincline,     spoff,          schrono,        setts,          sibrdr,         NULL,           NULL,           "Inclinometer");
+MENU_ITEM(spoff,        swusrc,         sincline,       setts,          NULL_MENU,      NULL,           NULL,           "Power off");
+MENU_ITEM(swusrc,       NULL_MENU,      spoff,          setts,          NULL_MENU,      NULL,           NULL,           "Wake-up source");
 //Menu/Settings/Chronograph
 MENU_ITEM(scdist,       scbind,         NULL_MENU,      schrono,        NULL_MENU,      NULL,           parEditRedir,   "Sensor distance");
 MENU_ITEM(scbind,       NULL_MENU,      scdist,         schrono,        NULL_MENU,      NULL,           parEditRedir,   "Bind");

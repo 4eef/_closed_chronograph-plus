@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR ELF Linker V7.80.2.11947/W32 for ARM                13/Feb/2017  23:41:43
+# IAR ELF Linker V7.80.2.11947/W32 for ARM                16/Feb/2017  17:47:45
 # Copyright 2007-2016 IAR Systems AB.
 #
 #    Output file  =  
@@ -57,7 +57,7 @@ initialize by copy { rw };
   .intvec             ro code  0x08000000    0xc0  startup_stm32f042x6.o [1]
                              - 0x080000c0    0xc0
 
-"P1":                                      0x63ec
+"P1":                                      0x63e4
   .text               ro code  0x080000c0  0x1958  main.o [1]
   .text               ro code  0x08001a18    0x94  clock.o [1]
   .text               ro code  0x08001aac   0x220  gpio.o [1]
@@ -130,59 +130,60 @@ initialize by copy { rw };
   .text               ro code  0x08005ed0    0x3c  zero_init3.o [5]
   .text               ro code  0x08005f0c    0x30  copy_init3.o [5]
   .rodata             const    0x08005f3c    0x2c  main.o [1]
-  .rodata             const    0x08005f68    0x2c  main.o [1]
-  .rodata             const    0x08005f94    0x28  main.o [1]
-  .rodata             const    0x08005fbc    0x28  main.o [1]
-  .rodata             const    0x08005fe4    0x28  main.o [1]
-  .rodata             const    0x0800600c    0x28  main.o [1]
-  .rodata             const    0x08006034    0x28  main.o [1]
-  .rodata             const    0x0800605c    0x28  main.o [1]
-  .rodata             const    0x08006084    0x28  main.o [1]
-  .text               ro code  0x080060ac    0x28  data_init.o [5]
-  .rodata             const    0x080060d4    0x24  main.o [1]
-  .rodata             const    0x080060f8    0x24  main.o [1]
-  .rodata             const    0x0800611c    0x24  main.o [1]
-  .rodata             const    0x08006140    0x24  main.o [1]
-  .rodata             const    0x08006164    0x24  main.o [1]
-  .iar.init_table     const    0x08006188    0x24  - Linker created -
-  .rodata             const    0x080061ac    0x20  main.o [1]
-  .rodata             const    0x080061cc    0x20  main.o [1]
-  .rodata             const    0x080061ec    0x20  main.o [1]
-  .rodata             const    0x0800620c    0x20  main.o [1]
-  .text               ro code  0x0800622c    0x1a  cmain.o [5]
-  .text               ro code  0x08006246     0x4  low_level_init.o [3]
-  .text               ro code  0x0800624a     0x8  exit.o [3]
-  .text               ro code  0x08006252     0x2  startup_stm32f042x6.o [1]
-  .text               ro code  0x08006254     0xa  cexit.o [5]
-  .text               ro code  0x0800625e     0x2  startup_stm32f042x6.o [1]
-  .text               ro code  0x08006260    0x14  exit.o [6]
-  .rodata             const    0x08006274    0x18  main.o [1]
-  .rodata             const    0x0800628c    0x18  MicroMenu.o [1]
-  .rodata             const    0x080062a4    0x14  lis3.o [1]
-  .rodata             const    0x080062b8    0x14  main.o [1]
-  .rodata             const    0x080062cc    0x14  main.o [1]
-  .rodata             const    0x080062e0    0x14  main.o [1]
-  .rodata             const    0x080062f4    0x14  main.o [1]
-  .rodata             const    0x08006308    0x10  main.o [1]
-  .rodata             const    0x08006318    0x10  main.o [1]
-  .rodata             const    0x08006328    0x10  main.o [1]
-  .rodata             const    0x08006338    0x10  main.o [1]
-  .rodata             const    0x08006348    0x10  main.o [1]
-  .rodata             const    0x08006358    0x10  main.o [1]
-  .rodata             const    0x08006368    0x10  main.o [1]
-  .rodata             const    0x08006378    0x10  main.o [1]
-  .rodata             const    0x08006388    0x10  main.o [1]
-  .rodata             const    0x08006398    0x10  main.o [1]
-  .rodata             const    0x080063a8    0x10  ssdGraph.o [1]
-  .rodata             const    0x080063b8    0x10  ssdGraph.o [1]
-  .rodata             const    0x080063c8     0xc  main.o [1]
-  .rodata             const    0x080063d4     0xc  main.o [1]
-  .rodata             const    0x080063e0     0xc  main.o [1]
-  .rodata             const    0x080063ec     0xc  main.o [1]
-  .rodata             const    0x080063f8     0xc  main.o [1]
-  .rodata             const    0x08006404     0xc  main.o [1]
-  .text               ro code  0x08006410     0xc  cstartup_M.o [5]
-  Initializer bytes   const    0x0800641c     0xc  <for P2-1>
+  .rodata             const    0x08005f68    0x28  main.o [1]
+  .rodata             const    0x08005f90    0x28  main.o [1]
+  .rodata             const    0x08005fb8    0x28  main.o [1]
+  .rodata             const    0x08005fe0    0x28  main.o [1]
+  .rodata             const    0x08006008    0x28  main.o [1]
+  .rodata             const    0x08006030    0x28  main.o [1]
+  .rodata             const    0x08006058    0x28  main.o [1]
+  .text               ro code  0x08006080    0x28  data_init.o [5]
+  .rodata             const    0x080060a8    0x24  main.o [1]
+  .rodata             const    0x080060cc    0x24  main.o [1]
+  .rodata             const    0x080060f0    0x24  main.o [1]
+  .rodata             const    0x08006114    0x24  main.o [1]
+  .rodata             const    0x08006138    0x24  main.o [1]
+  .rodata             const    0x0800615c    0x24  main.o [1]
+  .iar.init_table     const    0x08006180    0x24  - Linker created -
+  .rodata             const    0x080061a4    0x20  main.o [1]
+  .rodata             const    0x080061c4    0x20  main.o [1]
+  .rodata             const    0x080061e4    0x20  main.o [1]
+  .rodata             const    0x08006204    0x20  main.o [1]
+  .text               ro code  0x08006224    0x1a  cmain.o [5]
+  .text               ro code  0x0800623e     0x4  low_level_init.o [3]
+  .text               ro code  0x08006242     0x8  exit.o [3]
+  .text               ro code  0x0800624a     0x2  startup_stm32f042x6.o [1]
+  .text               ro code  0x0800624c     0xa  cexit.o [5]
+  .text               ro code  0x08006256     0x2  startup_stm32f042x6.o [1]
+  .text               ro code  0x08006258    0x14  exit.o [6]
+  .rodata             const    0x0800626c    0x18  main.o [1]
+  .rodata             const    0x08006284    0x18  MicroMenu.o [1]
+  .rodata             const    0x0800629c    0x14  lis3.o [1]
+  .rodata             const    0x080062b0    0x14  main.o [1]
+  .rodata             const    0x080062c4    0x14  main.o [1]
+  .rodata             const    0x080062d8    0x14  main.o [1]
+  .rodata             const    0x080062ec    0x14  main.o [1]
+  .rodata             const    0x08006300    0x10  main.o [1]
+  .rodata             const    0x08006310    0x10  main.o [1]
+  .rodata             const    0x08006320    0x10  main.o [1]
+  .rodata             const    0x08006330    0x10  main.o [1]
+  .rodata             const    0x08006340    0x10  main.o [1]
+  .rodata             const    0x08006350    0x10  main.o [1]
+  .rodata             const    0x08006360    0x10  main.o [1]
+  .rodata             const    0x08006370    0x10  main.o [1]
+  .rodata             const    0x08006380    0x10  main.o [1]
+  .rodata             const    0x08006390    0x10  main.o [1]
+  .rodata             const    0x080063a0    0x10  ssdGraph.o [1]
+  .rodata             const    0x080063b0    0x10  ssdGraph.o [1]
+  .rodata             const    0x080063c0     0xc  main.o [1]
+  .rodata             const    0x080063cc     0xc  main.o [1]
+  .rodata             const    0x080063d8     0xc  main.o [1]
+  .rodata             const    0x080063e4     0xc  main.o [1]
+  .rodata             const    0x080063f0     0xc  main.o [1]
+  .rodata             const    0x080063fc     0xc  main.o [1]
+  .text               ro code  0x08006408     0xc  cstartup_M.o [5]
+  Initializer bytes   const    0x08006414     0xc  <for P2-1>
+  .rodata             const    0x08006420     0x8  main.o [1]
   .rodata             const    0x08006428     0x8  main.o [1]
   .rodata             const    0x08006430     0x8  main.o [1]
   .rodata             const    0x08006438     0x8  main.o [1]
@@ -191,11 +192,14 @@ initialize by copy { rw };
   .rodata             const    0x08006450     0x8  main.o [1]
   .rodata             const    0x08006458     0x8  main.o [1]
   .rodata             const    0x08006460     0x8  main.o [1]
-  .rodata             const    0x08006468     0x8  main.o [1]
+  .rodata             const    0x08006468     0x8  ug2864.o [1]
   .rodata             const    0x08006470     0x8  ug2864.o [1]
-  .rodata             const    0x08006478     0x8  ug2864.o [1]
-  .rodata             const    0x08006480     0x8  xprintflarge_nomb.o [3]
-  .rodata             const    0x08006488     0x4  ssdGraph.o [1]
+  .rodata             const    0x08006478     0x8  xprintflarge_nomb.o [3]
+  .rodata             const    0x08006480     0x4  ssdGraph.o [1]
+  .text               ro code  0x08006484     0x2  startup_stm32f042x6.o [1]
+  .text               ro code  0x08006486     0x2  startup_stm32f042x6.o [1]
+  .text               ro code  0x08006488     0x2  startup_stm32f042x6.o [1]
+  .text               ro code  0x0800648a     0x2  startup_stm32f042x6.o [1]
   .text               ro code  0x0800648c     0x2  startup_stm32f042x6.o [1]
   .text               ro code  0x0800648e     0x2  startup_stm32f042x6.o [1]
   .text               ro code  0x08006490     0x2  startup_stm32f042x6.o [1]
@@ -208,13 +212,9 @@ initialize by copy { rw };
   .text               ro code  0x0800649e     0x2  startup_stm32f042x6.o [1]
   .text               ro code  0x080064a0     0x2  startup_stm32f042x6.o [1]
   .text               ro code  0x080064a2     0x2  startup_stm32f042x6.o [1]
-  .text               ro code  0x080064a4     0x2  startup_stm32f042x6.o [1]
-  .text               ro code  0x080064a6     0x2  startup_stm32f042x6.o [1]
-  .text               ro code  0x080064a8     0x2  startup_stm32f042x6.o [1]
-  .text               ro code  0x080064aa     0x2  startup_stm32f042x6.o [1]
-  .rodata             const    0x080064ac     0x0  zero_init3.o [5]
-  .rodata             const    0x080064ac     0x0  copy_init3.o [5]
-                             - 0x080064ac  0x63ec
+  .rodata             const    0x080064a4     0x0  zero_init3.o [5]
+  .rodata             const    0x080064a4     0x0  copy_init3.o [5]
+                             - 0x080064a4  0x63e4
 
 "P2", part 1 of 3:                            0xc
   P2-1                         0x20000000     0xc  <Init block>
@@ -259,7 +259,7 @@ Zero (__iar_zero_init3)
 
 Copy (__iar_copy_init3)
     1 source range, total size 0xc:
-          0x0800641c    0xc
+          0x08006414    0xc
     1 destination range, total size 0xc:
           0x20000000    0xc
 
@@ -281,7 +281,7 @@ C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\De
     gpio.o                     544      196        4
     i2c.o                      986
     lis3.o                     904       20       64
-    main.o                   6 488    1 086      960
+    main.o                   6 488    1 078      960
     ssdFonts.o                        1 920
     ssdGraph.o                           36
     startup_stm32f042x6.o      310
@@ -289,7 +289,7 @@ C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\De
     system_stm32f0xx.o         148
     ug2864.o                 2 652       20    1 032
     ------------------------------------------------
-    Total:                  14 828    3 306    2 518
+    Total:                  14 828    3 298    2 518
 
 command line: [2]
     ------------------------------------------------
@@ -360,7 +360,7 @@ shb_l.a: [6]
 
     Linker created                       36    1 024
 ----------------------------------------------------
-    Grand Total:            22 418    3 354    3 546
+    Grand Total:            22 418    3 346    3 546
 
 
 *******************************************************************************
@@ -369,9 +369,9 @@ shb_l.a: [6]
 
 Entry                      Address   Size  Type      Object
 -----                      -------   ----  ----      ------
-.iar.init_table$$Base   0x08006188          --   Gb  - Linker created -
-.iar.init_table$$Limit  0x080061ac          --   Gb  - Linker created -
-?main                   0x0800622d         Code  Gb  cmain.o [5]
+.iar.init_table$$Base   0x08006180          --   Gb  - Linker created -
+.iar.init_table$$Limit  0x080061a4          --   Gb  - Linker created -
+?main                   0x08006225         Code  Gb  cmain.o [5]
 ADC1_IRQHandler         0x080034db   0x82  Code  Gb  adc.o [1]
 CSTACK$$Base            0x20000010          --   Gb  - Linker created -
 CSTACK$$Limit           0x20000410          --   Gb  - Linker created -
@@ -387,13 +387,13 @@ LoadInt                 0x08004711   0x68  Code  Lc  xprintflarge_nomb.o [3]
 Menu_EnterCurrentItem   0x08003699   0x26  Code  Gb  MicroMenu.o [1]
 Menu_GetCurrentMenu     0x080035d5    0x6  Code  Gb  MicroMenu.o [1]
 Menu_Navigate           0x080035db   0xbe  Code  Gb  MicroMenu.o [1]
-NULL_MENU               0x0800628c   0x18  Data  Gb  MicroMenu.o [1]
+NULL_MENU               0x08006284   0x18  Data  Gb  MicroMenu.o [1]
 NVIC_EnableIRQ          0x080033cd    0xe  Code  Lc  adc.o [1]
 NVIC_EnableIRQ          0x08002e95    0xe  Code  Lc  IR.o [1]
 NVIC_SetPriority        0x080033db   0x84  Code  Lc  adc.o [1]
 NVIC_SetPriority        0x08002ea3   0x84  Code  Lc  IR.o [1]
-Region$$Table$$Base     0x08006188          --   Gb  - Linker created -
-Region$$Table$$Limit    0x080061ac          --   Gb  - Linker created -
+Region$$Table$$Base     0x08006180          --   Gb  - Linker created -
+Region$$Table$$Limit    0x080061a4          --   Gb  - Linker created -
 SystemInit              0x08005e01   0x68  Code  Gb  system_stm32f0xx.o [1]
 TIM2_IRQHandler         0x08003055  0x28a  Code  Gb  IR.o [1]
 _GenldLargeNoMb         0x08004b8d  0x29a  Code  Lc  xprintflarge_nomb.o [3]
@@ -435,8 +435,8 @@ __aeabi_ui2d            0x08003f75         Code  Gb  I32ToDbl.o [4]
 __aeabi_uidiv           0x0800370b         Code  Gb  I32DivModFast.o [5]
 __aeabi_uidivmod        0x0800370b         Code  Gb  I32DivModFast.o [5]
 __aeabi_uldivmod        0x080053f5         Code  Gb  I64DivMod.o [5]
-__cmain                 0x0800622d         Code  Gb  cmain.o [5]
-__exit                  0x08006261   0x14  Code  Gb  exit.o [6]
+__cmain                 0x08006225         Code  Gb  cmain.o [5]
+__exit                  0x08006259   0x14  Code  Gb  exit.o [6]
 __iar_Atan              0x080051e9  0x148  Code  Gb  xatan.o [4]
 __iar_Dtest             0x080051b9   0x30  Code  Gb  xdtest.o [4]
 __iar_Errno             0x20000008    0x4  Data  Gb  errno.o [3]
@@ -446,22 +446,22 @@ __iar_Memset_word       0x080039c1         Code  Gb  ABImemset.o [5]
 __iar_Strchr            0x080053c9   0x14  Code  Gb  strchr.o [5]
 __iar_copy_init3        0x08005f0d   0x30  Code  Gb  copy_init3.o [5]
 __iar_d2uiz             0x08004e89         Code  Gb  DblToI32.o [4]
-__iar_data_init3        0x080060ad   0x28  Code  Gb  data_init.o [5]
+__iar_data_init3        0x08006081   0x28  Code  Gb  data_init.o [5]
 __iar_dlib_perthread_access
                         0x080055bd    0x2  Code  Gb  xtls.o [3]
 __iar_edom              0x080055b1         Code  Gb  iarEdom.o [5]
-__iar_program_start     0x08006411         Code  Gb  cstartup_M.o [5]
+__iar_program_start     0x08006409         Code  Gb  cstartup_M.o [5]
 __iar_sqrt              0x080054dd         Code  Gb  sqrt.o [4]
 __iar_ui2d              0x08003f79         Code  Gb  I32ToDbl.o [4]
 __iar_ui2f              0x080040ad         Code  Gb  I32ToFlt.o [4]
 __iar_zero_init3        0x08005ed1   0x3c  Code  Gb  zero_init3.o [5]
-__low_level_init        0x08006247    0x4  Code  Gb  low_level_init.o [3]
+__low_level_init        0x0800623f    0x4  Code  Gb  low_level_init.o [3]
 __vector_table          0x08000000         Data  Gb  startup_stm32f042x6.o [1]
-_call_main              0x08006239         Code  Gb  cmain.o [5]
-_exit                   0x08006255         Code  Gb  cexit.o [5]
-_main                   0x08006243         Code  Gb  cmain.o [5]
+_call_main              0x08006231         Code  Gb  cmain.o [5]
+_exit                   0x0800624d         Code  Gb  cexit.o [5]
+_main                   0x0800623b         Code  Gb  cmain.o [5]
 a                       0x08005388   0x40  Data  Lc  xatan.o [4]
-about                   0x080061cc   0x20  Data  Gb  main.o [1]
+about                   0x080061c4   0x20  Data  Gb  main.o [1]
 accAxisCal              0x08002c3d  0x22e  Code  Gb  lis3.o [1]
 accel                   0x20000d94   0x1c  Data  Gb  lis3.o [1]
 adcData                 0x20000dc4    0x4  Data  Gb  adc.o [1]
@@ -470,11 +470,11 @@ asin                    0x080050cd   0xec  Code  Gb  asin.o [4]
 atan                    0x08003cdd   0x9c  Code  Gb  atan.o [4]
 buttonCnts              0x20000dcc    0x4  Data  Gb  main.o [1]
 delay_us                0x080040f1   0x60  Code  Gb  delay.o [1]
-display                 0x080061ac   0x20  Data  Gb  main.o [1]
+display                 0x080061a4   0x20  Data  Gb  main.o [1]
 div                     0x080054bd   0x20  Code  Gb  div.o [3]
 drawMainScreen          0x080016cd  0x304  Code  Gb  main.o [1]
 drawMenu                0x080015c5   0xba  Code  Gb  main.o [1]
-exit                    0x0800624b    0x8  Code  Gb  exit.o [3]
+exit                    0x08006243    0x8  Code  Gb  exit.o [3]
 font12x16               0x08005bc0  0x180  Data  Gb  ssdFonts.o [1]
 font6x8                 0x080055c0  0x600  Data  Gb  ssdFonts.o [1]
 getButtonState          0x080011f5  0x1a6  Code  Gb  main.o [1]
@@ -494,14 +494,14 @@ lpf                     0x08003965   0x2e  Code  Gb  filter.o [1]
 lpf::Dacc               0x20000dc8    0x4  Data  Lc  filter.o [1]
 lpf::Dout               0x20000ddc    0x2  Data  Lc  filter.o [1]
 main                    0x080000c1  0xef8  Code  Gb  main.o [1]
-mchron                  0x0800611c   0x24  Data  Gb  main.o [1]
-mcommon                 0x080061ec   0x20  Data  Gb  main.o [1]
+mchron                  0x080060f0   0x24  Data  Gb  main.o [1]
+mcommon                 0x080061e4   0x20  Data  Gb  main.o [1]
 meas                    0x20000814  0x248  Data  Gb  main.o [1]
 menu                    0x20000bc8  0x128  Data  Gb  MicroMenu.o [1]
-menuFolder              0x080063a8   0x10  Data  Gb  ssdGraph.o [1]
-menuScroll              0x08006488    0x4  Data  Gb  ssdGraph.o [1]
-mincline                0x08005fe4   0x28  Data  Gb  main.o [1]
-mode                    0x08005f94   0x28  Data  Gb  main.o [1]
+menuFolder              0x080063a0   0x10  Data  Gb  ssdGraph.o [1]
+menuScroll              0x08006480    0x4  Data  Gb  ssdGraph.o [1]
+mincline                0x08005fb8   0x28  Data  Gb  main.o [1]
+mode                    0x08005f68   0x28  Data  Gb  main.o [1]
 modeEdit                0x08001131   0x72  Code  Gb  main.o [1]
 parEdit                 0x080010d5   0x48  Code  Gb  main.o [1]
 parEditRedir            0x08000ff1   0xd8  Code  Gb  main.o [1]
@@ -509,19 +509,20 @@ pellets                 0x20000a5c  0x16c  Data  Gb  main.o [1]
 pinNum                  0x20000000    0x4  Data  Gb  gpio.o [1]
 pinsMode                0x08005d40   0xc0  Data  Gb  gpio.o [1]
 s16fNorm                0x08001411   0x3c  Code  Gb  main.o [1]
-scbind                  0x0800620c   0x20  Data  Gb  main.o [1]
-scdist                  0x08006084   0x28  Data  Gb  main.o [1]
-schrono                 0x08006140   0x24  Data  Gb  main.o [1]
-sclipc                  0x0800600c   0x28  Data  Gb  main.o [1]
-service                 0x08005fbc   0x28  Data  Gb  main.o [1]
-setts                   0x080060f8   0x24  Data  Gb  main.o [1]
-sibrdr                  0x08005f68   0x2c  Data  Gb  main.o [1]
-sical                   0x08006164   0x24  Data  Gb  main.o [1]
-sincline                0x08006034   0x28  Data  Gb  main.o [1]
+scbind                  0x08006204   0x20  Data  Gb  main.o [1]
+scdist                  0x08006058   0x28  Data  Gb  main.o [1]
+schrono                 0x08006114   0x24  Data  Gb  main.o [1]
+sclipc                  0x08005fe0   0x28  Data  Gb  main.o [1]
+service                 0x08005f90   0x28  Data  Gb  main.o [1]
+setts                   0x080060cc   0x24  Data  Gb  main.o [1]
+sibrdr                  0x08005f3c   0x2c  Data  Gb  main.o [1]
+sical                   0x0800615c   0x24  Data  Gb  main.o [1]
+sincline                0x08006008   0x28  Data  Gb  main.o [1]
+spoff                   0x08006138   0x24  Data  Gb  main.o [1]
 sprintf                 0x0800359d   0x38  Code  Gb  sprintf.o [3]
 sqrt                    0x080054dd         Code  Gb  sqrt.o [4]
 sqrtl                   0x080054dd         Code  Gb  sqrt.o [4]
-ssdBatt                 0x080063b8   0x10  Data  Gb  ssdGraph.o [1]
+ssdBatt                 0x080063b0   0x10  Data  Gb  ssdGraph.o [1]
 ssdSettings             0x20000dd8    0x4  Data  Gb  ug2864.o [1]
 ssdVideoBff             0x20000410  0x404  Data  Gb  ug2864.o [1]
 ssd_putBatt             0x0800266d   0xb0  Code  Gb  ug2864.o [1]
@@ -536,11 +537,10 @@ ssd_putRollBar          0x08002203  0x220  Code  Gb  ug2864.o [1]
 ssd_putString12x16      0x0800281d   0x24  Code  Gb  ug2864.o [1]
 ssd_putString6x8        0x080028a1   0x24  Code  Gb  ug2864.o [1]
 ssd_setpix              0x080028c5   0xc8  Code  Gb  ug2864.o [1]
-ssleep                  0x08005f3c   0x2c  Data  Gb  main.o [1]
-stats                   0x080060d4   0x24  Data  Gb  main.o [1]
+stats                   0x080060a8   0x24  Data  Gb  main.o [1]
 strcpy                  0x0800358d         Code  Gb  strcpy.o [5]
 strlen                  0x08003a05   0x10  Code  Gb  strlen.o [5]
-swusrc                  0x0800605c   0x28  Data  Gb  main.o [1]
+swusrc                  0x08006030   0x28  Data  Gb  main.o [1]
 sync                    0x0800336b   0x3c  Code  Gb  sync.o [1]
 syncInit                0x08003311   0x5a  Code  Gb  sync.o [1]
 sysPars                 0x20000dd4    0x4  Data  Gb  main.o [1]
@@ -559,7 +559,7 @@ ug2864init              0x08002991   0xae  Code  Gb  ug2864.o [1]
 [6] = shb_l.a
 
   22 418 bytes of readonly  code memory
-   3 354 bytes of readonly  data memory
+   3 346 bytes of readonly  data memory
    3 546 bytes of readwrite data memory
 
 Errors: none
