@@ -12,12 +12,15 @@
 * Include
 */
 #include "stm32f0xx.h"
+#include "power.h"
 
 /*!****************************************************************************
 * User define
 */
 #define F_APB1                  48000000
-#define CYC_PERIOD              50000//25000
+#define CYC_PERIOD_US           50000//25000
+#define CYC_POFF_MAX            50
+#define MIN_TO_US               60*1000000
 
 /*!****************************************************************************
 * User enum
@@ -39,6 +42,7 @@
 * Prototypes for the functions
 */
 void syncInit(void);
+void syncDeinit(void);
 uint8_t sync(void);
 
 #endif //sync_H

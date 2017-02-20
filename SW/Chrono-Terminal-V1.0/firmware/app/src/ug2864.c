@@ -351,6 +351,28 @@ void ssd_setpix(uint8_t x, uint8_t y, uint8_t color){   //0 - black, 1 - white, 
 }
 
 /*!****************************************************************************
+* @brief    Set sleep mode
+* @param    
+* @retval   
+*/
+void ug2864off(void){
+    ug2864_com(0xAE);
+    ug2864_com(0x8D);
+    ug2864_com(0x10);
+}
+
+/*!****************************************************************************
+* @brief    Set display ON
+* @param    
+* @retval   
+*/
+void ug2864on(void){
+    ug2864_com(0x8D);
+    ug2864_com(0x14);
+    ug2864_com(0xAF);
+}
+
+/*!****************************************************************************
 * @brief    Initialization routine
 * @param    
 * @retval   
@@ -382,11 +404,8 @@ void ug2864init(void){
     ug2864_com(0x12);
     ug2864_com(0xdb);                           //Set VCOMH
     ug2864_com(0x40);
-//    ug2864_com(0x8d);                           //Set Charge Pump enable
-//    ug2864_com(0x14);                           //0x10 for disable
-//    ug2864_com(0xaf);                           //Turn on oled panel
     ssdVideoBff.data = 0x40;
-//    ug2864_refresh();
+    ug2864_refresh();
 }
 
 /*!****************************************************************************
@@ -408,23 +427,7 @@ void ug2864_com(uint8_t com){
 */
 void ug2864_refresh(void){
     uint8_t sadd = 0x78;
-    if(ssdSettings.status != ssdSettings.enable){
-        if(ssdSettings.enable == DISPLAY_ENABLE){
-            ug2864_com(0x8D);
-            ug2864_com(0x14);
-            ug2864_com(0xAF);
-            ssdSettings.enable = DISPLAY_ENABLE;
-        }else{
-            ug2864_com(0xAE);
-            ug2864_com(0x8D);
-            ug2864_com(0x10);
-            ssdSettings.enable = DISPLAY_DISABLE;
-        }
-        ssdSettings.status = ssdSettings.enable;
-    }
-    if(ssdSettings.status == DISPLAY_ENABLE){
-        while(I2C1->ISR & I2C_ISR_BUSY) __NOP();
-        I2CTx(sadd | 1, &ssdVideoBff.data, 1025);
-    }
+    while(I2C1->ISR & I2C_ISR_BUSY) __NOP();
+    I2CTx(sadd | 1, &ssdVideoBff.data, 1025);
 }
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

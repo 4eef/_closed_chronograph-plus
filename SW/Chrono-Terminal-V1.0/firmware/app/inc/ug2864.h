@@ -80,6 +80,8 @@ typedef struct{
 * Prototypes for the functions
 */
 void ug2864init(void);
+void ug2864off(void);
+void ug2864on(void);
 void ug2864_com(uint8_t com);
 void ug2864_refresh(void);
 void ssd_putChar12x16(uint8_t x, uint8_t y, char c);

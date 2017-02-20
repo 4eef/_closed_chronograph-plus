@@ -60,6 +60,7 @@ void I2CTxInit(uint8_t sadd, uint16_t len);
 uint8_t I2CTx(uint8_t sadd, uint8_t *src, uint16_t len);
 uint8_t I2CTxDma(uint8_t sadd, uint8_t *src, uint16_t len);
 void initI2C1(void);
+void deinitI2C1(void);
 
 #endif //i2c_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

@@ -2338,6 +2338,9 @@
       <name>$PROJ_DIR$\..\app\src\MicroMenu.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\app\src\power.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\app\src\ssdFonts.c</name>
     </file>
     <file>

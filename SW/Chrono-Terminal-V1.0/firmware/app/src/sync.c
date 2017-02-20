@@ -14,6 +14,17 @@
 /*!****************************************************************************
 * MEMORY
 */
+extern power_type           power;
+
+/*!****************************************************************************
+* @brief    Syncronizer deinitialization function
+* @param    
+* @retval   
+*/
+void syncDeinit(void){
+    RCC->APB2RSTR   |= RCC_APB2RSTR_TIM1RST;
+    RCC->APB2ENR    &= ~RCC_APB2ENR_TIM1EN;
+}
 
 /*!****************************************************************************
 * @brief    Initialization function for syncronizer
@@ -25,7 +36,7 @@ void syncInit(void){
     RCC->APB2RSTR   |= RCC_APB2RSTR_TIM1RST;
     RCC->APB2RSTR   &= ~RCC_APB2RSTR_TIM1RST;
     TIM1->PSC       = F_APB1/1000000+1;
-    TIM1->ARR       = CYC_PERIOD;
+    TIM1->ARR       = CYC_PERIOD_US;
 	TIM1->EGR       |= TIM_EGR_UG;
 	TIM1->CR1       |= TIM_CR1_OPM;
 	TIM1->CR1       |= TIM_CR1_CEN;
@@ -38,12 +49,17 @@ void syncInit(void){
 */
 uint8_t sync(void){
     uint8_t retVal;
+    uint16_t tmp;
     if(TIM1->CR1 & TIM_CR1_CEN){
         while(TIM1->CR1 & TIM_CR1_CEN) __NOP();
         retVal = 0;
     }else{
         retVal = 1;
     }
+    power.uptimeCurr++;
+    tmp = (power.uptimeSet*MIN_TO_US)/CYC_PERIOD_US;
+    if((power.uptimeCurr > tmp) && (power.mode == POWER_RUN)) powerOff();
+    else if((power.uptimeCurr > CYC_POFF_MAX) && (power.mode == POWER_STOP)) powerOff();
     TIM1->CR1       |= TIM_CR1_CEN;
     ADC1->CR        |= ADC_CR_ADSTART;
     return retVal;

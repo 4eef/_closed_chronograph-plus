@@ -1,24 +1,32 @@
 /*!****************************************************************************
-* @file    adc.h
+* @file    power.h
 * @author  4eef
 * @version V1.0
-* @date    17.01.2017, 4eef
+* @date    17.02.2017, 4eef
 * @brief   --
 */
-#ifndef adc_H
-#define adc_H
+#ifndef power_H
+#define power_H
 
 /*!****************************************************************************
 * Include
 */
-#include "stm32f0xx.h"
+#include "adc.h"
+#include "IR.h"
+#include "ug2864.h"
+#include "clock.h"
+#include "sync.h"
+#include "lis3.h"
+#include "i2c.h"
 
 /*!****************************************************************************
 * User define
 */
-#define ADC_N_TO_UV             1612
-#define ADC_READY               0
-#define ADC_DATA_READY          1
+#define POWER_STOP              0
+#define POWER_RUN               1
+#define POWER_RUN_MAX           30
+#define POWER_RUN_MIN           1
+#define POWER_RUN_DEFAULT       5
 
 /*!****************************************************************************
 * User enum
@@ -28,9 +36,10 @@
 * User typedef
 */
 typedef struct{
-    uint16_t    adcRawData;
-    uint8_t     adcStat;
-}adcData_type;
+    uint8_t         mode;
+    uint16_t        uptimeCurr;
+    uint16_t        uptimeSet;
+}power_type;
 
 /*!****************************************************************************
 * Extern viriables
@@ -43,10 +52,10 @@ typedef struct{
 /*!****************************************************************************
 * Prototypes for the functions
 */
-void adcInit(void);
-void adcDeinit(void);
-void startConv(void);
-void adcDataConv(void);
+void powerOff(void);
+void powerOn(void);
+void initPeriphs(void);
+void stopModeConfig(void);
 
-#endif //adc_H
+#endif //power_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

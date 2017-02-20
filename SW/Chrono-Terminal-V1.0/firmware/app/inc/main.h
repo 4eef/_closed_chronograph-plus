@@ -14,28 +14,32 @@
 #include "string.h"
 #include "stdio.h"
 #include "stdlib.h"
+#include "math.h"
 #include "clock.h"
 #include "gpio.h"
 #include "i2c.h"
 #include "delay.h"
 #include "ug2864.h"
 #include "lis3.h"
-#include "math.h"
 #include "MicroMenu.h"
 #include "filter.h"
 #include "IR.h"
 #include "adc.h"
 #include "sync.h"
+#include "power.h"
 
 /*!****************************************************************************
 * User define
 */
 #define accSamples              1
 #define degRad                  57.2958f
-#define BUTTON_UP               GP_SW1
-#define BUTTON_DOWN             GP_SW2
-#define BUTTON_OK               GP_SW4
-#define BUTTON_CANCEL           GP_SW3
+#define BUTTON_UP               GP_SW2
+#define BUTTON_DOWN             GP_SW4
+#define BUTTON_OK               GP_SW3
+#define BUTTON_CANCEL           GP_SW1
+#define BUTTON_SHORT            1
+#define BUTTON_LONG             20
+#define BUTTON_MAX              100
 #define MSG_CNT                 30
 #define MSG_CNT_LONG            60
 #define MSG_CNT_BIND            100
@@ -106,7 +110,7 @@ typedef struct{
 typedef struct{
     uint32_t        shotsTotal;
     uint16_t        prefPellet;
-    uint32_t        shotsPPellet;
+    uint32_t        shotsPrefPellet;
     uint16_t        avgRoll;
     uint32_t        uptime;
 }stats_type;

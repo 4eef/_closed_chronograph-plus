@@ -17,6 +17,17 @@
 adcData_type                adcData;
 
 /*!****************************************************************************
+* @brief    ADC deinitialization routine
+* @param    
+* @retval   
+*/
+void adcDeinit(void){
+    RCC->APB2RSTR       |= RCC_APB2RSTR_ADCRST;
+    RCC->APB2ENR        &= ~RCC_APB2ENR_ADCEN;
+    NVIC_DisableIRQ(ADC1_IRQn);
+}
+
+/*!****************************************************************************
 * @brief    ADC initialization routine
 * @param    
 * @retval   

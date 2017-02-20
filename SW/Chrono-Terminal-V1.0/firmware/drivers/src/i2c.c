@@ -16,6 +16,16 @@
 */
 
 /*!****************************************************************************
+* @brief    I2C1 deinitializer
+* @param    
+* @retval   
+*/
+void deinitI2C1(void){
+    RCC->APB1RSTR   |= RCC_APB1RSTR_I2C1RST;
+    RCC->APB1ENR    &= ~RCC_APB1ENR_I2C1EN;
+}
+
+/*!****************************************************************************
 * @brief    I2C1 initializer
 * @param    
 * @retval   

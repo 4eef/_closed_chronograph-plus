@@ -59,7 +59,7 @@ typedef struct{
 * Prototypes for the functions
 */
 void initIRConfig(void);
-//void MX_TIM2_Init(void);
+void deInitIR(void);
 
 #endif //IR_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/
