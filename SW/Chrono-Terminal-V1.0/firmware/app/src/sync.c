@@ -15,6 +15,7 @@
 * MEMORY
 */
 extern power_type           power;
+extern menu_type            menu;
 
 /*!****************************************************************************
 * @brief    Syncronizer deinitialization function
@@ -48,8 +49,8 @@ void syncInit(void){
 * @retval   Returns 1 if cycle is broken; 0 if everything is ok
 */
 uint8_t sync(void){
-    uint8_t retVal;
-    uint16_t tmp;
+    uint8_t retVal, time;
+    uint16_t tmp, diff;
     if(TIM1->CR1 & TIM_CR1_CEN){
         while(TIM1->CR1 & TIM_CR1_CEN) __NOP();
         retVal = 0;
@@ -58,7 +59,12 @@ uint8_t sync(void){
     }
     power.uptimeCurr++;
     tmp = (power.uptimeSet*MIN_TO_US)/CYC_PERIOD_US;
-    if((power.uptimeCurr > tmp) && (power.mode == POWER_RUN)) powerOff();
+    diff = tmp - power.uptimeCurr;
+    if((diff < FIVE_SEC_WARNING) && (diff > 0)){
+        time = 1 + (diff*CYC_PERIOD_US)/S_TO_US;
+        sprintf(menu.message, "Shutdown in %u...", time);
+        menu.msgCnt = MSG_FOR_TIMER;
+    }else if((power.uptimeCurr > tmp) && (power.mode == POWER_RUN)) powerOff();
     else if((power.uptimeCurr > CYC_POFF_MAX) && (power.mode == POWER_STOP)) powerOff();
     TIM1->CR1       |= TIM_CR1_CEN;
     ADC1->CR        |= ADC_CR_ADSTART;

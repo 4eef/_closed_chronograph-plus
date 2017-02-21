@@ -40,9 +40,6 @@
 #define BUTTON_SHORT            1
 #define BUTTON_LONG             20
 #define BUTTON_MAX              100
-#define MSG_CNT                 30
-#define MSG_CNT_LONG            60
-#define MSG_CNT_BIND            100
 #define MODE_COM                0
 #define MODE_CHR                1
 #define MODE_INC                2
