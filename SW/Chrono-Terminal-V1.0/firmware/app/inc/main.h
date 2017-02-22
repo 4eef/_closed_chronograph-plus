@@ -75,6 +75,10 @@
 #define BATT_ADD_PERC_MIN       0
 #define BATT_ADD_PERC_MAX       9
 #define BATT_MSG_PERIOD         2400
+#define BATT_PERC_HYST          3
+#define BATT_PERC_FLAG_NONE     0
+#define BATT_PERC_FLAG_INC      1
+#define BATT_PERC_FLAG_DEC      2
 #define ACC_N_SAMPLES           1
 
 /*!****************************************************************************

@@ -30,31 +30,31 @@ pellets_type                pellets;
 sysPars_type                sysPars;
 
 //Menu implementation
-//        Name          Next            Previous        Parent          Child           SelectFunc      EnterFunc       Text
+//        Name          Next            Previous        Parent          Child           SelectFunc      EnterFunc       Name                    Window title
 //Main screen
-MENU_ITEM(display,      NULL_MENU,      NULL_MENU,      NULL_MENU,      mode,           NULL,           NULL,           "Menu");
+MENU_ITEM(display,      NULL_MENU,      NULL_MENU,      NULL_MENU,      mode,           NULL,           NULL,           "Menu"                  );
 //Menu
-MENU_ITEM(mode,         stats,          NULL_MENU,      display,        mcommon,        NULL,           NULL,           "Main screen");
-MENU_ITEM(stats,        setts,          mode,           display,        NULL_MENU,      NULL,           NULL,           "Statistics");
-MENU_ITEM(setts,        about,          stats,          display,        sclipc,         NULL,           NULL,           "Settings");
-MENU_ITEM(about,        service,        setts,          display,        NULL_MENU,      NULL,           NULL,           "About");
-MENU_ITEM(service,      NULL_MENU,      about,          display,        NULL_MENU,      NULL,           NULL,           "Service info");
+MENU_ITEM(mode,         stats,          NULL_MENU,      display,        mcommon,        NULL,           NULL,           "Main screen"           );
+MENU_ITEM(stats,        setts,          mode,           display,        NULL_MENU,      NULL,           NULL,           "Statistics"            );
+MENU_ITEM(setts,        about,          stats,          display,        sclipc,         NULL,           NULL,           "Settings"              );
+MENU_ITEM(about,        service,        setts,          display,        NULL_MENU,      NULL,           NULL,           "About"                 );
+MENU_ITEM(service,      NULL_MENU,      about,          display,        NULL_MENU,      NULL,           NULL,           "Service info"          );
 //Menu/Display mode
-MENU_ITEM(mcommon,      mchron,         NULL_MENU,      mode,           NULL_MENU,      NULL,           modeEdit,       "Hybrid");
-MENU_ITEM(mchron,       mincline,       mcommon,        mode,           NULL_MENU,      NULL,           modeEdit,       "Chronograph");
-MENU_ITEM(mincline,     NULL_MENU,      mchron,         mode,           NULL_MENU,      NULL,           modeEdit,       "Inclinometer");
+MENU_ITEM(mcommon,      mchron,         NULL_MENU,      mode,           NULL_MENU,      NULL,           modeEdit,       "Hybrid"                );
+MENU_ITEM(mchron,       mincline,       mcommon,        mode,           NULL_MENU,      NULL,           modeEdit,       "Chronograph"           );
+MENU_ITEM(mincline,     NULL_MENU,      mchron,         mode,           NULL_MENU,      NULL,           modeEdit,       "Inclinometer"          );
 //Menu/Settings
-MENU_ITEM(sclipc,       schrono,        NULL_MENU,      setts,          NULL_MENU,      NULL,           parEditRedir,   "Clip capacity");
-MENU_ITEM(schrono,      sincline,       sclipc,         setts,          scdist,         NULL,           NULL,           "Chronograph");
-MENU_ITEM(sincline,     spofft,         schrono,        setts,          sibrdr,         NULL,           NULL,           "Inclinometer");
-MENU_ITEM(spofft,       swusrc,         sincline,       setts,          NULL_MENU,      NULL,           parEditRedir,   "Power off timer");
-MENU_ITEM(swusrc,       NULL_MENU,      spofft,         setts,          NULL_MENU,      NULL,           parEditRedir,   "Wake-up source");
+MENU_ITEM(sclipc,       schrono,        NULL_MENU,      setts,          NULL_MENU,      NULL,           parEditRedir,   "Clip capacity"         );
+MENU_ITEM(schrono,      sincline,       sclipc,         setts,          scdist,         NULL,           NULL,           "Chronograph"           );
+MENU_ITEM(sincline,     spofft,         schrono,        setts,          sibrdr,         NULL,           NULL,           "Inclinometer"          );
+MENU_ITEM(spofft,       swusrc,         sincline,       setts,          NULL_MENU,      NULL,           parEditRedir,   "Power off timer"       );
+MENU_ITEM(swusrc,       NULL_MENU,      spofft,         setts,          NULL_MENU,      NULL,           parEditRedir,   "Wake-up source"        );
 //Menu/Settings/Chronograph
-MENU_ITEM(scdist,       scbind,         NULL_MENU,      schrono,        NULL_MENU,      NULL,           parEditRedir,   "Sensor distance");
-MENU_ITEM(scbind,       NULL_MENU,      scdist,         schrono,        NULL_MENU,      NULL,           parEditRedir,   "Bind");
+MENU_ITEM(scdist,       scbind,         NULL_MENU,      schrono,        NULL_MENU,      NULL,           parEditRedir,   "Sensor distance"       );
+MENU_ITEM(scbind,       NULL_MENU,      scdist,         schrono,        NULL_MENU,      NULL,           parEditRedir,   "Bind"                  );
 //Menu/Settings/Inclinometer
-MENU_ITEM(sibrdr,       sical,          NULL_MENU,      sincline,       NULL_MENU,      NULL,           parEditRedir,   "Roll graph border");
-MENU_ITEM(sical,        NULL_MENU,      sibrdr,         sincline,       NULL_MENU,      NULL,           parEditRedir,   "Calibration");
+MENU_ITEM(sibrdr,       sical,          NULL_MENU,      sincline,       NULL_MENU,      NULL,           parEditRedir,   "Roll graph border"     );
+MENU_ITEM(sical,        NULL_MENU,      sibrdr,         sincline,       NULL_MENU,      NULL,           parEditRedir,   "Calibration"           );
 
 /*!****************************************************************************
 * @brief    Main function
@@ -65,6 +65,7 @@ void main(void){
     uint32_t dist, sgn, spd0, spd1, spd2, spd3, spd4, val1, val2, val3, val4;
     uint16_t battChgArr[BATT_CHG_ARR_PTS], volt;
     uint8_t i, j, offs, len, perc, tmp;
+    static uint8_t percFlag;
     char text[20], par[6], axis1[10], axis2[10], axis3[10], dir[2];
     //Battery discharge graph points
     battChgArr[0] = 4150;
@@ -383,7 +384,18 @@ void main(void){
                         perc += tmp;
                     }
                 }
-                meas.battCharge = perc;
+                //Add hysteresis to indicated percentage
+                if(perc > meas.battCharge){
+                    if((perc > (meas.battCharge + BATT_PERC_HYST)) || (percFlag == BATT_PERC_FLAG_INC)){
+                        percFlag = BATT_PERC_FLAG_INC;
+                        meas.battCharge = perc;
+                    }
+                }else if(perc < meas.battCharge){
+                    if((perc < (meas.battCharge - BATT_PERC_HYST)) || (percFlag == BATT_PERC_FLAG_DEC)){
+                        percFlag = BATT_PERC_FLAG_DEC;
+                        meas.battCharge = perc;
+                    }
+                }
                 if(sysPars.battDplMsgPer != 0){
                     sysPars.battDplMsgPer--;
                 }
