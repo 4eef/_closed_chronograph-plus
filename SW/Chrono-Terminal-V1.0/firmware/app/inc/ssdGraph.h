@@ -11,6 +11,7 @@
 /*!****************************************************************************
 * Include
 */
+#include "stdint.h"
 
 /*!****************************************************************************
 * User define
@@ -30,6 +31,7 @@
 extern const uint8_t ssdBatt[15];
 extern const uint8_t menuFolder[13];
 extern const uint8_t menuScroll[4];
+extern const uint8_t chrgSym[6];
 
 /*!****************************************************************************
 * Macro functions

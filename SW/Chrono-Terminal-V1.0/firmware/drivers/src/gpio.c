@@ -16,7 +16,7 @@
 * MEMORY
 */
 pinMode_type   const pinsMode[] = {
-/*0 */  makepin(GPIOB,  8,  floatingInput,              0,  0),     //ChrgStatus
+/*0 */  makepin(GPIOB,  8,  inputWithPullUp,            0,  0),     //ChrgStatus
 /*1 */  makepin(GPIOF,  0,  alternateFunctionOpenDrain, 1,  1),     //I2C1_SDA
 /*2 */  makepin(GPIOF,  1,  alternateFunctionOpenDrain, 1,  1),     //I2C1_SCL
 /*3 */  makepin(GPIOA,  0,  outPushPull,                0,  0),     //Buzzer

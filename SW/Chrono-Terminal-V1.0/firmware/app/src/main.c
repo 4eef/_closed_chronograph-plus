@@ -402,7 +402,7 @@ void main(void){
             }
             //Refresh video buffer
             memset(ssdVideoBff.video, 0, sizeof(ssdVideoBff.video));
-            ssd_putBatt(meas.battCharge);
+            ssd_putBatt(meas.battCharge, (gppin_get(GP_ChrgStatus)) >> 8);
             //Draw screen
             if(CurrentMenuItem == &display){
                 drawMainScreen();

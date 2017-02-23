@@ -239,7 +239,7 @@ void ssd_putMenuFolder(void){
 * @param    
 * @retval   
 */
-void ssd_putBatt(uint8_t percentage){
+void ssd_putBatt(uint8_t percentage, uint8_t chrgStat){
     uint8_t i, j, x, y, fillBiasX, fillBiasY;
     x = BATT_X;
     y = BATT_Y;
@@ -248,8 +248,8 @@ void ssd_putBatt(uint8_t percentage){
     //Protection
     if(percentage > 100) percentage = 100;
     //Draw empty battery
-    for(i=0; i<15; i++){
-        for (j=0; j<8; j++){
+    for(i = 0; i < sizeof(ssdBatt); i++){
+        for (j = 0; j < 8; j++){
             if(ssdBatt[i] & (1 << j)){
                 ssd_setpix(x+i, y+j, WHITE);
             }else{
@@ -261,6 +261,18 @@ void ssd_putBatt(uint8_t percentage){
     for(i = 0; i < percentage/10; i++){
         for(j = 0; j < BATT_PIXELS; j++){
             ssd_setpix((fillBiasX + i), (fillBiasY + j), WHITE);
+        }
+    }
+    //Put "charge" symbol
+    if(chrgStat == BATT_CHRGING){
+        for(i = 0; i < sizeof(chrgSym); i++){
+            for (j = 0; j < 8; j++){
+                if(chrgSym[i] & (1 << j)){
+                    ssd_setpix(x+i, y+j, WHITE);
+                }else{
+                    ssd_setpix(x+i, y+j, BLACK);
+                }
+            }
         }
     }
 }

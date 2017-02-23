@@ -43,6 +43,8 @@
 #define BATT_PIXELS                     4
 #define BATT_X                          113
 #define BATT_Y                          0
+#define BATT_CHRGING                    0
+#define BATT_CHRG_DONE                  1
 #define MSG_BOX_HEIGHT                  16
 #define PAR_BOX_WIDTH                   111
 #define PAR_BOX_HEIGHT                  47
@@ -89,7 +91,7 @@ void ssd_putString12x16(uint8_t x, uint8_t y, const char *s);
 void ssd_putChar6x8(uint8_t x, uint8_t y, char c);
 void ssd_putString6x8(uint8_t x, uint8_t y, const char *s);
 void ssd_setpix(uint8_t x, uint8_t y, uint8_t color);
-void ssd_putBatt(uint8_t percentage);
+void ssd_putBatt(uint8_t percentage, uint8_t chrgStat);
 void ssd_putPitchBar(float aabs, uint16_t border);
 void ssd_putMenuFolder(void);
 void ssd_putMenuScroll(void);

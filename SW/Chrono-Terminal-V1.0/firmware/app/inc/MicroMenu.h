@@ -29,7 +29,7 @@
 #define PAR_EDIT_ENABLE         1
 #define PAR_UNSIGNED            0
 #define PAR_SIGNED              1
-#define MSG_FOR_TIMER           1
+#define MSG_FOR_TIMER           2
 #define MSG_CNT                 30
 #define MSG_CNT_LONG            60
 #define MSG_CNT_BIND            100
