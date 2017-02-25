@@ -17,6 +17,7 @@
 #include "string.h"
 #include "MicroMenu.h"
 #include "power.h"
+#include "gpio.h"
 
 /*!****************************************************************************
 * User define

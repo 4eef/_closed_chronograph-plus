@@ -46,7 +46,7 @@
 #define INC_BORDER_MIN          1
 #define MAG_DISABLE             0
 #define MAG_ENABLE              1
-#define CHR_DIST_DEFAULT        275
+#define CHR_DIST_DEFAULT        200
 #define CHR_DIST_MPLY           100000
 #define CHR_TCK_NS              125
 #define CHR_DIST_MIN            100

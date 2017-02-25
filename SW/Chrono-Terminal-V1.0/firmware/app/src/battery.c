@@ -28,6 +28,9 @@ void battCalc(void){
     uint16_t volt;
     uint8_t i, j, tmp, perc;
     static uint8_t percFlag;
+    //Charge status
+    meas.battery.battChgStat = !(gppin_get(GP_ChrgStatus) >> 8);
+    //Charge level calculation
     volt = lpf((adcData.adcRawData*ADC_N_TO_UV)/1000);
     meas.battery.battVolt = volt;
     if(volt >= meas.battery.battVltPts[0]){
