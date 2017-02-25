@@ -2320,6 +2320,12 @@
       <name>$PROJ_DIR$\..\app\src\adc.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\app\src\battery.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\app\src\buttons.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\app\src\delay.c</name>
     </file>
     <file>
@@ -2348,6 +2354,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\app\src\sync.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\app\src\system.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\app\src\ug2864.c</name>

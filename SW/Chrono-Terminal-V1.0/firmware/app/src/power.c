@@ -15,6 +15,7 @@
 * MEMORY
 */
 extern ssdSettings_type         ssdSettings;
+extern buttons_type         buttons;
 power_type                      power;
 
 /*!****************************************************************************
@@ -25,11 +26,7 @@ power_type                      power;
 __irq void EXTI4_15_IRQHandler(void){
     if(EXTI->PR & EXTI_PR_PR7){
         EXTI->PR |= EXTI_PR_PR7;
-        //Set the clock source to HSI48
-        RCC->CR2 |= RCC_CR2_HSI48ON;
-        while((RCC->CR2 & RCC_CR2_HSI48RDY) == 0) __NOP();
-        RCC->CFGR |= (3 << RCC_CFGR_SW_Pos);
-        while((RCC->CFGR & RCC_CFGR_SWS >> RCC_CFGR_SWS_Pos) != 3) __NOP();
+        initClocks();
         NVIC_DisableIRQ(EXTI4_15_IRQn);
     }
 }
@@ -63,12 +60,15 @@ void stopModeConfig(void){
 void powerOff(void){
     power.mode = POWER_STOP;
     power.uptimeCurr = 0;
+    buttons.okLck = BUTTON_ENABLE;
+    buttons.clLck = BUTTON_ENABLE;
     ug2864off();
     deInitIR();
     adcDeinit();
     //deinitI2C1();
     stopModeConfig();
     __WFI();
+    adcInit();
 }
 
 /*!****************************************************************************
@@ -80,9 +80,7 @@ void powerOn(void){
     power.mode = POWER_RUN;
     //initI2C1();
     ug2864on();
-    initClocks();
     initIRConfig();
-    adcInit();
 }
 
 /*!****************************************************************************

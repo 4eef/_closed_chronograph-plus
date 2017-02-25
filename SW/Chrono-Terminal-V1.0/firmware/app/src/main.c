@@ -23,11 +23,11 @@ extern adcData_type         adcData;
 extern ssdSettings_type     ssdSettings;
 extern lis3AxisCal_type     lis3AxisCal;
 extern power_type           power;
-buttonCnts_type             buttonCnts;
+extern buttons_type         buttons;
+extern meas_type            meas;
+extern sysPars_type         sysPars;
+extern pellets_type         pellets;
 Menu_Item_t                 *CurrentMenuItem;
-meas_type                   meas;
-pellets_type                pellets;
-sysPars_type                sysPars;
 
 //Menu implementation
 //        Name          Next            Previous        Parent          Child           SelectFunc      EnterFunc       Name                    Window title
@@ -63,25 +63,23 @@ MENU_ITEM(sical,        NULL_MENU,      sibrdr,         sincline,       NULL_MEN
 */
 void main(void){
     uint32_t dist, sgn, spd0, spd1, spd2, spd3, spd4, val1, val2, val3, val4;
-    uint16_t battChgArr[BATT_CHG_ARR_PTS], volt;
-    uint8_t i, j, offs, len, perc, tmp;
-    static uint8_t percFlag;
+    uint8_t i, offs, len;
     char text[20], par[6], axis1[10], axis2[10], axis3[10], dir[2];
-    //Battery discharge graph points
-    battChgArr[0] = 4150;
-    battChgArr[1] = 4050;
-    battChgArr[2] = 3970;
-    battChgArr[3] = 3905;
-    battChgArr[4] = 3865;
-    battChgArr[5] = 3785;
-    battChgArr[6] = 3765;
-    battChgArr[7] = 3750;
-    battChgArr[8] = 3741;
-    battChgArr[9] = 3705;
-    battChgArr[10] = 3595;
+    //Battery discharge graph points (temporary)
+    meas.battery.battVltPts[0] = 4150;
+    meas.battery.battVltPts[1] = 4050;
+    meas.battery.battVltPts[2] = 3970;
+    meas.battery.battVltPts[3] = 3905;
+    meas.battery.battVltPts[4] = 3865;
+    meas.battery.battVltPts[5] = 3785;
+    meas.battery.battVltPts[6] = 3765;
+    meas.battery.battVltPts[7] = 3750;
+    meas.battery.battVltPts[8] = 3741;
+    meas.battery.battVltPts[9] = 3705;
+    meas.battery.battVltPts[10] = 3595;
     //Pellets database primary config
     strcpy(pellets.pelStrings[0], "<unknown pellet>");
-    for(i = 1; i < PELLETS_DB_NUM; i++){
+    for(i = 1; i < PELLET_DB_NUM; i++){
         sprintf(pellets.pelStrings[i], "Default pellet %u", i);
     }
     //Initial parameters
@@ -112,11 +110,17 @@ void main(void){
     while(1){
         //Syncronize cycle
         sync();
+        //Calculate battery parameters
+        if(adcData.adcStat == ADC_DATA_READY){
+            adcData.adcStat = ADC_READY;
+            battCalc();
+            if(meas.battery.battMsgPer != 0) meas.battery.battMsgPer--;
+            if((meas.battery.battMsgPer == 0) && (meas.battery.battVolt <= BATT_VOLT_LOW)) powerOff();
+        }
         CurrentMenuItem = Menu_GetCurrentMenu();
         //MicroMenu navigation
         switch(getButtonState()){
         case UP:
-            power.uptimeCurr = 0;                                               //Reset uptime counter
             if(menu.parEdit == PAR_EDIT_ENABLE){
                 if(menu.parValue >= menu.parBorderMax){
                     menu.parValue = menu.parBorderMin;
@@ -124,17 +128,16 @@ void main(void){
                     menu.parValue++;
                 }
             }else if((pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
-                if(pellets.matchedSgnNum >= PELLETS_DB_NUM-1){
-                    pellets.matchedSgnNum = PELLETS_DB_NULL;
+                if(pellets.matchedSgnNum >= PELLET_DB_NUM-1){
+                    pellets.matchedSgnNum = PELLET_DB_NULL;
                 }else{
                     pellets.matchedSgnNum++;
                 }
-            }else{
+            }else if(power.mode == POWER_RUN){
                 Menu_Navigate(MENU_PREVIOUS);
             }
             break;
         case DOWN:
-            power.uptimeCurr = 0;
             if(menu.parEdit == PAR_EDIT_ENABLE){
                 if(menu.parValue <= menu.parBorderMin){
                     menu.parValue = menu.parBorderMax;
@@ -142,17 +145,16 @@ void main(void){
                     menu.parValue--;
                 }
             }else if((pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
-                if(pellets.matchedSgnNum <= PELLETS_DB_NULL){
-                    pellets.matchedSgnNum = PELLETS_DB_NUM-1;
+                if(pellets.matchedSgnNum <= PELLET_DB_NULL){
+                    pellets.matchedSgnNum = PELLET_DB_NUM-1;
                 }else{
                     pellets.matchedSgnNum--;
                 }
-            }else{
+            }else if(power.mode == POWER_RUN){
                 Menu_Navigate(MENU_NEXT);
             }
             break;
         case OK:
-            power.uptimeCurr = 0;
             if((menu.parEdit == PAR_EDIT_ENABLE) || (pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
                 strcpy(menu.message, "Saved");
                 menu.msgCnt = MSG_CNT;
@@ -167,7 +169,7 @@ void main(void){
                     meas.chron.pellet = pellets.matchedSgnNum;
                     pellets.pelStat = PELLET_OK;
                 }
-            }else{
+            }else if(power.mode == POWER_RUN){
                 if((MENU_CHILD == &NULL_MENU) || (MENU_CHILD == NULL)){
                     Menu_EnterCurrentItem();
                 }else{
@@ -175,8 +177,9 @@ void main(void){
                 }
             }
             break;
+        case OKLNG:
+            break;
         case CANCEL:
-            power.uptimeCurr = 0;
             if((menu.parEdit == PAR_EDIT_ENABLE) || (pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
                 sysPars.sysSettings.chrBind = 0;
                 strcpy(menu.message, "Cancelled");
@@ -192,13 +195,12 @@ void main(void){
                     pellets.matchedSgnNum = 0;
                     pellets.pelStat = PELLET_OK;
                 }
-            }else{
+            }else if(power.mode == POWER_RUN){
                 Menu_Navigate(MENU_PARENT);
             }
             break;
-        case HOME:
-            power.uptimeCurr = 0;
-            if(CurrentMenuItem == &display){
+        case CLLNG:
+            if((CurrentMenuItem == &display) && (power.mode == POWER_RUN)){
                 if((sysPars.sysSettings.clipEn != 0) && (meas.chron.clipCurrent != meas.chron.clipCapacity)){
                     meas.chron.clipCurrent = meas.chron.clipCapacity;
                     strcpy(menu.message, "Clip reloaded");
@@ -210,12 +212,14 @@ void main(void){
                     meas.chron.statMean = 0;
                     strcpy(menu.message, "Stats cleared");
                     menu.msgCnt = MSG_CNT;
-                }else if(power.mode == POWER_STOP){
-                    powerOn();
-                }else if(power.mode == POWER_RUN){
+                }else{
                     powerOff();
                 }
-            }else if(menu.parEdit == PAR_EDIT_DISABLE) Menu_Navigate(&display);
+            }else if(power.mode == POWER_STOP){
+                powerOn();
+            }else if(menu.parEdit == PAR_EDIT_DISABLE){
+                Menu_Navigate(&display);
+            }
             break;
         default:
             menu.parStat = PAR_NONE;
@@ -289,7 +293,7 @@ void main(void){
                                 pellets.matchedSgnNum = 0;
                                 val3 = pellets.newSgn-pellets.newSgn/PELLET_SGN_TOLERANCE;
                                 val4 = pellets.newSgn+pellets.newSgn/PELLET_SGN_TOLERANCE;
-                                for(i = 1; i < PELLETS_DB_NUM; i++){
+                                for(i = 1; i < PELLET_DB_NUM; i++){
                                     if(pellets.pelSgntrs[i] >= val3 && pellets.pelSgntrs[i] <= val4){
                                         pellets.matchedSgnNum = i;
                                         pellets.pelStat = PELLET_CONFIRM;
@@ -355,54 +359,9 @@ void main(void){
             }
             //Perform data transmition with accelerometer
             trxAccData();
-            //Calculate battery charge level
-            if(adcData.adcStat == ADC_DATA_READY){
-                adcData.adcStat = ADC_READY;
-                volt = lpf((adcData.adcRawData*ADC_N_TO_UV)/1000);
-                meas.battVolt = volt;
-                if(volt >= battChgArr[0]){
-                    perc = 100;
-                }else if(volt <= battChgArr[BATT_CHG_ARR_PTS-1]){
-                    perc = 0;
-                    //Put message
-                    if(sysPars.battDplMsgPer == 0){
-                        strcpy(menu.message, "Battery depleted");
-                        menu.msgCnt = MSG_CNT_LONG;
-                        sysPars.battDplMsgPer = BATT_MSG_PERIOD;
-                    }
-                }else{
-                    for(i = BATT_CHG_ARR_PTS-1; i > 0; i--){
-                        if(volt >= battChgArr[i]){
-                            perc = 100-i*10;
-                            j = i;
-                        }
-                    }
-                    tmp = battChgArr[j-1] - battChgArr[j];
-                    volt -= battChgArr[j];
-                    tmp = (volt*BATT_CHG_VMPLY_COEFF)/tmp;
-                    if((tmp > BATT_ADD_PERC_MIN) && (tmp <= BATT_ADD_PERC_MAX)){
-                        perc += tmp;
-                    }
-                }
-                //Add hysteresis to indicated percentage
-                if(perc > meas.battCharge){
-                    if((perc > (meas.battCharge + BATT_PERC_HYST)) || (percFlag == BATT_PERC_FLAG_INC)){
-                        percFlag = BATT_PERC_FLAG_INC;
-                        meas.battCharge = perc;
-                    }
-                }else if(perc < meas.battCharge){
-                    if((perc < (meas.battCharge - BATT_PERC_HYST)) || (percFlag == BATT_PERC_FLAG_DEC)){
-                        percFlag = BATT_PERC_FLAG_DEC;
-                        meas.battCharge = perc;
-                    }
-                }
-                if(sysPars.battDplMsgPer != 0){
-                    sysPars.battDplMsgPer--;
-                }
-            }
             //Refresh video buffer
             memset(ssdVideoBff.video, 0, sizeof(ssdVideoBff.video));
-            ssd_putBatt(meas.battCharge, (gppin_get(GP_ChrgStatus)) >> 8);
+            ssd_putBatt(meas.battery.battCharge, meas.battery.battChgStat);
             //Draw screen
             if(CurrentMenuItem == &display){
                 drawMainScreen();
@@ -527,6 +486,7 @@ void parEditRedir(void){
         menu.parBorderMax = POWER_RUN_MAX;
         menu.parBorderMin = POWER_RUN_MIN;
         power.uptimeSet = parEdit(power.uptimeSet);
+        power.uptimeCurr = 0;
     }
 }
 
@@ -566,54 +526,6 @@ void modeEdit(void){
     menu.msgCnt = MSG_CNT;
     if(CurrentMenuItem->Parent == &mode) Menu_Navigate(&display);
 }
-
-/*!****************************************************************************
-* @brief    Get button state routine (revise: use timer to eliminate bounce)
-* @param    
-* @retval   enum button value
-*/
-enum buttonValues getButtonState(void){
-    enum buttonValues retVal;
-    retVal = NONE;                                                              //Default value
-    //Sense the buttons
-    if((gppin_get(BUTTON_UP) == 0) && (buttonCnts.cntUp <= BUTTON_MAX)) buttonCnts.cntUp++;
-    if((gppin_get(BUTTON_DOWN) == 0) && (buttonCnts.cntDn <= BUTTON_MAX)) buttonCnts.cntDn++;
-    if((gppin_get(BUTTON_OK) == 0) && (buttonCnts.cntOK <= BUTTON_MAX)) buttonCnts.cntOK++;
-    if((gppin_get(BUTTON_CANCEL) == 0) && (buttonCnts.cntCl <= BUTTON_MAX)) buttonCnts.cntCl++;
-    //Anti-bounce protection
-    if((gppin_get(BUTTON_UP) != 0) && (buttonCnts.cntUp >= BUTTON_SHORT) && (power.mode == POWER_RUN)){
-        retVal = UP;
-        buttonCnts.cntUp = 0;
-        buttonCnts.cntDn = 0;
-        buttonCnts.cntOK = 0;
-        buttonCnts.cntCl = 0;
-    }else if((gppin_get(BUTTON_DOWN) != 0) && (buttonCnts.cntDn >= BUTTON_SHORT) && (power.mode == POWER_RUN)){
-        retVal = DOWN;
-        buttonCnts.cntUp = 0;
-        buttonCnts.cntDn = 0;
-        buttonCnts.cntOK = 0;
-        buttonCnts.cntCl = 0;
-    }else if((gppin_get(BUTTON_OK) != 0) && (buttonCnts.cntOK >= BUTTON_SHORT) && (power.mode == POWER_RUN)){
-        retVal = OK;
-        buttonCnts.cntUp = 0;
-        buttonCnts.cntDn = 0;
-        buttonCnts.cntOK = 0;
-        buttonCnts.cntCl = 0;
-    }else if((gppin_get(BUTTON_CANCEL) != 0) && (buttonCnts.cntCl >= BUTTON_SHORT) && (buttonCnts.cntCl < BUTTON_LONG) && (power.mode == POWER_RUN)){
-        retVal = CANCEL;
-        buttonCnts.cntUp = 0;
-        buttonCnts.cntDn = 0;
-        buttonCnts.cntOK = 0;
-        buttonCnts.cntCl = 0;
-    }else if((gppin_get(BUTTON_CANCEL) == 0) && (buttonCnts.cntCl >= BUTTON_LONG)){//Button is hold
-        retVal = HOME;
-        buttonCnts.cntUp = 0;
-        buttonCnts.cntDn = 0;
-        buttonCnts.cntOK = 0;
-        buttonCnts.cntCl = 0;
-    }
-    return retVal;
-};
 
 /*!****************************************************************************
 * @brief    Tilt angle calculation routine

@@ -14,6 +14,7 @@
 #include "stm32f0xx.h"
 #include "power.h"
 #include "MicroMenu.h"
+#include "system.h"
 
 /*!****************************************************************************
 * User define
@@ -46,7 +47,7 @@
 */
 void syncInit(void);
 void syncDeinit(void);
-uint8_t sync(void);
+void sync(void);
 
 #endif //sync_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

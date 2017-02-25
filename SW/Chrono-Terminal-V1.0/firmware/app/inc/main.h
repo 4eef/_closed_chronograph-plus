@@ -11,6 +11,7 @@
 /*!****************************************************************************
 * Include
 */
+#include "stm32f0xx.h"
 #include "string.h"
 #include "stdio.h"
 #include "stdlib.h"
@@ -27,19 +28,15 @@
 #include "adc.h"
 #include "sync.h"
 #include "power.h"
+#include "buttons.h"
+#include "battery.h"
+#include "system.h"
 
 /*!****************************************************************************
 * User define
 */
 #define accSamples              1
 #define degRad                  57.2958f
-#define BUTTON_UP               GP_SW2
-#define BUTTON_DOWN             GP_SW4
-#define BUTTON_OK               GP_SW3
-#define BUTTON_CANCEL           GP_SW1
-#define BUTTON_SHORT            1
-#define BUTTON_LONG             20
-#define BUTTON_MAX              100
 #define MODE_COM                0
 #define MODE_CHR                1
 #define MODE_INC                2
@@ -58,114 +55,15 @@
 #define FRACT_NOFRACT           0
 #define FRACT_TENTHS            10
 #define FRACT_HUNDREDTHS        100
-#define STAT_SHOTS_MAX          255
-#define STAT_ENERGY_DIV_COEFF   10000
-#define PELLETS_DB_NULL         1
-#define PELLETS_DB_NUM          16
-#define PELLET_SGN_TOLERANCE    10
-#define PELLET_CHANGE_THR       5
-#define PELLET_NEW_SGN_THR      10
-#define PELLET_NEW_SGN_BOUND    PELLET_NEW_SGN_THR*1.5
-#define PELLET_OK               0
-#define PELLET_CONFIRM          1
-#define PELLET_NEW              2
-#define PELLET_ERR_NEW          3
-#define BATT_CHG_ARR_PTS        11
-#define BATT_CHG_VMPLY_COEFF    10
-#define BATT_ADD_PERC_MIN       0
-#define BATT_ADD_PERC_MAX       9
-#define BATT_MSG_PERIOD         2400
-#define BATT_PERC_HYST          3
-#define BATT_PERC_FLAG_NONE     0
-#define BATT_PERC_FLAG_INC      1
-#define BATT_PERC_FLAG_DEC      2
 #define ACC_N_SAMPLES           1
 
 /*!****************************************************************************
 * User enum
 */
-enum buttonValues{
-    NONE = 1,
-    UP,
-    DOWN,
-    OK,
-    CANCEL,
-    HOME,
-};
 
 /*!****************************************************************************
 * User typedef
 */
-typedef struct{
-    char            pelStrings[PELLETS_DB_NUM][18];
-    uint16_t        pelWghts[PELLETS_DB_NUM];
-    uint16_t        pelSgntrs[PELLETS_DB_NUM];
-    uint8_t         matchedSgnNum;
-    uint16_t        newSgn;
-    uint32_t        newSgnSum;
-    uint8_t         newSgnCnt;
-    uint8_t         newSgnErrCnt;
-    uint8_t         pelStat;
-}pellets_type;
-
-typedef struct{
-    uint32_t        shotsTotal;
-    uint16_t        prefPellet;
-    uint32_t        shotsPrefPellet;
-    uint16_t        avgRoll;
-    uint32_t        uptime;
-}stats_type;
-
-typedef struct{
-    uint8_t         __reserv        :4;
-    uint8_t         chrBind         :1;
-    uint8_t         dispMode        :2;
-    uint8_t         clipEn          :1;
-}sysStngs_type;
-
-typedef struct{
-    uint16_t        pellet;
-    uint8_t         clipCurrent;
-    uint8_t         clipCapacity;
-    uint16_t        speed0;
-    uint16_t        speed1;
-    uint16_t        speed2;
-    uint16_t        speed3;
-    uint16_t        speed4;
-    uint16_t        pelSgntr;
-    uint32_t        chrSgntr;
-    uint16_t        sensDist;
-    uint16_t        statSpeeds[STAT_SHOTS_MAX];
-    uint32_t        statSpeedsSum;
-    uint32_t        statDevsSum;
-    uint16_t        statShots;
-    uint16_t        statEnergy;
-    uint16_t        statMean;
-    uint16_t        statSdev;
-}chron_type;
-
-typedef struct{
-    uint8_t         battCharge;
-    uint16_t        battVolt;
-    chron_type      chron;
-    stats_type      stats;
-    float           accRoll;
-    float           accPitch;
-    uint16_t        accRollBorder;
-    uint16_t        accPitchBorder;
-}meas_type;
-
-typedef struct{
-    uint8_t         cntUp;
-    uint8_t         cntDn;
-    uint8_t         cntOK;
-    uint8_t         cntCl;
-}buttonCnts_type;
-
-typedef struct{
-    uint16_t        battDplMsgPer;
-    sysStngs_type   sysSettings;
-}sysPars_type;
 
 /*!****************************************************************************
 * Extern viriables
@@ -185,7 +83,6 @@ void trxAccData(void);
 float s16fNorm(int16_t val);
 float tiltAngCalc(float A, float B, float C);
 void drawMainScreen(void);
-enum buttonValues getButtonState(void);
 void drawMenu(void);
 void parEditRedir(void);
 int16_t parEdit(int16_t param);

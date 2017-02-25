@@ -16,6 +16,7 @@
 */
 extern power_type           power;
 extern menu_type            menu;
+extern meas_type            meas;
 
 /*!****************************************************************************
 * @brief    Syncronizer deinitialization function
@@ -48,16 +49,16 @@ void syncInit(void){
 * @param    
 * @retval   Returns 1 if cycle is broken; 0 if everything is ok
 */
-uint8_t sync(void){
-    uint8_t retVal, time;
+void sync(void){
+    uint8_t time;
     uint16_t tmp, diff;
     if(TIM1->CR1 & TIM_CR1_CEN){
         while(TIM1->CR1 & TIM_CR1_CEN) __NOP();
-        retVal = 0;
     }else{
-        retVal = 1;
+        meas.stats.cycBroken++;
     }
     power.uptimeCurr++;
+    meas.stats.cycTotal++;
     tmp = (power.uptimeSet*MIN_TO_US)/CYC_PERIOD_US;
     diff = tmp - power.uptimeCurr;
     if((diff < FIVE_SEC_WARNING) && (diff > 0)){
@@ -68,7 +69,6 @@ uint8_t sync(void){
     else if((power.uptimeCurr > CYC_POFF_MAX) && (power.mode == POWER_STOP)) powerOff();
     TIM1->CR1       |= TIM_CR1_CEN;
     ADC1->CR        |= ADC_CR_ADSTART;
-    return retVal;
 }
 
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

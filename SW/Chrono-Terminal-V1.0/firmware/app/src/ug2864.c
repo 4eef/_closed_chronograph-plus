@@ -264,7 +264,7 @@ void ssd_putBatt(uint8_t percentage, uint8_t chrgStat){
         }
     }
     //Put "charge" symbol
-    if(chrgStat == BATT_CHRGING){
+    if(chrgStat != 0){
         for(i = 0; i < sizeof(chrgSym); i++){
             for (j = 0; j < 8; j++){
                 if(chrgSym[i] & (1 << j)){
