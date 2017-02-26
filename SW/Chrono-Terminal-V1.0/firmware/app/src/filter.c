@@ -15,28 +15,59 @@
 * MEMORY
 */
 kalman_type                 kalman;
+lpfPrim_type                lpfPrim;
+
+/*!****************************************************************************
+* @brief    Primary filter for accelerometer RAW data
+* @param    
+* @retval   
+*/
+int16_t lpfAccPrim(lpfAxs_type *axis, int16_t raw){
+    axis->L1 -= (axis->C1 - raw) / K_ACC + axis->L1 / R_ACC;                    //10-th ordered RLC-filter
+    axis->C1 += axis->L1 / K_ACC;
+    axis->L2 -= (axis->C2 - axis->C1) / K_ACC + axis->L2 / R_ACC;
+    axis->C2 += axis->L2 / K_ACC;
+    axis->L3 -= (axis->C3 - axis->C2) / K_ACC + axis->L3 / R_ACC;
+    axis->C3 += axis->L3 / K_ACC;
+    axis->L4 -= (axis->C4 - axis->C3) / K_ACC + axis->L4 / R_ACC;
+    axis->C4 += axis->L4 / K_ACC;
+    axis->L5 -= (axis->C5 - axis->C4) / K_ACC + axis->L5 / R_ACC;
+    axis->C5 += axis->L5 / K_ACC;                                               //Output
+    return axis->C5;
+}
 
 /*!****************************************************************************
 * @brief    Kalman filter for single accelerometer axis
 * @param    
-* @retval   Accelerometer axis value
+* @retval   Filtered accelerometer axis value
 */
 int16_t kalmanAccCorr(kAxis_type *axis, int16_t raw){
-    int16_t val;
-    double spd;
+    int32_t i, val[KALMAN_N_VALS], sum, acc, preVal;
+    double sumNorm, F, gain, H, P;
     //Prediction stage
-    axis->preVal = (int16_t)(axis->F*axis->val);
-    axis->P = axis->F*axis->covariance*axis->F + kalman.Q;
+    F = axis->F;
+    H = kalman.H;
+    for(i = 0; i < KALMAN_N_VALS - 1; i++){                                     //Copy previous values
+        val[i + 1] = axis->val[i];
+    }
+    preVal = (int16_t)(F * val[1]);
+    axis->preVal = preVal;
+    axis->P = F * axis->covariance * F + kalman.Q;
+    P = axis->P;
     //Update stage
-    axis->gain = kalman.H*axis->P/(kalman.H*axis->P*kalman.H + kalman.R);
-    val = ((int16_t)(axis->preVal + axis->gain*(raw - kalman.H*axis->preVal)));
-    axis->covariance = (1 - axis->gain*kalman.H)*axis->P;
-    //Calculate value changing speed
-    spd = ((double)(val - axis->val))/ACC_MAX;
-    if(spd <= 1 && spd >= -1) axis->F = 1 + asin(spd)/RADIAN;
-    axis->val = val;
-    if(isnan(axis->covariance)) axis->covariance = 0;//Reset
-    return val;
+    axis->gain = H * P/(H * P * H + kalman.R);
+    gain = axis->gain;
+    val[0] = ((int16_t)(preVal + gain * (raw - H * preVal)));
+    memcpy(axis->val, val, KALMAN_N_VALS);
+    axis->covariance = (1 - gain * H) * P;
+    //Calculate value acceleration and speed
+    acc = val[0] - 2 * val[1] + val[2];
+    sum = axis->V + acc;
+    axis->V = sum;
+    sumNorm = sum / ACC_MAX;
+    if(sumNorm <= 1 && sumNorm >= -1) axis->F = 1 + asin(sumNorm) / RADIAN;
+    if(isnan(axis->covariance)) axis->covariance = 0;                           //Protection
+    return val[0];
 }
 
 /*!****************************************************************************

@@ -18,6 +18,7 @@ extern ssdVideoBff_type     ssdVideoBff;
 extern accel_type           accel;
 extern menu_type            menu;
 extern kalman_type          kalman;
+extern lpfPrim_type         lpfPrim;
 extern IRRXData_type        IRRXData;
 extern adcData_type         adcData;
 extern ssdSettings_type     ssdSettings;
@@ -583,19 +584,22 @@ void trxAccData(void){
         reg = lis3_read(0x27);                                                  //Check if data is ready
         if((reg & 0x3) != 0){
             lis3_getXYZ();                                                      //Get sampled data
+            accel.rawX |= (int16_t)(accel.rawXL | (accel.rawXH<<8));
+            accel.rawY |= (int16_t)(accel.rawYL | (accel.rawYH<<8));
+            accel.rawZ |= (int16_t)(accel.rawZL | (accel.rawZH<<8));
             tmp--;
         }
     }
     lis3_write(0x20, 0x00);                                                     //Off
-    //Normalizing data
-    accel.corrX = (accel.rawX*ACCEL_MAX)/accel.gainX;
-    accel.corrY = (accel.rawY*ACCEL_MAX)/accel.gainY;
-    accel.corrZ = (accel.rawZ*ACCEL_MAX)/accel.gainZ;
+    //Primary data processing
+    accel.corrX = (accel.rawX*ACCEL_MAX)/accel.gainX;//lpfAccPrim(&lpfPrim.x, 
+    accel.corrY = (accel.rawY*ACCEL_MAX)/accel.gainY;//lpfAccPrim(&lpfPrim.y, 
+    accel.corrZ = (accel.rawZ*ACCEL_MAX)/accel.gainZ;//lpfAccPrim(&lpfPrim.z, 
     //Data filtering
     accel.corrX = kalmanAccCorr(&kalman.x, accel.corrX);
     accel.corrY = kalmanAccCorr(&kalman.y, accel.corrY);
     accel.corrZ = kalmanAccCorr(&kalman.z, accel.corrZ);
-    //Data proccessed by LPF
+    //Copy data
     if(lis3AxisCal.calState != ACCEL_CAL_OK){
         lis3AxisCal.calFiltX = accel.corrX;
         lis3AxisCal.calFiltY = accel.corrY;

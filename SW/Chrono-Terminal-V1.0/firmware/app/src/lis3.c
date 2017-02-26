@@ -71,9 +71,6 @@ void lis3_getXYZ(void){
     I2CTx(sadd, &reg, 1);
     while(I2C1->ISR & I2C_ISR_BUSY) __NOP();
     I2CRx(sadd | 1, &accel.rawXL, 6);
-    accel.rawX |= (int16_t)(accel.rawXL | (accel.rawXH<<8));
-    accel.rawY |= (int16_t)(accel.rawYL | (accel.rawYH<<8));
-    accel.rawZ |= (int16_t)(accel.rawZL | (accel.rawZH<<8));
 }
 
 /*!****************************************************************************
