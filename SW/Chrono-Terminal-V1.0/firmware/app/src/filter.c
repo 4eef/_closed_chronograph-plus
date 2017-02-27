@@ -72,7 +72,7 @@ int16_t kalmanAccCorr(kAxis_type *axis, int16_t raw){
     acc = val[0] - 2 * val[1] + val[2];
     sum = axis->V + acc;
     axis->V = sum;
-    sumNorm = sum / ACC_MAX;
+    sumNorm = (double)sum / ACC_MAX;
     if(sumNorm <= 1 && sumNorm >= -1) axis->F = 1 + asin(sumNorm) / RADIAN;
     if(isnan(axis->covariance)) axis->covariance = 0;                           //Protection
     return val[0];
