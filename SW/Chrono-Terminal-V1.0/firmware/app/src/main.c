@@ -107,6 +107,8 @@ void main(void){
     //Initialize hardware
     initPeriphs();
     powerOff();
+//    adcInit();
+//    powerOn();
     
     while(1){
         //Syncronize cycle
@@ -569,7 +571,7 @@ float s16fNorm(int16_t val){
 */
 void trxAccData(void){
     float X, Y, Z;
-    uint8_t reg, tmp, numSamples = ACC_N_SAMPLES;
+    uint8_t reg, numSamples = ACCEL_N_SAMPLES;
     accel.rawX = 0;
     accel.rawY = 0;
     accel.rawZ = 0;
@@ -577,24 +579,23 @@ void trxAccData(void){
     lis3_write(0x10, accel.offsetX);                                            //Offsets
     lis3_write(0x11, accel.offsetY);
     lis3_write(0x12, accel.offsetZ);
-    lis3_write(0x20, 0x87);                                                     //800 Hz sample rate
+    lis3_write(0x20, 0x97);                                                     //1600 Hz sample rate
     //Get the samples
-    tmp = numSamples;
-    while(tmp != 0){
+    while(numSamples != 0){
         reg = lis3_read(0x27);                                                  //Check if data is ready
         if((reg & 0x3) != 0){
             lis3_getXYZ();                                                      //Get sampled data
-            accel.rawX |= (int16_t)(accel.rawXL | (accel.rawXH<<8));
-            accel.rawY |= (int16_t)(accel.rawYL | (accel.rawYH<<8));
-            accel.rawZ |= (int16_t)(accel.rawZL | (accel.rawZH<<8));
-            tmp--;
+            accel.corrX = lpfAccPrim(&lpfPrim.x, ((int16_t)(accel.rawXL | (accel.rawXH << 8))));
+            accel.corrY = lpfAccPrim(&lpfPrim.y, ((int16_t)(accel.rawYL | (accel.rawYH << 8))));
+            accel.corrZ = lpfAccPrim(&lpfPrim.z, ((int16_t)(accel.rawZL | (accel.rawZH << 8))));
+            numSamples--;
         }
     }
     lis3_write(0x20, 0x00);                                                     //Off
     //Primary data processing
-    accel.corrX = (accel.rawX*ACCEL_MAX)/accel.gainX;//lpfAccPrim(&lpfPrim.x, 
-    accel.corrY = (accel.rawY*ACCEL_MAX)/accel.gainY;//lpfAccPrim(&lpfPrim.y, 
-    accel.corrZ = (accel.rawZ*ACCEL_MAX)/accel.gainZ;//lpfAccPrim(&lpfPrim.z, 
+    accel.corrX = (lpfAccPrim(&lpfPrim.x, accel.rawX)*ACCEL_MAX)/accel.gainX;//
+    accel.corrY = (lpfAccPrim(&lpfPrim.y, accel.rawY)*ACCEL_MAX)/accel.gainY;//
+    accel.corrZ = (lpfAccPrim(&lpfPrim.z, accel.rawZ)*ACCEL_MAX)/accel.gainZ;//
     //Data filtering
     accel.corrX = kalmanAccCorr(&kalman.x, accel.corrX);
     accel.corrY = kalmanAccCorr(&kalman.y, accel.corrY);

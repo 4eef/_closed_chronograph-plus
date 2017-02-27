@@ -23,17 +23,23 @@ lpfPrim_type                lpfPrim;
 * @retval   
 */
 int16_t lpfAccPrim(lpfAxs_type *axis, int16_t raw){
-    axis->L1 -= (axis->C1 - raw) / K_ACC + axis->L1 / R_ACC;                    //10-th ordered RLC-filter
-    axis->C1 += axis->L1 / K_ACC;
-    axis->L2 -= (axis->C2 - axis->C1) / K_ACC + axis->L2 / R_ACC;
-    axis->C2 += axis->L2 / K_ACC;
-    axis->L3 -= (axis->C3 - axis->C2) / K_ACC + axis->L3 / R_ACC;
-    axis->C3 += axis->L3 / K_ACC;
-    axis->L4 -= (axis->C4 - axis->C3) / K_ACC + axis->L4 / R_ACC;
-    axis->C4 += axis->L4 / K_ACC;
-    axis->L5 -= (axis->C5 - axis->C4) / K_ACC + axis->L5 / R_ACC;
-    axis->C5 += axis->L5 / K_ACC;                                               //Output
-    return axis->C5;
+//    axis->L1 -= (axis->C1 - raw) / K_ACC + axis->L1 / R_ACC;                    //10-th ordered RLC-filter
+//    axis->C1 += axis->L1 / K_ACC;
+//    axis->L2 -= (axis->C2 - axis->C1) / K_ACC + axis->L2 / R_ACC;
+//    axis->C2 += axis->L2 / K_ACC;
+//    axis->L3 -= (axis->C3 - axis->C2) / K_ACC + axis->L3 / R_ACC;
+//    axis->C3 += axis->L3 / K_ACC;
+//    axis->L4 -= (axis->C4 - axis->C3) / K_ACC + axis->L4 / R_ACC;
+//    axis->C4 += axis->L4 / K_ACC;
+//    axis->L5 -= (axis->C5 - axis->C4) / K_ACC + axis->L5 / R_ACC;
+//    axis->C5 += axis->L5 / K_ACC;                                               //Output
+//    return axis->C5;
+//    axis->L -= (axis->C - raw) / K_ACC + axis->L / R_ACC;                    //10-th ordered RLC-filter
+//    axis->C += axis->L / K_ACC;
+//    return (int16_t)axis->C;
+    axis->Dacc = axis->Dacc + raw - axis->Dout;
+    axis->Dout = axis->Dacc/(int16_t)K_ACC;
+    return axis->Dout;
 }
 
 /*!****************************************************************************
@@ -52,13 +58,15 @@ int16_t kalmanAccCorr(kAxis_type *axis, int16_t raw){
     }
     preVal = (int16_t)(F * val[1]);
     axis->preVal = preVal;
-    axis->P = F * axis->covariance * F + kalman.Q;
-    P = axis->P;
+    P = F * axis->covariance * F + kalman.Q;
+    axis->P = P;
     //Update stage
-    axis->gain = H * P/(H * P * H + kalman.R);
-    gain = axis->gain;
+    gain = H * P/(H * P * H + kalman.R);
+    axis->gain = gain;
     val[0] = ((int16_t)(preVal + gain * (raw - H * preVal)));
-    memcpy(axis->val, val, KALMAN_N_VALS);
+    for(i = 0; i < KALMAN_N_VALS; i++){
+        axis->val[i] = val[i];
+    }
     axis->covariance = (1 - gain * H) * P;
     //Calculate value acceleration and speed
     acc = val[0] - 2 * val[1] + val[2];
@@ -101,8 +109,7 @@ uint32_t isqrt32(uint32_t n){
 int16_t lpf(int16_t data){
     static int32_t Dacc = 0;
     static int16_t Dout = 0;
-    int16_t Din = data;
-    Dacc = Dacc + Din - Dout;
+    Dacc = Dacc + data - Dout;
     Dout = Dacc/(int16_t)K;
     return Dout;
 }

@@ -37,7 +37,7 @@
 #define BATT_PERC_FLAG_NONE     0
 #define BATT_PERC_FLAG_INC      1
 #define BATT_PERC_FLAG_DEC      2
-#define BATT_VOLT_LOW           3300
+#define BATT_VOLT_LOW           3400
 #define CYC_OK                  0
 #define CYC_BROKEN              1
 

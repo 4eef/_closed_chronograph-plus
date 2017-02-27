@@ -28,6 +28,7 @@
 #define ACCEL_OFF_MIN           -4096
 #define ACCEL_OFF_MAX           4095
 #define ACCEL_CAL_SAMPLES       25
+#define ACCEL_N_SAMPLES         10
 
 /*!****************************************************************************
 * User enum

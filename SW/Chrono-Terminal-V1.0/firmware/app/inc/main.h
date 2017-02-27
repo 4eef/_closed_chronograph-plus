@@ -55,7 +55,6 @@
 #define FRACT_NOFRACT           0
 #define FRACT_TENTHS            10
 #define FRACT_HUNDREDTHS        100
-#define ACC_N_SAMPLES           1
 
 /*!****************************************************************************
 * User enum
