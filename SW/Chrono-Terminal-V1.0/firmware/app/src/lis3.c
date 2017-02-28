@@ -84,18 +84,18 @@ void accAxisCal(void){
         if(lis3AxisCal.calXState != ACCEL_CAL_SAVE){
             if(lis3AxisCal.calXState == ACCEL_CAL_SAVE_HALF){
                 lis3AxisCal.calXState = ACCEL_CAL_SAVE;
-                lis3AxisCal.calTmpMinX = lis3AxisCal.calFiltX;
+                lis3AxisCal.calTmpMinX = accel.corrX;
             }else{
                 lis3AxisCal.calXState = ACCEL_CAL_SAVE_HALF;
-                lis3AxisCal.calTmpMaxX = lis3AxisCal.calFiltX;
+                lis3AxisCal.calTmpMaxX = accel.corrX;
             }
         }else if(lis3AxisCal.calYState != ACCEL_CAL_SAVE){
             if(lis3AxisCal.calYState == ACCEL_CAL_SAVE_HALF){
                 lis3AxisCal.calYState = ACCEL_CAL_SAVE;
-                lis3AxisCal.calTmpMinY = lis3AxisCal.calFiltY;
+                lis3AxisCal.calTmpMinY = accel.corrY;
             }else{
                 lis3AxisCal.calYState = ACCEL_CAL_SAVE_HALF;
-                lis3AxisCal.calTmpMaxY = lis3AxisCal.calFiltY;
+                lis3AxisCal.calTmpMaxY = accel.corrY;
             }
         }else if(lis3AxisCal.calZState != ACCEL_CAL_SAVE){
             if(lis3AxisCal.calZState == ACCEL_CAL_SAVE_HALF){
@@ -105,7 +105,7 @@ void accAxisCal(void){
                 lis3AxisCal.calYState = ACCEL_CAL_OK;
                 lis3AxisCal.calZState = ACCEL_CAL_OK;
                 lis3AxisCal.calState = ACCEL_CAL_OK;
-                lis3AxisCal.calTmpMinZ = lis3AxisCal.calFiltZ;
+                lis3AxisCal.calTmpMinZ = accel.corrZ;
                 //Gain calculation
                 lis3AxisCal.calGainX = (lis3AxisCal.calTmpMaxX-lis3AxisCal.calTmpMinX)/2;
                 lis3AxisCal.calGainY = (lis3AxisCal.calTmpMaxY-lis3AxisCal.calTmpMinY)/2;
@@ -124,12 +124,12 @@ void accAxisCal(void){
                 accel.gainX = lis3AxisCal.calGainX;
                 accel.gainY = lis3AxisCal.calGainY;
                 accel.gainZ = lis3AxisCal.calGainZ;
-                accel.offsetX += lis3AxisCal.calOffX/32;
-                accel.offsetY += lis3AxisCal.calOffY/32;
-                accel.offsetZ += lis3AxisCal.calOffZ/32;
+                accel.offsetX = lis3AxisCal.calOffX/32;
+                accel.offsetY = lis3AxisCal.calOffY/32;
+                accel.offsetZ = lis3AxisCal.calOffZ/32;
             }else{
                 lis3AxisCal.calZState = ACCEL_CAL_SAVE_HALF;
-                lis3AxisCal.calTmpMaxZ = lis3AxisCal.calFiltZ;
+                lis3AxisCal.calTmpMaxZ = accel.corrZ;
             }
         }
     }else if(lis3AxisCal.calState == ACCEL_CAL_CANCEL){

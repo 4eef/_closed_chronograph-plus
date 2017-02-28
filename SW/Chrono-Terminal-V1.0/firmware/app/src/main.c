@@ -396,9 +396,9 @@ void main(void){
                         strcpy(text, "2/2 Z axis...");
                         sprintf(dir, "%c", 158);
                     }
-                    sprintf(axis1, "X:%d", lis3AxisCal.calFiltX);
-                    sprintf(axis2, "Y:%d", lis3AxisCal.calFiltY);
-                    sprintf(axis3, "Z:%d", lis3AxisCal.calFiltZ);
+                    sprintf(axis1, "X:%d", accel.corrX);
+                    sprintf(axis2, "Y:%d", accel.corrY);
+                    sprintf(axis3, "Z:%d", accel.corrZ);
                     ssd_putParBox(&text[0], PAR_BOX_ARROWS_DIS);
                     //Axis raws
                     len = strlen(axis1);
@@ -572,14 +572,11 @@ float s16fNorm(int16_t val){
 void trxAccData(void){
     float X, Y, Z;
     uint8_t reg, numSamples = ACCEL_N_SAMPLES;
-    accel.rawX = 0;
-    accel.rawY = 0;
-    accel.rawZ = 0;
     //Settings
     lis3_write(0x10, accel.offsetX);                                            //Offsets
     lis3_write(0x11, accel.offsetY);
     lis3_write(0x12, accel.offsetZ);
-    lis3_write(0x20, 0x97);                                                     //1600 Hz sample rate
+    lis3_write(0x20, 0x87);                                                     //1600 Hz sample rate
     //Get the samples
     while(numSamples != 0){
         reg = lis3_read(0x27);                                                  //Check if data is ready
@@ -592,20 +589,14 @@ void trxAccData(void){
         }
     }
     lis3_write(0x20, 0x00);                                                     //Off
-    //Primary data processing
-    accel.corrX = (lpfAccPrim(&lpfPrim.x, accel.rawX)*ACCEL_MAX)/accel.gainX;//
-    accel.corrY = (lpfAccPrim(&lpfPrim.y, accel.rawY)*ACCEL_MAX)/accel.gainY;//
-    accel.corrZ = (lpfAccPrim(&lpfPrim.z, accel.rawZ)*ACCEL_MAX)/accel.gainZ;//
+    //Axises scaling by calculated gain
+    accel.corrX = (accel.corrX * ACCEL_MAX) / accel.gainX;
+    accel.corrY = (accel.corrY * ACCEL_MAX) / accel.gainY;
+    accel.corrZ = (accel.corrZ * ACCEL_MAX) / accel.gainZ;
     //Data filtering
     accel.corrX = kalmanAccCorr(&kalman.x, accel.corrX);
     accel.corrY = kalmanAccCorr(&kalman.y, accel.corrY);
     accel.corrZ = kalmanAccCorr(&kalman.z, accel.corrZ);
-    //Copy data
-    if(lis3AxisCal.calState != ACCEL_CAL_OK){
-        lis3AxisCal.calFiltX = accel.corrX;
-        lis3AxisCal.calFiltY = accel.corrY;
-        lis3AxisCal.calFiltZ = accel.corrZ;
-    }
     //Normalize values
     X = s16fNorm(accel.corrX);
     Y = s16fNorm(accel.corrY);

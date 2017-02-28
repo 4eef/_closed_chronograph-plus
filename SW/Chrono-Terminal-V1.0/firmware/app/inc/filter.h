@@ -66,10 +66,10 @@ typedef struct{
     int16_t     preVal;
     int16_t     V;
     int16_t     a;
-    double      F;
-    double      gain;
-    double      covariance;
-    double      P;
+    float       F;
+    float       gain;
+    float       covariance;
+    float       P;
 }kAxis_type;
 
 typedef struct{

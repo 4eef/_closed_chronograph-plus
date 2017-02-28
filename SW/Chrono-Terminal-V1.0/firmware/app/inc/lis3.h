@@ -47,9 +47,6 @@ typedef struct{
     int16_t     corrX;
     int16_t     corrY;
     int16_t     corrZ;
-    int16_t     rawX;
-    int16_t     rawY;
-    int16_t     rawZ;
     uint8_t     rawXL;
     uint8_t     rawXH;
     uint8_t     rawYL;
@@ -59,9 +56,6 @@ typedef struct{
 }accel_type;
 
 typedef struct{
-    int16_t     calFiltX;
-    int16_t     calFiltY;
-    int16_t     calFiltZ;
     int16_t     calGainX;
     int16_t     calGainY;
     int16_t     calGainZ;

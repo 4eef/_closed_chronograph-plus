@@ -49,7 +49,7 @@ int16_t lpfAccPrim(lpfAxs_type *axis, int16_t raw){
 */
 int16_t kalmanAccCorr(kAxis_type *axis, int16_t raw){
     int32_t i, val[KALMAN_N_VALS], sum, acc, preVal;
-    double sumNorm, F, gain, H, P;
+    float sumNorm, F, gain, H, P;
     //Prediction stage
     F = axis->F;
     H = kalman.H;
@@ -72,8 +72,8 @@ int16_t kalmanAccCorr(kAxis_type *axis, int16_t raw){
     acc = val[0] - 2 * val[1] + val[2];
     sum = axis->V + acc;
     axis->V = sum;
-    sumNorm = (double)sum / ACC_MAX;
-    if(sumNorm <= 1 && sumNorm >= -1) axis->F = 1 + asin(sumNorm) / RADIAN;
+    sumNorm = (float)sum / ACC_MAX;
+    if(sumNorm <= 1 && sumNorm >= -1) axis->F = 1 + sumNorm;
     if(isnan(axis->covariance)) axis->covariance = 0;                           //Protection
     return val[0];
 }
