@@ -19,11 +19,17 @@
 /*!****************************************************************************
 * User define
 */
-#define ACCEL_CAL_OK            0
-#define ACCEL_CAL_EN            1
+#define ACCEL_CAL_READY         0
+#define ACCEL_CAL_SAVE          1
 #define ACCEL_CAL_CANCEL        2
-#define ACCEL_CAL_SAVE_HALF     3
-#define ACCEL_CAL_SAVE          4
+#define ACCEL_CAL_DONE          3
+#define ACCEL_CAL_WAIT          4
+#define ACCEL_X_CAL_SAVE_NEG    5
+#define ACCEL_X_CAL_SAVE_POS    6
+#define ACCEL_Y_CAL_SAVE_NEG    7
+#define ACCEL_Y_CAL_SAVE_POS    8
+#define ACCEL_Z_CAL_SAVE_NEG    9
+#define ACCEL_Z_CAL_SAVE_POS    10
 #define ACCEL_MAX               16383
 #define ACCEL_OFF_MIN           -4096
 #define ACCEL_OFF_MAX           4095
@@ -56,22 +62,17 @@ typedef struct{
 }accel_type;
 
 typedef struct{
-    int16_t     calGainX;
-    int16_t     calGainY;
-    int16_t     calGainZ;
-    int16_t     calOffX;
-    int16_t     calOffY;
-    int16_t     calOffZ;
+    int16_t     calAxisX;
+    int16_t     calAxisY;
+    int16_t     calAxisZ;
     int16_t     calTmpMinX;
     int16_t     calTmpMaxX;
     int16_t     calTmpMinY;
     int16_t     calTmpMaxY;
     int16_t     calTmpMinZ;
     int16_t     calTmpMaxZ;
-    uint8_t     calXState;
-    uint8_t     calYState;
-    uint8_t     calZState;
     uint8_t     calState;
+    uint8_t     calAxisState;
 }lis3AxisCal_type;
 
 /*!****************************************************************************
@@ -89,7 +90,7 @@ void lis3init(void);
 void lis3_write(uint8_t reg, uint8_t data);
 uint8_t lis3_read(uint8_t reg);
 void lis3_getXYZ(void);
-void accAxisCal(void);
+void accGainCal(void);
 
 #endif //lis3_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/
