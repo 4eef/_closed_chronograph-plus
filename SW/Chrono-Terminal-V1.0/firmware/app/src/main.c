@@ -599,19 +599,18 @@ void trxAccData(void){
         }
     }
     lis3_write(0x20, 0x00);                                                     //Off
-    if(lis3AxisCal.calState != ACCEL_CAL_READY){
-        lis3AxisCal.calAxisX = accel.corrX;
-        lis3AxisCal.calAxisY = accel.corrY;
-        lis3AxisCal.calAxisZ = accel.corrZ;
-    }
-    //Axises scaling by calculated gain
-    accel.corrX = (accel.corrX * ACCEL_MAX) / accel.gainX;
-    accel.corrY = (accel.corrY * ACCEL_MAX) / accel.gainY;
-    accel.corrZ = (accel.corrZ * ACCEL_MAX) / accel.gainZ;
     //Data filtering
     accel.corrX = kalmanAccCorr(&kalman.x, accel.corrX);
     accel.corrY = kalmanAccCorr(&kalman.y, accel.corrY);
     accel.corrZ = kalmanAccCorr(&kalman.z, accel.corrZ);
+    //Copy data for gain and offset calibration
+    lis3AxisCal.calAxisX = accel.corrX;
+    lis3AxisCal.calAxisY = accel.corrY;
+    lis3AxisCal.calAxisZ = accel.corrZ;
+    //Axises scaling by calculated gain
+    accel.corrX = (accel.corrX * ACCEL_MAX) / accel.gainX;
+    accel.corrY = (accel.corrY * ACCEL_MAX) / accel.gainY;
+    accel.corrZ = (accel.corrZ * ACCEL_MAX) / accel.gainZ;
     //Normalize values
     X = s16fNorm(accel.corrX);
     Y = s16fNorm(accel.corrY);
