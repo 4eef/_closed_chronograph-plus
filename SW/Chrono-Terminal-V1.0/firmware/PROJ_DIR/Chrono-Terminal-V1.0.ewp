@@ -314,6 +314,7 @@
         </option>
         <option>
           <name>CCIncludePath2</name>
+          <state>$PROJ_DIR$\..\libfixmath\inc</state>
           <state>$PROJ_DIR$\..\app\inc</state>
           <state>$PROJ_DIR$\..\debugFiles\inc</state>
           <state>$PROJ_DIR$\..\drivers\inc</state>
@@ -2008,6 +2009,27 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\drivers\src\i2c.c</name>
+    </file>
+  </group>
+  <group>
+    <name>libfixmath</name>
+    <file>
+      <name>$PROJ_DIR$\..\libfixmath\src\fix16.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libfixmath\src\fix16_exp.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libfixmath\src\fix16_sqrt.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libfixmath\src\fix16_trig.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libfixmath\src\fract32.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libfixmath\src\uint32.c</name>
     </file>
   </group>
 </project>

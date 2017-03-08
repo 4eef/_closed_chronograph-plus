@@ -31,12 +31,14 @@
 #include "buttons.h"
 #include "battery.h"
 #include "system.h"
+#include "fix16.h"
 
 /*!****************************************************************************
 * User define
 */
 #define accSamples              1
 #define degRad                  57.2958f
+#define Q16_RAD_DEG             degRad*65535
 #define MODE_COM                0
 #define MODE_CHR                1
 #define MODE_INC                2
@@ -55,6 +57,7 @@
 #define FRACT_NOFRACT           0
 #define FRACT_TENTHS            10
 #define FRACT_HUNDREDTHS        100
+#define Q16_ONE                 0xFFFF
 
 /*!****************************************************************************
 * User enum
@@ -80,6 +83,7 @@ extern void SystemClock_Config(void);
 void convtochar(void);
 void trxAccData(void);
 float s16fNorm(int16_t val);
+int32_t q16TiltCalc(int32_t X, int32_t Y, int32_t Z);
 float tiltAngCalc(float A, float B, float C);
 void drawMainScreen(void);
 void drawMenu(void);

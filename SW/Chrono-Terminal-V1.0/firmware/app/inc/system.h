@@ -109,8 +109,8 @@ typedef struct{
     battery_type    battery;
     chron_type      chron;
     stats_type      stats;
-    float           accRoll;
-    float           accPitch;
+    int16_t         accRoll;
+    int16_t         accPitch;
     uint16_t        accRollBorder;
     uint16_t        accPitchBorder;
 }meas_type;

@@ -107,9 +107,9 @@ void main(void){
     Menu_Navigate(&display);
     //Initialize hardware
     initPeriphs();
-    powerOff();
-//    adcInit();
-//    powerOn();
+//    powerOff();
+    adcInit();
+    powerOn();
     
     while(1){
         //Syncronize cycle
@@ -124,112 +124,112 @@ void main(void){
         }
         CurrentMenuItem = Menu_GetCurrentMenu();
         //MicroMenu navigation
-        switch(getButtonState()){
-        case UP:
-            if(menu.parEdit == PAR_EDIT_ENABLE){
-                if(menu.parValue >= menu.parBorderMax){
-                    menu.parValue = menu.parBorderMin;
-                }else{
-                    menu.parValue++;
-                }
-            }else if((pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
-                if(pellets.matchedSgnNum >= PELLET_DB_NUM-1){
-                    pellets.matchedSgnNum = PELLET_DB_NULL;
-                }else{
-                    pellets.matchedSgnNum++;
-                }
-            }else if(power.mode == POWER_RUN){
-                Menu_Navigate(MENU_PREVIOUS);
-            }
-            break;
-        case DOWN:
-            if(menu.parEdit == PAR_EDIT_ENABLE){
-                if(menu.parValue <= menu.parBorderMin){
-                    menu.parValue = menu.parBorderMax;
-                }else{
-                    menu.parValue--;
-                }
-            }else if((pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
-                if(pellets.matchedSgnNum <= PELLET_DB_NULL){
-                    pellets.matchedSgnNum = PELLET_DB_NUM-1;
-                }else{
-                    pellets.matchedSgnNum--;
-                }
-            }else if(power.mode == POWER_RUN){
-                Menu_Navigate(MENU_NEXT);
-            }
-            break;
-        case OK:
-            if((menu.parEdit == PAR_EDIT_ENABLE) || (pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
-                strcpy(menu.message, "Saved");
-                menu.msgCnt = MSG_CNT;
-                if(menu.parEdit == PAR_EDIT_ENABLE){
-                    if(lis3AxisCal.calState == ACCEL_CAL_WAIT){
-                        lis3AxisCal.calState = ACCEL_CAL_SAVE;
-                    }else{
-                        menu.parStat = PAR_SAVE;
-                    }
-                }else{
-                    pellets.pelSgntrs[pellets.matchedSgnNum] = pellets.newSgn;
-                    meas.chron.pellet = pellets.matchedSgnNum;
-                    pellets.pelStat = PELLET_OK;
-                }
-            }else if(power.mode == POWER_RUN){
-                if((MENU_CHILD == &NULL_MENU) || (MENU_CHILD == NULL)){
-                    Menu_EnterCurrentItem();
-                }else{
-                    Menu_Navigate(MENU_CHILD);
-                }
-            }
-            break;
-        case OKLNG:
-            break;
-        case CANCEL:
-            if((menu.parEdit == PAR_EDIT_ENABLE) || (pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
-                sysPars.sysSettings.chrBind = 0;
-                strcpy(menu.message, "Cancelled");
-                menu.msgCnt = MSG_CNT;
-                if(menu.parEdit == PAR_EDIT_ENABLE){
-                    if(lis3AxisCal.calState == ACCEL_CAL_WAIT){
-                        lis3AxisCal.calState = ACCEL_CAL_CANCEL;
-                    }else{
-                        menu.parStat = PAR_CANCEL;
-                    }
-                }else{
-                    meas.chron.pellet = 0;
-                    pellets.matchedSgnNum = 0;
-                    pellets.pelStat = PELLET_OK;
-                }
-            }else if(power.mode == POWER_RUN){
-                Menu_Navigate(MENU_PARENT);
-            }
-            break;
-        case CLLNG:
-            if((CurrentMenuItem == &display) && (power.mode == POWER_RUN)){
-                if((sysPars.sysSettings.clipEn != 0) && (meas.chron.clipCurrent != meas.chron.clipCapacity)){
-                    meas.chron.clipCurrent = meas.chron.clipCapacity;
-                    strcpy(menu.message, "Clip reloaded");
-                    menu.msgCnt = MSG_CNT;
-                }else if((meas.chron.statShots != 0) && (sysPars.sysSettings.dispMode == MODE_CHR)){
-                    meas.chron.statShots = 0;
-                    meas.chron.statSpeedsSum = 0;
-                    meas.chron.statSdev = 0;
-                    meas.chron.statMean = 0;
-                    strcpy(menu.message, "Stats cleared");
-                    menu.msgCnt = MSG_CNT;
-                }else{
-                    powerOff();
-                }
-            }else if(power.mode == POWER_STOP){
-                powerOn();
-            }else if(menu.parEdit == PAR_EDIT_DISABLE){
-                Menu_Navigate(&display);
-            }
-            break;
-        default:
-            menu.parStat = PAR_NONE;
-            break;
-        }
+//        switch(getButtonState()){
+//        case UP:
+//            if(menu.parEdit == PAR_EDIT_ENABLE){
+//                if(menu.parValue >= menu.parBorderMax){
+//                    menu.parValue = menu.parBorderMin;
+//                }else{
+//                    menu.parValue++;
+//                }
+//            }else if((pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
+//                if(pellets.matchedSgnNum >= PELLET_DB_NUM-1){
+//                    pellets.matchedSgnNum = PELLET_DB_NULL;
+//                }else{
+//                    pellets.matchedSgnNum++;
+//                }
+//            }else if(power.mode == POWER_RUN){
+//                Menu_Navigate(MENU_PREVIOUS);
+//            }
+//            break;
+//        case DOWN:
+//            if(menu.parEdit == PAR_EDIT_ENABLE){
+//                if(menu.parValue <= menu.parBorderMin){
+//                    menu.parValue = menu.parBorderMax;
+//                }else{
+//                    menu.parValue--;
+//                }
+//            }else if((pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
+//                if(pellets.matchedSgnNum <= PELLET_DB_NULL){
+//                    pellets.matchedSgnNum = PELLET_DB_NUM-1;
+//                }else{
+//                    pellets.matchedSgnNum--;
+//                }
+//            }else if(power.mode == POWER_RUN){
+//                Menu_Navigate(MENU_NEXT);
+//            }
+//            break;
+//        case OK:
+//            if((menu.parEdit == PAR_EDIT_ENABLE) || (pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
+//                strcpy(menu.message, "Saved");
+//                menu.msgCnt = MSG_CNT;
+//                if(menu.parEdit == PAR_EDIT_ENABLE){
+//                    if(lis3AxisCal.calState == ACCEL_CAL_WAIT){
+//                        lis3AxisCal.calState = ACCEL_CAL_SAVE;
+//                    }else{
+//                        menu.parStat = PAR_SAVE;
+//                    }
+//                }else{
+//                    pellets.pelSgntrs[pellets.matchedSgnNum] = pellets.newSgn;
+//                    meas.chron.pellet = pellets.matchedSgnNum;
+//                    pellets.pelStat = PELLET_OK;
+//                }
+//            }else if(power.mode == POWER_RUN){
+//                if((MENU_CHILD == &NULL_MENU) || (MENU_CHILD == NULL)){
+//                    Menu_EnterCurrentItem();
+//                }else{
+//                    Menu_Navigate(MENU_CHILD);
+//                }
+//            }
+//            break;
+//        case OKLNG:
+//            break;
+//        case CANCEL:
+//            if((menu.parEdit == PAR_EDIT_ENABLE) || (pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
+//                sysPars.sysSettings.chrBind = 0;
+//                strcpy(menu.message, "Cancelled");
+//                menu.msgCnt = MSG_CNT;
+//                if(menu.parEdit == PAR_EDIT_ENABLE){
+//                    if(lis3AxisCal.calState == ACCEL_CAL_WAIT){
+//                        lis3AxisCal.calState = ACCEL_CAL_CANCEL;
+//                    }else{
+//                        menu.parStat = PAR_CANCEL;
+//                    }
+//                }else{
+//                    meas.chron.pellet = 0;
+//                    pellets.matchedSgnNum = 0;
+//                    pellets.pelStat = PELLET_OK;
+//                }
+//            }else if(power.mode == POWER_RUN){
+//                Menu_Navigate(MENU_PARENT);
+//            }
+//            break;
+//        case CLLNG:
+//            if((CurrentMenuItem == &display) && (power.mode == POWER_RUN)){
+//                if((sysPars.sysSettings.clipEn != 0) && (meas.chron.clipCurrent != meas.chron.clipCapacity)){
+//                    meas.chron.clipCurrent = meas.chron.clipCapacity;
+//                    strcpy(menu.message, "Clip reloaded");
+//                    menu.msgCnt = MSG_CNT;
+//                }else if((meas.chron.statShots != 0) && (sysPars.sysSettings.dispMode == MODE_CHR)){
+//                    meas.chron.statShots = 0;
+//                    meas.chron.statSpeedsSum = 0;
+//                    meas.chron.statSdev = 0;
+//                    meas.chron.statMean = 0;
+//                    strcpy(menu.message, "Stats cleared");
+//                    menu.msgCnt = MSG_CNT;
+//                }else{
+//                    powerOff();
+//                }
+//            }else if(power.mode == POWER_STOP){
+//                powerOn();
+//            }else if(menu.parEdit == PAR_EDIT_DISABLE){
+//                Menu_Navigate(&display);
+//            }
+//            break;
+//        default:
+//            menu.parStat = PAR_NONE;
+//            break;
+//        }
         if(power.mode == POWER_RUN){
             CurrentMenuItem = Menu_GetCurrentMenu();
             //Magazine
@@ -541,6 +541,25 @@ void modeEdit(void){
 }
 
 /*!****************************************************************************
+* @brief    Tilt angle calculation routine from Q16.16 fixed point format
+* @param    X, Y, Z - values in radians (Q16.16)
+* @retval   Angle in degrees (Q16.16)
+*/
+int32_t q16TiltCalc(int32_t X, int32_t Y, int32_t Z){
+    int32_t tilt, Ysq, Zsq, sumSqYZ, div;
+    //Prepare arguments
+    Ysq = fix16_mul(Y, Y);
+    Zsq = fix16_mul(Z, Z);
+    sumSqYZ = fix16_add(Ysq, Zsq);
+    //Divide-by-zero protection
+    if(sumSqYZ == 0) sumSqYZ = 1;
+    //Tilt calculation
+    div = fix16_div(X, sumSqYZ);
+    tilt = fix16_atan(div);
+    return tilt;
+}
+
+/*!****************************************************************************
 * @brief    Tilt angle calculation routine
 * @param    X, Y, Z - normalized projections to axises
 * @retval   Angle in degrees (float)
@@ -565,13 +584,7 @@ float tiltAngCalc(float X, float Y, float Z){
 * @retval   Normalized (-1...1) float value
 */
 float s16fNorm(int16_t val){
-    float retVal;
-    if(val >= 0){
-        retVal = val/16383.;
-    }else{
-        retVal = val/16384.;
-    }
-    return retVal;
+    return val/16383.;
 }
 
 /*!****************************************************************************
@@ -580,8 +593,8 @@ float s16fNorm(int16_t val){
 * @retval   
 */
 void trxAccData(void){
-    float X, Y, Z;
     uint8_t reg, numSamples = ACCEL_N_SAMPLES;
+    int32_t X, Y, Z, tmpRoll, tmpPitch, tmpConv;
     //Settings
     lis3_write(0x10, accel.offsetX);                                            //Offsets
     lis3_write(0x11, accel.offsetY);
@@ -608,17 +621,22 @@ void trxAccData(void){
     lis3AxisCal.calAxisY = accel.corrY;
     lis3AxisCal.calAxisZ = accel.corrZ;
     //Axises scaling by calculated gain
-    accel.corrX = (accel.corrX * ACCEL_MAX) / accel.gainX;
-    accel.corrY = (accel.corrY * ACCEL_MAX) / accel.gainY;
-    accel.corrZ = (accel.corrZ * ACCEL_MAX) / accel.gainZ;
+    X = (accel.corrX * Q16_ONE) / accel.gainX;
+    Y = (accel.corrY * Q16_ONE) / accel.gainY;
+    Z = (accel.corrZ * Q16_ONE) / accel.gainZ;
     //Normalize values
-    X = s16fNorm(accel.corrX);
-    Y = s16fNorm(accel.corrY);
-    Z = s16fNorm(accel.corrZ);
+    X = fix16_asin(X);
+    Y = fix16_asin(Y);
+    Z = fix16_asin(Z);
     //Roll calculation
-    meas.accRoll = tiltAngCalc(Y, X, Z);
+    tmpConv = (int32_t)Q16_RAD_DEG;
+    tmpRoll = q16TiltCalc(Y, X, Z);
+    tmpRoll = fix16_mul(tmpConv, tmpRoll);
+    meas.accRoll = 45;
     //Pitch calculation
-    meas.accPitch = tiltAngCalc(Z, X, Y);
+    tmpPitch = q16TiltCalc(Z, X, Y);
+    tmpPitch = fix16_mul(tmpConv, tmpPitch);
+    meas.accPitch = 54;
 }
 
 /*!****************************************************************************

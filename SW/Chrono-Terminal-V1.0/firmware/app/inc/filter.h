@@ -25,8 +25,6 @@
 #define SPS_ACC                 1600UL
 #define Trc_ACC                 0.03f
 #define K_ACC                   (SPS_ACC*Trc_ACC)
-//#define K_ACC                   SAMPLE_RATE / (6.283185307*10)                  //K=FN/(pi*Fs) - K>1. 
-//#define R_ACC                   1 + K_ACC * 0.707                               //R=K*Q+1 - Добротность элементов фильтра НЧ 
 #define ACC_MAX                 16383
 #define RADIAN                  1.57079633
 #define KALMAN_N_VALS           3
@@ -39,18 +37,6 @@
 * User typedef
 */
 typedef struct{
-//    double      L1;
-//    double      C1;
-//    double      L2;
-//    double      C2;
-//    double      L3;
-//    double      C3;
-//    double      L4;
-//    double      C4;
-//    double      L5;
-//    double      C5;
-//    double      L;
-//    double      C;
     int32_t     Dacc;
     int16_t     Dout;
 }lpfAxs_type;

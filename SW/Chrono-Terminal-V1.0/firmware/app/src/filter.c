@@ -23,20 +23,6 @@ lpfPrim_type                lpfPrim;
 * @retval   
 */
 int16_t lpfAccPrim(lpfAxs_type *axis, int16_t raw){
-//    axis->L1 -= (axis->C1 - raw) / K_ACC + axis->L1 / R_ACC;                    //10-th ordered RLC-filter
-//    axis->C1 += axis->L1 / K_ACC;
-//    axis->L2 -= (axis->C2 - axis->C1) / K_ACC + axis->L2 / R_ACC;
-//    axis->C2 += axis->L2 / K_ACC;
-//    axis->L3 -= (axis->C3 - axis->C2) / K_ACC + axis->L3 / R_ACC;
-//    axis->C3 += axis->L3 / K_ACC;
-//    axis->L4 -= (axis->C4 - axis->C3) / K_ACC + axis->L4 / R_ACC;
-//    axis->C4 += axis->L4 / K_ACC;
-//    axis->L5 -= (axis->C5 - axis->C4) / K_ACC + axis->L5 / R_ACC;
-//    axis->C5 += axis->L5 / K_ACC;                                               //Output
-//    return axis->C5;
-//    axis->L -= (axis->C - raw) / K_ACC + axis->L / R_ACC;                    //10-th ordered RLC-filter
-//    axis->C += axis->L / K_ACC;
-//    return (int16_t)axis->C;
     axis->Dacc = axis->Dacc + raw - axis->Dout;
     axis->Dout = axis->Dacc/(int16_t)K_ACC;
     return axis->Dout;
