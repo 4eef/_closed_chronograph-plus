@@ -18,6 +18,7 @@
 #include "MicroMenu.h"
 #include "power.h"
 #include "gpio.h"
+#include "ug2864.h"
 
 /*!****************************************************************************
 * User define

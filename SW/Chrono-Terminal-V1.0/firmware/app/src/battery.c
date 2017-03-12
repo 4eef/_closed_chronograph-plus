@@ -28,6 +28,8 @@ void battCalc(void){
     uint16_t volt;
     uint8_t i, j, tmp, perc;
     static uint8_t percFlag;
+    if(adcData.adcStat != ADC_DATA_READY) return;
+    adcData.adcStat = ADC_READY;
     //Charge status
     meas.battery.battChgStat = !(gppin_get(GP_ChrgStatus) >> 8);
     //Charge level calculation
@@ -40,11 +42,10 @@ void battCalc(void){
         //Put message
         if(meas.battery.battMsgPer == 0){
             if(volt <= BATT_VOLT_LOW){
-                strcpy(menu.message, "Battery depleted");
+                ssd_putMessage("Battery depleted", MSG_CNT_LONG);
             }else{
-                strcpy(menu.message, "Low charge");
+                ssd_putMessage("Low charge", MSG_CNT_LONG);
             }
-            menu.msgCnt = MSG_CNT_LONG;
             meas.battery.battMsgPer = BATT_MSG_PERIOD;
         }
     }else{
@@ -75,6 +76,9 @@ void battCalc(void){
             meas.battery.battCharge = perc;
         }
     }
+    //Counters managing
+    if(meas.battery.battMsgPer != 0) meas.battery.battMsgPer--;
+    if((meas.battery.battMsgPer == 0) && (meas.battery.battVolt <= BATT_VOLT_LOW)) powerOff();
 }
 
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

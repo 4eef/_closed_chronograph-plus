@@ -92,11 +92,12 @@ void ssd_putChar6x8(uint8_t x, uint8_t y, char c);
 void ssd_putString6x8(uint8_t x, uint8_t y, const char *s);
 void ssd_setpix(uint8_t x, uint8_t y, uint8_t color);
 void ssd_putBatt(uint8_t percentage, uint8_t chrgStat);
-void ssd_putPitchBar(float aabs, uint16_t border);
+void ssd_putPitchBar(int16_t aabs, uint16_t border);
 void ssd_putMenuFolder(void);
 void ssd_putMenuScroll(void);
-void ssd_putRollBar(float aabs, uint16_t border, uint8_t y, uint8_t hgt);
-void ssd_putMsgBox(uint8_t len);
+void ssd_putRollBar(int16_t aabs, uint16_t border, uint8_t y, uint8_t hgt);
+void ssd_putMsgBox(uint8_t msgLen);
+void ssd_putMessage(char *newStr, uint8_t newCnt);
 void ssd_putParBox(char *text, uint8_t enArrows);
 
 #endif //ug9616_H

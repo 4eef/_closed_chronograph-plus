@@ -19,6 +19,23 @@ ssdVideoBff_type    ssdVideoBff;
 ssdSettings_type    ssdSettings;
 
 /*!****************************************************************************
+* @brief    Put text message at the center of display
+* @param    
+* @retval   
+*/
+void ssd_putStrClr(char *text, uint8_t maxLen, uint8_t fontSize){
+    char tmp[22];
+    uint8_t currLen;
+    currLen = strlen(text);
+    if(currLen <= maxLen){
+        strcat(text, tmp);
+    }else{
+        return;
+    }
+}
+
+
+/*!****************************************************************************
 * @brief    Put box for text at the center of display
 * @param    
 * @retval   
@@ -52,14 +69,47 @@ void ssd_putParBox(char *text, uint8_t enArrows){
 }
 
 /*!****************************************************************************
+* @brief    Put text message at the center of display
+* @param    
+* @retval   
+*/
+void ssd_putMessage(char *newStr, uint8_t newCnt){
+    static char msgStr[22];
+    static uint8_t msgCnt;
+    uint8_t i, j, x, y, boxLength, msgLen, offset;
+    if(newCnt != NULL) msgCnt = newCnt + 1;
+    if(msgCnt != 0){
+        msgCnt--;
+        if(newStr != NULL) strcpy(msgStr, newStr);
+        msgLen = strlen(msgStr);
+        //Put message box
+        boxLength = msgLen*6 + 8;
+        x = SSD1306_LCDWIDTH/2 - boxLength/2;
+        y = SSD1306_LCDHEIGHT/2 - MSG_BOX_HEIGHT/2 - 1;
+        //Put box
+        for(i = 0; i <= boxLength; i++){
+            for(j = 0; j <= MSG_BOX_HEIGHT; j++){
+                if(j == 0 || j == MSG_BOX_HEIGHT || i == 0 || i == boxLength){
+                    ssd_setpix(x+i, y+j, WHITE);
+                }else{
+                    ssd_setpix(x+i, y+j, BLACK);
+                }
+            }
+        }
+        offset = SSD1306_LCDWIDTH/2 - (msgLen*6)/2;
+        ssd_putString6x8(offset, 28, &msgStr[0]);
+    }
+}
+
+/*!****************************************************************************
 * @brief    Put box for text at the center of display
 * @param    
 * @retval   
 */
-void ssd_putMsgBox(uint8_t len){
+void ssd_putMsgBox(uint8_t msgLen){
     uint8_t i, j, x, y, boxLength;
     //Parameters
-    boxLength = len*6 + 8;
+    boxLength = msgLen*6 + 8;
     x = SSD1306_LCDWIDTH/2 - boxLength/2;
     y = SSD1306_LCDHEIGHT/2 - MSG_BOX_HEIGHT/2 - 1;
     //Put box
@@ -79,7 +129,7 @@ void ssd_putMsgBox(uint8_t len){
 * @param    
 * @retval   
 */
-void ssd_putRollBar(float aabs, uint16_t border, uint8_t y, uint8_t hgt){
+void ssd_putRollBar(int16_t aabs, uint16_t border, uint8_t y, uint8_t hgt){
     uint8_t i, j, k, l, m, cStrt, cEnd, fYBias, fHgt;
     int16_t brel, angle, end, iaabs, iborder, izero;
     //Parameters calculation
@@ -91,30 +141,28 @@ void ssd_putRollBar(float aabs, uint16_t border, uint8_t y, uint8_t hgt){
     for(i = 0; i < SSD1306_LCDWIDTH; i++){
         k = i;
         //Pasting the one in the beginning
-        if(i >= SSD1306_LCDWIDTH/2){
-            k = i - SSD1306_LCDWIDTH/2;
-        }
-        //How frequent lines are draw
-        if((k%ROLL_PERIOD == 0) || (k == 0)){
-            for(j = 0; j < hgt; j++){
-                l = (hgt/3)-1;
-                m = ((hgt*2)/3)+1;
-                //Draw pattern with center part highlighted
-                if(i == (SSD1306_LCDWIDTH/2-1) || (i == (SSD1306_LCDWIDTH/2))){
-                    l = cStrt;
-                    m = cEnd;
-                }
-                //Draw pattern
-                if((j == 0) || (j > l) && (j < m) || (j == hgt-1)){
-                    ssd_setpix(i, y+j, WHITE);
-                }
+        if(i >= SSD1306_LCDWIDTH/2) k = i - SSD1306_LCDWIDTH/2;
+        //Draw lines
+        for(j = 0; j < hgt; j++){
+            l = (hgt/3)-1;
+            m = ((hgt*2)/3)+1;
+            //Draw pattern with center part highlighted
+            if(i == (SSD1306_LCDWIDTH/2-1) || (i == (SSD1306_LCDWIDTH/2))){
+                l = cStrt;
+                m = cEnd;
+            }
+            //Draw pattern
+            if((k%ROLL_PERIOD == 0) || (k == 0)){
+                if((j == 0) || (j > l) && (j < m) || (j == hgt-1)) ssd_setpix(i, y+j, WHITE);
+            }else{
+                ssd_setpix(i, y+j, BLACK);
             }
         }
     }
     k = SSD1306_LCDWIDTH;                           //Progress bar center setting
     //Convert floats to sints
-    iaabs = (int16_t)(aabs*PRECISION);
-    iborder = (int16_t)(border*PRECISION);
+    iaabs = aabs;
+    iborder = border * PRECISION;
     izero = 0;
     //Bias
     if(iaabs < izero) k -= 2;                       //Horizontal
@@ -176,14 +224,14 @@ void ssd_putMenuScroll(void){
 * @param    
 * @retval   
 */
-void ssd_putPitchBar(float aabs, uint16_t border){
+void ssd_putPitchBar(int16_t aabs, uint16_t border){
     uint8_t i, j, k;
     int16_t brel, angle, end, iaabs, iborder, izero;
     //Parameters calculation
     k = SSD1306_LCDHEIGHT;                          //Progress bar center setting
     //Convert floats to sints
-    iaabs = (int16_t)(aabs*PRECISION);
-    iborder = (int16_t)(border*PRECISION);
+    iaabs = aabs;
+    iborder = border * PRECISION;
     izero = 0;
     //Biases
     if(iaabs > izero) k -= 2;                       //Vertical

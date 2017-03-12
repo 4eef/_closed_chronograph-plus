@@ -115,13 +115,7 @@ void main(void){
         //Syncronize cycle
         sync();
 //        meas.chron.speed0 = meas.stats.cycBroken;
-        //Calculate battery parameters
-        if(adcData.adcStat == ADC_DATA_READY){
-            adcData.adcStat = ADC_READY;
-            battCalc();
-            if(meas.battery.battMsgPer != 0) meas.battery.battMsgPer--;
-            if((meas.battery.battMsgPer == 0) && (meas.battery.battVolt <= BATT_VOLT_LOW)) powerOff();
-        }
+        battCalc();                                                             //Calculate battery parameters
         CurrentMenuItem = Menu_GetCurrentMenu();
         //MicroMenu navigation
 //        switch(getButtonState()){
@@ -161,8 +155,7 @@ void main(void){
 //            break;
 //        case OK:
 //            if((menu.parEdit == PAR_EDIT_ENABLE) || (pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
-//                strcpy(menu.message, "Saved");
-//                menu.msgCnt = MSG_CNT;
+//                ssd_putMessage("Saved", MSG_CNT);
 //                if(menu.parEdit == PAR_EDIT_ENABLE){
 //                    if(lis3AxisCal.calState == ACCEL_CAL_WAIT){
 //                        lis3AxisCal.calState = ACCEL_CAL_SAVE;
@@ -187,8 +180,7 @@ void main(void){
 //        case CANCEL:
 //            if((menu.parEdit == PAR_EDIT_ENABLE) || (pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
 //                sysPars.sysSettings.chrBind = 0;
-//                strcpy(menu.message, "Cancelled");
-//                menu.msgCnt = MSG_CNT;
+//                ssd_putMessage("Cancelled", MSG_CNT);
 //                if(menu.parEdit == PAR_EDIT_ENABLE){
 //                    if(lis3AxisCal.calState == ACCEL_CAL_WAIT){
 //                        lis3AxisCal.calState = ACCEL_CAL_CANCEL;
@@ -208,15 +200,13 @@ void main(void){
 //            if((CurrentMenuItem == &display) && (power.mode == POWER_RUN)){
 //                if((sysPars.sysSettings.clipEn != 0) && (meas.chron.clipCurrent != meas.chron.clipCapacity)){
 //                    meas.chron.clipCurrent = meas.chron.clipCapacity;
-//                    strcpy(menu.message, "Clip reloaded");
-//                    menu.msgCnt = MSG_CNT;
+//                    ssd_putMessage("Clip reloaded", MSG_CNT);
 //                }else if((meas.chron.statShots != 0) && (sysPars.sysSettings.dispMode == MODE_CHR)){
 //                    meas.chron.statShots = 0;
 //                    meas.chron.statSpeedsSum = 0;
 //                    meas.chron.statSdev = 0;
 //                    meas.chron.statMean = 0;
-//                    strcpy(menu.message, "Stats cleared");
-//                    menu.msgCnt = MSG_CNT;
+//                    ssd_putMessage("Stats cleared", MSG_CNT);
 //                }else{
 //                    powerOff();
 //                }
@@ -246,8 +236,7 @@ void main(void){
                     if(sysPars.sysSettings.chrBind != 0){
                         sysPars.sysSettings.chrBind = 0;
                         meas.chron.chrSgntr = sgn;
-                        strcpy(menu.message, "Binded");
-                        menu.msgCnt = MSG_CNT;
+                        ssd_putMessage("Binded", MSG_CNT);
                     }
                     meas.stats.shotsTotal++;
                     //Measurements
@@ -272,11 +261,9 @@ void main(void){
                     if(sysPars.sysSettings.clipEn != 0){
                         if(meas.chron.clipCurrent == 0){
                             meas.chron.clipCurrent = meas.chron.clipCapacity;
-                            strcpy(menu.message, "Clip reloaded");
-                            menu.msgCnt = MSG_CNT;
+                            ssd_putMessage("Clip reloaded", MSG_CNT);
                         }else if(meas.chron.clipCurrent == 1){
-                            strcpy(menu.message, "Reload clip");
-                            menu.msgCnt = MSG_CNT;
+                            ssd_putMessage("Replace clip", MSG_CNT);
                         }
                         meas.chron.clipCurrent--;
                     }
@@ -324,8 +311,7 @@ void main(void){
                                 pellets.newSgnCnt = 0;
                                 pellets.newSgnSum = 0;
                             }else if(pellets.newSgnErrCnt >= PELLET_NEW_SGN_BOUND){
-                                strcpy(menu.message, "Error pellet ID");
-                                menu.msgCnt = MSG_CNT;
+                                ssd_putMessage("Error pellet ID", MSG_CNT);
                                 pellets.pelStat = PELLET_OK;
                                 pellets.newSgnErrCnt = 0;
                                 pellets.newSgnCnt = 0;
@@ -336,8 +322,7 @@ void main(void){
                     //Statistics calculation
                     if(sysPars.sysSettings.dispMode == MODE_CHR){
                         if(meas.chron.statShots >= STAT_SHOTS_MAX){
-                            strcpy(menu.message, "Buffer is full");
-                            menu.msgCnt = MSG_CNT;
+                            ssd_putMessage("Buffer is full", MSG_CNT);
                         }else{
                             meas.chron.statSpeeds[meas.chron.statShots] = meas.chron.speed0;
                             meas.chron.statSpeedsSum += meas.chron.statSpeeds[meas.chron.statShots];
@@ -365,7 +350,7 @@ void main(void){
             //Perform data transmition with accelerometer
             trxAccData();
             //Refresh video buffer
-            memset(ssdVideoBff.video, 0, sizeof(ssdVideoBff.video));
+//            memset(ssdVideoBff.video, 0, sizeof(ssdVideoBff.video));
             ssd_putBatt(meas.battery.battCharge, meas.battery.battChgStat);
             //Draw screen
             if(CurrentMenuItem == &display){
@@ -446,6 +431,7 @@ void main(void){
                 ssd_putString6x8(offs, 28, &text[0]);
             }
             //Draw message
+            ssd_putMessage(NULL, NULL);
             if(menu.msgCnt != 0){
                 menu.msgCnt--;
                 if((sysPars.sysSettings.chrBind != 0) && (menu.msgCnt == 0)){
@@ -535,8 +521,7 @@ void modeEdit(void){
     if(CurrentMenuItem == &mcommon)sysPars.sysSettings.dispMode = MODE_COM;
     else if(CurrentMenuItem == &mchron)sysPars.sysSettings.dispMode = MODE_CHR;
     else if(CurrentMenuItem == &mincline)sysPars.sysSettings.dispMode = MODE_INC;
-    strcpy(menu.message, "OK");
-    menu.msgCnt = MSG_CNT;
+    ssd_putMessage("OK", MSG_CNT);
     if(CurrentMenuItem->Parent == &mode) Menu_Navigate(&display);
 }
 
@@ -605,9 +590,9 @@ void trxAccData(void){
         reg = lis3_read(0x27);                                                  //Check if data is ready
         if((reg & 0x3) != 0){
             lis3_getXYZ();                                                      //Get sampled data
-            accel.corrX = lpfAccPrim(&lpfPrim.x, ((int16_t)(accel.rawXL | (accel.rawXH << 8))));
-            accel.corrY = lpfAccPrim(&lpfPrim.y, ((int16_t)(accel.rawYL | (accel.rawYH << 8))));
-            accel.corrZ = lpfAccPrim(&lpfPrim.z, ((int16_t)(accel.rawZL | (accel.rawZH << 8))));
+            lis3AxisCal.calAxisX = accel.corrX = lpfAccPrim(&lpfPrim.x, ((int16_t)(accel.rawXL | (accel.rawXH << 8))));
+            lis3AxisCal.calAxisY = accel.corrY = lpfAccPrim(&lpfPrim.y, ((int16_t)(accel.rawYL | (accel.rawYH << 8))));
+            lis3AxisCal.calAxisZ = accel.corrZ = lpfAccPrim(&lpfPrim.z, ((int16_t)(accel.rawZL | (accel.rawZH << 8))));
             numSamples--;
         }
     }
@@ -616,27 +601,29 @@ void trxAccData(void){
     accel.corrX = kalmanAccCorr(&kalman.x, accel.corrX);
     accel.corrY = kalmanAccCorr(&kalman.y, accel.corrY);
     accel.corrZ = kalmanAccCorr(&kalman.z, accel.corrZ);
-    //Copy data for gain and offset calibration
-    lis3AxisCal.calAxisX = accel.corrX;
-    lis3AxisCal.calAxisY = accel.corrY;
-    lis3AxisCal.calAxisZ = accel.corrZ;
     //Axises scaling by calculated gain
-    X = (accel.corrX * Q16_ONE) / accel.gainX;
-    Y = (accel.corrY * Q16_ONE) / accel.gainY;
-    Z = (accel.corrZ * Q16_ONE) / accel.gainZ;
-    //Normalize values
-    X = fix16_asin(X);
-    Y = fix16_asin(Y);
-    Z = fix16_asin(Z);
+    X = (accel.corrX * fix16_one) / accel.gainX;
+    Y = (accel.corrY * fix16_one) / accel.gainY;
+    Z = (accel.corrZ * fix16_one) / accel.gainZ;
+    //Calculate values
+//    if(X > fix16_one) X = fix16_one - 1; else if(X < -fix16_one) X = -fix16_one + 1;
+//    if(Y > fix16_one) Y = fix16_one - 1; else if(Y < -fix16_one) Y = -fix16_one + 1;
+//    if(Z > fix16_one) Z = fix16_one - 1; else if(Z < -fix16_one) Z = -fix16_one + 1;
+//    X = fix16_asin(X);
+//    Y = fix16_asin(Y);
+//    Z = fix16_asin(Z);
+//    X = fix16_sin(X);
+//    Y = fix16_sin(Y);
+//    Z = fix16_sin(Z);
     //Roll calculation
-    tmpConv = (int32_t)Q16_RAD_DEG;
+    tmpConv = Q16_RAD_DEG;
     tmpRoll = q16TiltCalc(Y, X, Z);
     tmpRoll = fix16_mul(tmpConv, tmpRoll);
-    meas.accRoll = 45;
+    meas.accRoll = ((tmpRoll) * 100) >> 16;
     //Pitch calculation
     tmpPitch = q16TiltCalc(Z, X, Y);
     tmpPitch = fix16_mul(tmpConv, tmpPitch);
-    meas.accPitch = 54;
+    meas.accPitch = ((tmpPitch) * 100) >> 16;
 }
 
 /*!****************************************************************************
@@ -674,9 +661,17 @@ void drawMenu(void){
 */
 void drawMainScreen(void){
     char speed0[8], speed1[4], speed2[4], speed3[4], speed4[4], magStat[6], def[21];
-    char rollAng[7], pitchAng[7], energy[8], currShots[4], mean[8], sdev[8], border[4];
-    uint16_t val1, val2;
-    sprintf(pitchAng, "%c%.1f%c", 232, fabs(meas.accPitch), 248);
+    char rollAng[8], pitchAng[8], energy[8], currShots[4], mean[8], sdev[8], border[4];
+    uint16_t val1, val2, ptch1, ptch2, roll1, roll2;
+    val1 = abs(meas.accPitch) / 10;
+    ptch1 = val1 / FRACT_TENTHS;
+    ptch2 = val1 - (ptch1*FRACT_TENTHS);
+    if(ptch1 == 0) ptch2 = val1;
+    val1 = abs(meas.accRoll) / 10;
+    roll1 = val1 / FRACT_TENTHS;
+    roll2 = val1 - (roll1 * FRACT_TENTHS);
+    if(roll1 == 0) roll2 = val1;
+    sprintf(pitchAng, "%c%u.%.1u%c", 232, ptch1, ptch2, 248);
     //Display settings
     if(sysPars.sysSettings.dispMode == MODE_COM || sysPars.sysSettings.dispMode == MODE_CHR){
         val1 = meas.chron.speed0/FRACT_HUNDREDTHS;
@@ -700,7 +695,7 @@ void drawMainScreen(void){
         ssd_putString6x8(98, 35, &speed3[0]);
         //Select the info to display
         if(sysPars.sysSettings.dispMode == MODE_COM){
-            sprintf(rollAng, "%c%.1f%c", 226, fabs(meas.accRoll), 248);
+            sprintf(rollAng, "%c%u.%.1u%c", 226, roll1, roll2, 248);
             ssd_putString6x8(0, 40, &rollAng[0]);
             ssd_putString6x8(42, 40, &pitchAng[0]);
             ssd_putRollBar(meas.accRoll, meas.accRollBorder, ROLL_LOW_Y, ROLL_LOW_HEIGHT);
@@ -725,7 +720,7 @@ void drawMainScreen(void){
             ssd_putString12x16(0, 56, &energy[0]);
         }
     }else if(sysPars.sysSettings.dispMode == MODE_INC){
-        sprintf(rollAng, "%c%.1f%c", 59, fabs(meas.accRoll), 61);               //Roll angle
+        sprintf(rollAng, "%c%u.%.1u%c", 59, roll1, roll2, 61);
         sprintf(border, "%c%u%c", 241, meas.accRollBorder, 248);                //Roll border
         ssd_putString12x16(0, 8, &rollAng[0]);
         ssd_putString6x8(76, 0, &pitchAng[0]);

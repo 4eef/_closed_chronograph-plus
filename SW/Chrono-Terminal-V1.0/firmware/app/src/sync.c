@@ -50,8 +50,8 @@ void syncInit(void){
 * @retval   Returns 1 if cycle is broken; 0 if everything is ok
 */
 void sync(void){
-    uint8_t time;
-    uint16_t tmp, diff;
+    uint8_t cntDown;
+    uint16_t timeSet, timeDiff;
     if(TIM1->CR1 & TIM_CR1_CEN){
         while(TIM1->CR1 & TIM_CR1_CEN) __NOP();
     }else{
@@ -59,13 +59,13 @@ void sync(void){
     }
     power.uptimeCurr++;
     meas.stats.cycTotal++;
-    tmp = (power.uptimeSet*MIN_TO_US)/CYC_PERIOD_US;
-    diff = tmp - power.uptimeCurr;
-    if((diff < FIVE_SEC_WARNING) && (diff > 0)){
-        time = 1 + (diff*CYC_PERIOD_US)/S_TO_US;
-        sprintf(menu.message, "Shutdown in %u...", time);
+    timeSet = (power.uptimeSet*MIN_TO_US)/CYC_PERIOD_US;
+    timeDiff = timeSet - power.uptimeCurr;
+    if((timeDiff < FIVE_SEC_WARNING) && (timeDiff > 0)){
+        cntDown = 1 + (timeDiff*CYC_PERIOD_US)/S_TO_US;
+        sprintf(menu.message, "Shutdown in %u...", cntDown);
         menu.msgCnt = MSG_FOR_TIMER;
-    }else if((power.uptimeCurr > tmp) && (power.mode == POWER_RUN)) powerOff();
+    }else if((power.uptimeCurr > timeSet) && (power.mode == POWER_RUN)) powerOff();
     else if((power.uptimeCurr > CYC_POFF_MAX) && (power.mode == POWER_STOP)) powerOff();
     TIM1->CR1       |= TIM_CR1_CEN;
     ADC1->CR        |= ADC_CR_ADSTART;

@@ -38,7 +38,7 @@
 */
 #define accSamples              1
 #define degRad                  57.2958f
-#define Q16_RAD_DEG             degRad*65535
+#define Q16_RAD_DEG             3754938
 #define MODE_COM                0
 #define MODE_CHR                1
 #define MODE_INC                2
@@ -57,7 +57,6 @@
 #define FRACT_NOFRACT           0
 #define FRACT_TENTHS            10
 #define FRACT_HUNDREDTHS        100
-#define Q16_ONE                 0xFFFF
 
 /*!****************************************************************************
 * User enum
