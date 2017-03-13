@@ -52,6 +52,9 @@
 #define DISPLAY_ENABLE                  1
 #define PAR_BOX_ARROWS_DIS              0
 #define PAR_BOX_ARROWS_EN               1
+#define STR_MAX_LEN                     22
+#define DISPLAY_OK                      0
+#define DISPLAY_CLEAR                   1
 
 /*!****************************************************************************
 * User enum
@@ -67,7 +70,6 @@ typedef struct{
 
 typedef struct{
     uint8_t     status;
-    uint8_t     enable;
 }ssdSettings_type;
 
 /*!****************************************************************************
@@ -99,6 +101,7 @@ void ssd_putRollBar(int16_t aabs, uint16_t border, uint8_t y, uint8_t hgt);
 void ssd_putMsgBox(uint8_t msgLen);
 void ssd_putMessage(char *newStr, uint8_t newCnt);
 void ssd_putParBox(char *text, uint8_t enArrows);
+void ssd_putStrClr(uint8_t x, uint8_t y, char *text, uint8_t maxLen, uint8_t fontSize);
 
 #endif //ug9616_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

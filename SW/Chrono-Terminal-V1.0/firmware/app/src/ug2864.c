@@ -19,18 +19,36 @@ ssdVideoBff_type    ssdVideoBff;
 ssdSettings_type    ssdSettings;
 
 /*!****************************************************************************
-* @brief    Put text message at the center of display
+* @brief    Put string and clear its previous contents
 * @param    
 * @retval   
 */
-void ssd_putStrClr(char *text, uint8_t maxLen, uint8_t fontSize){
-    char tmp[22];
-    uint8_t currLen;
+void ssd_putStrClr(uint8_t x, uint8_t y, char *text, uint8_t maxLen, uint8_t fontSize){
+    char string[STR_MAX_LEN];
+    uint8_t i, currLen, empty;
     currLen = strlen(text);
-    if(currLen <= maxLen){
-        strcat(text, tmp);
+    if((currLen > maxLen) || (maxLen > STR_MAX_LEN)) return;
+    //Set corresponding sign number
+    if(fontSize == FONT_6X8){
+        empty = 7;
     }else{
-        return;
+        empty = 62;
+    }
+    //Fill string with text and empty signs
+    for(i = 0; i < maxLen; i++){
+        if(*text != 0){
+            string[i] = *text;
+            text++;
+        }else{
+            string[i] = empty;
+            string[i+1] = 0;
+        }
+    }
+    //Put string
+    if(fontSize == FONT_6X8){
+        ssd_putString6x8(x, y, &string[0]);
+    }else{
+        ssd_putString12x16(x, y, &string[0]);
     }
 }
 
