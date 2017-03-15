@@ -116,6 +116,7 @@ void ssd_putMessage(char *newStr, uint8_t newCnt){
         }
         offset = SSD1306_LCDWIDTH/2 - (msgLen*6)/2;
         ssd_putString6x8(offset, 28, &msgStr[0]);
+        if(msgCnt == 0) ssdSettings.status = DISPLAY_CLEAR;
     }
 }
 

@@ -134,6 +134,7 @@ void main(void){
                 }
             }else if(power.mode == POWER_RUN){
                 Menu_Navigate(MENU_PREVIOUS);
+                ssdSettings.status = DISPLAY_CLEAR;
             }
             break;
         case DOWN:
@@ -151,6 +152,7 @@ void main(void){
                 }
             }else if(power.mode == POWER_RUN){
                 Menu_Navigate(MENU_NEXT);
+                ssdSettings.status = DISPLAY_CLEAR;
             }
             break;
         case OK:
@@ -172,6 +174,7 @@ void main(void){
                     Menu_EnterCurrentItem();
                 }else{
                     Menu_Navigate(MENU_CHILD);
+                    ssdSettings.status = DISPLAY_CLEAR;
                 }
             }
             break;
@@ -194,6 +197,7 @@ void main(void){
                 }
             }else if(power.mode == POWER_RUN){
                 Menu_Navigate(MENU_PARENT);
+                ssdSettings.status = DISPLAY_CLEAR;
             }
             break;
         case CLLNG:
@@ -214,6 +218,7 @@ void main(void){
                 powerOn();
             }else if(menu.parEdit == PAR_EDIT_DISABLE){
                 Menu_Navigate(&display);
+                ssdSettings.status = DISPLAY_CLEAR;
             }
             break;
         default:
@@ -347,11 +352,13 @@ void main(void){
 //            memset(ssdVideoBff.video, 0, sizeof(ssdVideoBff.video));
             ssd_putBatt(meas.battery.battCharge, meas.battery.battChgStat);
             //Draw screen
+            if(ssdSettings.status == DISPLAY_CLEAR) memset(ssdVideoBff.video, 0, sizeof(ssdVideoBff.video));
             if(CurrentMenuItem == &display){
                 drawMainScreen();
             }else{
                 drawMenu();
             }
+            ssdSettings.status = DISPLAY_OK;
             //Edit function
             if(menu.parStat != PAR_NONE || lis3AxisCal.calState != ACCEL_CAL_READY) parEditRedir();
             //Draw parameter edit box
@@ -439,6 +446,7 @@ void main(void){
                 ssd_putString6x8(offs, 28, &menu.message[0]);
             }
             //Refresh GDDRAM
+            //Add drawing flag if something on display is changed
             ug2864_refresh();
         }
     }
@@ -655,15 +663,15 @@ void drawMenu(void){
 */
 void drawMainScreen(void){
     static uint16_t prvSpd0, prvSpd1, prvSpd2, prvSpd3, prvSpd4, prvMagStat, prvRoll;
-    static uint16_t prvPitch, prvEnrg, prvCurrShots, prvMean, prvSDev, prvBrdr;
+    static uint16_t prvPitch, prvEnrg, prvStatShots, prvMean, prvSDev, prvBrdr;
     char speed0[8], speed1[4], speed2[4], speed3[4], speed4[4], magStat[6], def[21];
-    char rollAng[8], pitchAng[8], energy[8], currShots[4], mean[8], sdev[8], border[4];
+    char rollAng[8], pitchAng[8], energy[8], statShots[4], mean[8], sdev[8], border[4];
     uint16_t val1, val2, ptch1, ptch2, roll1, roll2;
     //Display settings
     if(sysPars.sysSettings.dispMode == MODE_COM || sysPars.sysSettings.dispMode == MODE_CHR){
         ssd_putString6x8(0, 0, &pellets.pelStrings[meas.chron.pellet][0]);      //Detected pellet
         //Speed 0
-        if(prvSpd0 != meas.chron.speed0){
+        if((prvSpd0 != meas.chron.speed0) || (ssdSettings.status == DISPLAY_CLEAR)){
             prvSpd0 = meas.chron.speed0;
             val1 = meas.chron.speed0/FRACT_HUNDREDTHS;
             val2 = meas.chron.speed0-(val1*FRACT_HUNDREDTHS);
@@ -672,29 +680,29 @@ void drawMainScreen(void){
             ssd_putStrClr(0, 24, &speed0[0], 7, FONT_12x16);
         }
         //Speed 1
-        if(prvSpd1 != meas.chron.speed1){
+        if((prvSpd1 != meas.chron.speed1) || (ssdSettings.status == DISPLAY_CLEAR)){
             prvSpd1 = meas.chron.speed1;
             sprintf(speed1, "%u", meas.chron.speed1/100);
             ssd_putStrClr(98, 15, &speed1[0], 3, FONT_6X8);
         }
         //Speed 2
-        if(prvSpd2 != meas.chron.speed2){
+        if((prvSpd2 != meas.chron.speed2) || (ssdSettings.status == DISPLAY_CLEAR)){
             prvSpd2 = meas.chron.speed2;
             sprintf(speed2, "%u", meas.chron.speed2/100);
             ssd_putStrClr(98, 25, &speed2[0], 3, FONT_6X8);
         }
         //Speed 3
-        if(prvSpd3 != meas.chron.speed3){
+        if((prvSpd3 != meas.chron.speed3) || (ssdSettings.status == DISPLAY_CLEAR)){
             prvSpd3 = meas.chron.speed3;
             sprintf(speed3, "%u", meas.chron.speed3/100);
             ssd_putStrClr(98, 35, &speed3[0], 3, FONT_6X8);
         }
         //Magazine status/Speed4
-        if((meas.chron.clipCapacity > 1) && (prvMagStat != meas.chron.clipCurrent)){
+        if((meas.chron.clipCapacity > 1) && (prvMagStat != meas.chron.clipCurrent) || (ssdSettings.status == DISPLAY_CLEAR)){
             prvMagStat = meas.chron.clipCurrent;
             sprintf(magStat, "%u/%u", meas.chron.clipCurrent, meas.chron.clipCapacity);
             ssd_putStrClr(92, 45, &magStat[0], 5, FONT_6X8);
-        }else if(prvSpd4 != meas.chron.speed4){
+        }else if((prvSpd4 != meas.chron.speed4) || (ssdSettings.status == DISPLAY_CLEAR)){
             prvSpd4 = meas.chron.speed4;
             sprintf(speed4, "%u", meas.chron.speed4/100);
             ssd_putStrClr(98, 45, &speed4[0], 3, FONT_6X8);
@@ -709,10 +717,10 @@ void drawMainScreen(void){
                 roll2 = val1 - (roll1 * FRACT_TENTHS);
                 if(roll1 == 0) roll2 = val1;
                 sprintf(rollAng, "%c%u.%.1u%c", 226, roll1, roll2, 248);
-                ssd_putStrClr(0, 40, &rollAng[0], 7, FONT_6X8);
+                ssd_putStrClr(0, 40, &rollAng[0], 6, FONT_6X8);
                 ssd_putRollBar(meas.accRoll, meas.accRollBorder, ROLL_LOW_Y, ROLL_LOW_HEIGHT);
             }
-            //Pitch angle
+            //Pitch angle (add clearing of previous level)
             if(prvPitch != meas.accPitch){
                 prvPitch = meas.accPitch;
                 val1 = abs(meas.accPitch) / 10;
@@ -720,35 +728,72 @@ void drawMainScreen(void){
                 ptch2 = val1 - (ptch1*FRACT_TENTHS);
                 if(ptch1 == 0) ptch2 = val1;
                 sprintf(pitchAng, "%c%u.%.1u%c", 232, ptch1, ptch2, 248);
-                ssd_putStrClr(42, 40, &pitchAng[0], 7, FONT_6X8);
+                ssd_putStrClr(42, 40, &pitchAng[0], 6, FONT_6X8);
                 ssd_putPitchBar(meas.accPitch, meas.accPitchBorder);
             }
         }else{
-            sprintf(currShots, "%u", meas.chron.statShots);                     //Number of shots per measurement
-            val1 = meas.chron.statMean/FRACT_HUNDREDTHS;
-            val2 = meas.chron.statMean-(val1*FRACT_HUNDREDTHS);
-            if(val1 == 0) val2 = meas.chron.statMean;
-            sprintf(mean, "%c%u.%.2u", 230, val1, val2);                        //Mean of current measurement
-            val1 = meas.chron.statSdev/FRACT_HUNDREDTHS;
-            val2 = meas.chron.statSdev-(val1*FRACT_HUNDREDTHS);
-            if(val1 == 0) val2 = meas.chron.statSdev;
-            sprintf(sdev, "%c%u.%.2u", 229, val1, val2);                        //Standard deviation
-            val1 = meas.chron.statEnergy/FRACT_HUNDREDTHS;
-            val2 = meas.chron.statEnergy-(val1*FRACT_HUNDREDTHS);
-            if(val1 == 0) val2 = meas.chron.statEnergy;
-            sprintf(energy, "%u.%.2u%c", val1, val2, 58);                       //Calculated energy
-            ssd_putString6x8(98, 55, &currShots[0]);
-            ssd_putString6x8(0, 36, &mean[0]);
-            ssd_putString6x8(49, 36, &sdev[0]);
-            ssd_putString12x16(0, 56, &energy[0]);
+            //Number of shots per measurement
+            if((prvStatShots != meas.chron.statShots) || (ssdSettings.status == DISPLAY_CLEAR)){
+                prvStatShots = meas.chron.statShots;
+                sprintf(statShots, "%u", meas.chron.statShots);
+                ssd_putStrClr(98, 55, &statShots[0], 3, FONT_6X8);
+            }
+            //Mean of current measurement
+            if((prvMean != meas.chron.statMean) || (ssdSettings.status == DISPLAY_CLEAR)){
+                prvMean = meas.chron.statMean;
+                val1 = meas.chron.statMean/FRACT_HUNDREDTHS;
+                val2 = meas.chron.statMean-(val1*FRACT_HUNDREDTHS);
+                if(val1 == 0) val2 = meas.chron.statMean;
+                sprintf(mean, "%c%u.%.2u", 230, val1, val2);
+                ssd_putStrClr(0, 36, &mean[0], 7, FONT_6X8);
+            }
+            //Standard deviation
+            if((prvSDev != meas.chron.statSdev) || (ssdSettings.status == DISPLAY_CLEAR)){
+                prvSDev = meas.chron.statSdev;
+                val1 = meas.chron.statSdev/FRACT_HUNDREDTHS;
+                val2 = meas.chron.statSdev-(val1*FRACT_HUNDREDTHS);
+                if(val1 == 0) val2 = meas.chron.statSdev;
+                sprintf(sdev, "%c%u.%.2u", 229, val1, val2);
+                ssd_putStrClr(49, 36, &sdev[0], 7, FONT_6X8);
+            }
+            //Calculated energy
+            if((prvEnrg != meas.chron.statEnergy) || (ssdSettings.status == DISPLAY_CLEAR)){
+                prvEnrg = meas.chron.statEnergy;
+                val1 = meas.chron.statEnergy/FRACT_HUNDREDTHS;
+                val2 = meas.chron.statEnergy-(val1*FRACT_HUNDREDTHS);
+                sprintf(energy, "%u.%.2u%c", val1, val2, 58);
+                if(val1 == 0) val2 = meas.chron.statEnergy;
+                ssd_putStrClr(0, 56, &energy[0], 7, FONT_12x16);
+            }
         }
     }else if(sysPars.sysSettings.dispMode == MODE_INC){
-        sprintf(rollAng, "%c%u.%.1u%c", 59, roll1, roll2, 61);
-        sprintf(border, "%c%u%c", 241, meas.accRollBorder, 248);                //Roll border
-        ssd_putString12x16(0, 8, &rollAng[0]);
-        ssd_putString6x8(76, 0, &pitchAng[0]);
-        ssd_putString6x8(76, 9, &border[0]);
-        ssd_putRollBar(meas.accRoll, meas.accRollBorder, ROLL_HIGH_Y, ROLL_HIGH_HEIGHT);
+        //Roll angle
+        if((prvRoll != meas.accRoll) || (ssdSettings.status == DISPLAY_CLEAR)){
+            prvRoll = meas.accRoll;
+            val1 = abs(meas.accRoll) / 10;
+            roll1 = val1 / FRACT_TENTHS;
+            roll2 = val1 - (roll1 * FRACT_TENTHS);
+            if(roll1 == 0) roll2 = val1;
+            sprintf(rollAng, "%c%u.%.1u%c", 59, roll1, roll2, 61);
+            ssd_putStrClr(0, 8, &rollAng[0], 6, FONT_12x16);
+            ssd_putRollBar(meas.accRoll, meas.accRollBorder, ROLL_HIGH_Y, ROLL_HIGH_HEIGHT);
+        }
+        //Pitch angle
+        if((prvPitch != meas.accPitch) || (ssdSettings.status == DISPLAY_CLEAR)){
+            prvPitch = meas.accPitch;
+            val1 = abs(meas.accPitch) / 10;
+            ptch1 = val1 / FRACT_TENTHS;
+            ptch2 = val1 - (ptch1*FRACT_TENTHS);
+            if(ptch1 == 0) ptch2 = val1;
+            sprintf(pitchAng, "%c%u.%.1u%c", 232, ptch1, ptch2, 248);
+            ssd_putStrClr(76, 0, &pitchAng[0], 6, FONT_6X8);
+        }
+        //Roll border
+        if((prvBrdr != meas.accRollBorder) || (ssdSettings.status == DISPLAY_CLEAR)){
+            prvBrdr = meas.accRollBorder;
+            sprintf(border, "%c%u%c", 241, meas.accRollBorder, 248);                //Roll border
+            ssd_putString6x8(76, 9, &border[0]);
+        }
     }else{
         sprintf(def, "Error display config");                                   //Default line
         ssd_putString6x8(8, 0, &def[0]);

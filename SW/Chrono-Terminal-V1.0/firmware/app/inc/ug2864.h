@@ -53,8 +53,8 @@
 #define PAR_BOX_ARROWS_DIS              0
 #define PAR_BOX_ARROWS_EN               1
 #define STR_MAX_LEN                     22
-#define DISPLAY_OK                      0
-#define DISPLAY_CLEAR                   1
+#define DISPLAY_CLEAR                   0
+#define DISPLAY_OK                      1
 
 /*!****************************************************************************
 * User enum
