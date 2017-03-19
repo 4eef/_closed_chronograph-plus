@@ -15,6 +15,10 @@
 #include "i2c.h"
 #include "delay.h"
 #include "MicroMenu.h"
+#include "fix16.h"
+#include "math.h"
+#include "filter.h"
+#include "system.h"
 
 /*!****************************************************************************
 * User define
@@ -35,6 +39,8 @@
 #define ACCEL_OFF_MAX           4095
 #define ACCEL_CAL_SAMPLES       25
 #define ACCEL_N_SAMPLES         10
+#define degRad                  57.2958f
+#define Q16_RAD_DEG             3754938
 
 /*!****************************************************************************
 * User enum
@@ -91,6 +97,10 @@ void lis3_write(uint8_t reg, uint8_t data);
 uint8_t lis3_read(uint8_t reg);
 void lis3_getXYZ(void);
 void accGainCal(void);
+void trxAccData(void);
+float s16fNorm(int16_t val);
+int32_t q16TiltCalc(int32_t X, int32_t Y, int32_t Z);
+float tiltAngCalc(float A, float B, float C);
 
 #endif //lis3_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

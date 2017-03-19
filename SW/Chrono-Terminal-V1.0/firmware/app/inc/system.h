@@ -12,6 +12,8 @@
 * Include
 */
 #include "stm32f0xx.h"
+#include "ug2864.h"
+#include "lis3.h"
 
 /*!****************************************************************************
 * User define
@@ -26,6 +28,8 @@
 #define PELLET_CONFIRM          1
 #define PELLET_NEW              2
 #define PELLET_ERR_NEW          3
+#define PELLET_MAX              99
+#define PELLET_MIN              1
 #define STAT_SHOTS_MAX          255
 #define STAT_ENERGY_DIV_COEFF   10000
 #define BATT_CHG_ARR_PTS        11
@@ -40,6 +44,12 @@
 #define BATT_VOLT_LOW           3400
 #define CYC_OK                  0
 #define CYC_BROKEN              1
+#define MODE_COM                0
+#define MODE_CHR                1
+#define MODE_INC                2
+#define FRACT_NOFRACT           0
+#define FRACT_TENTHS            10
+#define FRACT_HUNDREDTHS        100
 
 /*!****************************************************************************
 * User enum
@@ -130,6 +140,10 @@ typedef struct{
 /*!****************************************************************************
 * Prototypes for the functions
 */
+void drawIncScr(void);
+void drawChrScr(void);
+void drawHybrScr(void);
+void drawMenu(void);
 
 #endif //system_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

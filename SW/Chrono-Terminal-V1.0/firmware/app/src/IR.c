@@ -14,7 +14,134 @@
 /*!****************************************************************************
 * MEMORY
 */
+extern meas_type            meas;
+extern pellets_type         pellets;
+extern sysPars_type         sysPars;
+extern power_type           power;
 IRRXData_type               IRRXData;
+
+void hndlIRData(void){
+    uint32_t dist, sgn, spd0, spd1, spd2, spd3, spd4, val1, val2, val3, val4;
+    uint8_t i;
+    if(IRRXData.rxState == IR_DATA_READY){
+        sgn = (IRRXData.rxByte[IR_MAX_BYTES-1]) | (IRRXData.rxByte[IR_MAX_BYTES-2])<<8 | (IRRXData.rxByte[IR_MAX_BYTES-3])<<16 | (IRRXData.rxByte[IR_MAX_BYTES-4])<<24;
+        if((sysPars.sysSettings.dispMode != MODE_INC) && ((meas.chron.chrSgntr == sgn) || (sysPars.sysSettings.chrBind != 0))){
+            power.uptimeCurr = 0;
+            if(sysPars.sysSettings.chrBind != 0){
+                sysPars.sysSettings.chrBind = 0;
+                meas.chron.chrSgntr = sgn;
+                ssd_putMessage("Binded", MSG_CNT);
+            }
+            meas.stats.shotsTotal++;
+            //Measurements
+            dist = meas.chron.sensDist*CHR_DIST_MPLY;
+            spd0 = dist/(((IRRXData.rxByte[0]<<8 | IRRXData.rxByte[1])*CHR_TCK_NS)/100);
+            meas.chron.pelSgntr = IRRXData.rxByte[2]<<8 | IRRXData.rxByte[3];
+            spd1 = dist/(((IRRXData.rxByte[4]<<8 | IRRXData.rxByte[5])*CHR_TCK_NS)/100);
+            spd2 = dist/(((IRRXData.rxByte[6]<<8 | IRRXData.rxByte[7])*CHR_TCK_NS)/100);
+            spd3 = dist/(((IRRXData.rxByte[8]<<8 | IRRXData.rxByte[9])*CHR_TCK_NS)/100);
+            spd4 = dist/(((IRRXData.rxByte[10]<<8 | IRRXData.rxByte[11])*CHR_TCK_NS)/100);
+            meas.chron.speed0 = spd0;
+            if(spd0 >= CHR_SPD_MAX) meas.chron.speed0 = CHR_SPD_MAX;
+            meas.chron.speed1 = spd1;
+            if(spd1 >= CHR_SPD_MAX) meas.chron.speed1 = CHR_SPD_MAX;
+            meas.chron.speed2 = spd2;
+            if(spd2 >= CHR_SPD_MAX) meas.chron.speed2 = CHR_SPD_MAX;
+            meas.chron.speed3 = spd3;
+            if(spd3 >= CHR_SPD_MAX) meas.chron.speed3 = CHR_SPD_MAX;
+            meas.chron.speed4 = spd4;
+            if(spd4 >= CHR_SPD_MAX) meas.chron.speed4 = CHR_SPD_MAX;
+            //Ñalculate clip status
+            if(meas.chron.clipCapacity > 1){
+                if(meas.chron.clipCurrent == 0){
+                    meas.chron.clipCurrent = meas.chron.clipCapacity;
+                    ssd_putMessage("Clip reloaded", MSG_CNT);
+                }else if(meas.chron.clipCurrent == 1){
+                    ssd_putMessage("Replace clip", MSG_CNT);
+                }
+                meas.chron.clipCurrent--;
+            }
+            //Pellet recognition by signature
+            if(pellets.pelStat == PELLET_OK){
+                val1 = meas.chron.pelSgntr-meas.chron.pelSgntr/PELLET_SGN_TOLERANCE;
+                val2 = meas.chron.pelSgntr+meas.chron.pelSgntr/PELLET_SGN_TOLERANCE;
+                //Compare current signature with existing in database
+                if((pellets.pelSgntrs[meas.chron.pellet] >= val1) && (pellets.pelSgntrs[meas.chron.pellet] <= val2) && (pellets.matchedSgnNum != 0)){
+                    pellets.newSgnSum = 0;
+                    pellets.newSgnCnt = 0;
+                    pellets.newSgnErrCnt = 0;
+                }else if(pellets.matchedSgnNum != 0){
+                    pellets.newSgnSum += meas.chron.pelSgntr;
+                    pellets.newSgnCnt++;
+                    pellets.newSgnErrCnt++;
+                    if(pellets.newSgnCnt >= PELLET_CHANGE_THR){
+                        pellets.newSgn = pellets.newSgnSum/pellets.newSgnCnt;
+                        pellets.matchedSgnNum = 0;
+                        val3 = pellets.newSgn-pellets.newSgn/PELLET_SGN_TOLERANCE;
+                        val4 = pellets.newSgn+pellets.newSgn/PELLET_SGN_TOLERANCE;
+                        for(i = 1; i < PELLET_DB_NUM; i++){
+                            if(pellets.pelSgntrs[i] >= val3 && pellets.pelSgntrs[i] <= val4){
+                                pellets.matchedSgnNum = i;
+                                pellets.pelStat = PELLET_CONFIRM;
+                                break;
+                            }
+                        }
+                    }
+                }else{                                                          //No existing pellet found
+                    pellets.newSgnErrCnt++;
+                    if((pellets.newSgn >= val1) && (pellets.newSgn <= val2)){
+                        pellets.newSgnCnt++;
+                        pellets.newSgnSum += meas.chron.pelSgntr;
+                    }else{
+                        pellets.newSgn = meas.chron.pelSgntr;
+                        pellets.newSgnCnt = 1;
+                        pellets.newSgnSum = meas.chron.pelSgntr;
+                    }
+                    if(pellets.newSgnCnt >= PELLET_NEW_SGN_THR){
+                        pellets.newSgn = pellets.newSgnSum/pellets.newSgnCnt;
+                        pellets.pelStat = PELLET_NEW;
+                        pellets.matchedSgnNum = 1;
+                        pellets.newSgnErrCnt = 0;
+                        pellets.newSgnCnt = 0;
+                        pellets.newSgnSum = 0;
+                    }else if(pellets.newSgnErrCnt >= PELLET_NEW_SGN_BOUND){
+                        ssd_putMessage("Error pellet ID", MSG_CNT);
+                        pellets.pelStat = PELLET_OK;
+                        pellets.newSgnErrCnt = 0;
+                        pellets.newSgnCnt = 0;
+                        pellets.newSgnSum = 0;
+                    }
+                }
+            }
+            //Statistics calculation
+            if(sysPars.sysSettings.dispMode == MODE_CHR){
+                if(meas.chron.statShots >= STAT_SHOTS_MAX){
+                    ssd_putMessage("Buffer is full", MSG_CNT);
+                }else{
+                    meas.chron.statSpeeds[meas.chron.statShots] = meas.chron.speed0;
+                    meas.chron.statSpeedsSum += meas.chron.statSpeeds[meas.chron.statShots];
+                    meas.chron.statShots++;
+                    if(meas.chron.statShots >= 2){
+                        meas.chron.statMean = meas.chron.statSpeedsSum/meas.chron.statShots;
+                        meas.chron.statDevsSum = 0;
+                        for(i = 0; i < meas.chron.statShots; i++){
+                            if(meas.chron.statMean >= meas.chron.statSpeeds[i]){
+                                meas.chron.statDevsSum += meas.chron.statMean - meas.chron.statSpeeds[i];
+                            }else{
+                                meas.chron.statDevsSum += meas.chron.statSpeeds[i] - meas.chron.statMean;
+                            }
+                        }
+                        meas.chron.statSdev = meas.chron.statDevsSum/meas.chron.statShots;
+                    }
+                    if((meas.chron.pellet != 0) && (pellets.pelWghts[meas.chron.pellet] != 0)){
+                        meas.chron.statEnergy = (((meas.chron.speed0*meas.chron.speed0)/STAT_ENERGY_DIV_COEFF)*pellets.pelWghts[meas.chron.pellet])/STAT_ENERGY_DIV_COEFF/2;
+                    }
+                }
+            }
+        }
+        IRRXData.rxState = IR_READY;                                            //Release receiver
+    }
+}
 
 /*!****************************************************************************
 * @brief    IR receiver initial configuration

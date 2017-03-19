@@ -34,12 +34,13 @@
 #define SCROLL_LINE_WIDTH               2
 #define SCROLL_LINE_LENGTH              52
 #define ROLL_PERIOD                     7
-#define ROLL_HIGH_HEIGHT                46
+#define ROLL_HIGH_HEIGHT                44
 #define ROLL_HIGH_Y                     18
 #define ROLL_LOW_HEIGHT                 8
 #define ROLL_LOW_Y                      56
 #define PITCH_X                         124
 #define PITCH_HEIGHT                    44
+#define PITCH_WIDTH                     4
 #define BATT_PIXELS                     4
 #define BATT_X                          113
 #define BATT_Y                          0
@@ -54,7 +55,8 @@
 #define PAR_BOX_ARROWS_EN               1
 #define STR_MAX_LEN                     22
 #define DISPLAY_CLEAR                   0
-#define DISPLAY_OK                      1
+#define DISPLAY_REFRESH                 1
+#define DISPLAY_OK                      2
 
 /*!****************************************************************************
 * User enum
@@ -97,11 +99,13 @@ void ssd_putBatt(uint8_t percentage, uint8_t chrgStat);
 void ssd_putPitchBar(int16_t aabs, uint16_t border);
 void ssd_putMenuFolder(void);
 void ssd_putMenuScroll(void);
-void ssd_putRollBar(int16_t aabs, uint16_t border, uint8_t y, uint8_t hgt);
+void ssd_putRollBar(int16_t angle, uint16_t border, uint8_t y, uint8_t height);
 void ssd_putMsgBox(uint8_t msgLen);
 void ssd_putMessage(char *newStr, uint8_t newCnt);
 void ssd_putParBox(char *text, uint8_t enArrows);
 void ssd_putStrClr(uint8_t x, uint8_t y, char *text, uint8_t maxLen, uint8_t fontSize);
+void ssd_clearVidBff(void);
+void ssd_clrAreaBff(uint8_t x, uint8_t y, uint8_t height, uint8_t width);
 
 #endif //ug9616_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

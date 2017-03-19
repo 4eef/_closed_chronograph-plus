@@ -14,9 +14,12 @@
 /*!****************************************************************************
 * MEMORY
 */
-extern menu_type        menu;
-lis3AxisCal_type        lis3AxisCal;
-accel_type              accel;
+extern menu_type            menu;
+extern lpfPrim_type         lpfPrim;
+extern kalman_type          kalman;
+extern meas_type            meas;
+lis3AxisCal_type            lis3AxisCal;
+accel_type                  accel;
 
 /*!****************************************************************************
 * @brief    Initialize the LIS3DSH
@@ -71,6 +74,107 @@ void lis3_getXYZ(void){
     I2CTx(sadd, &reg, 1);
     while(I2C1->ISR & I2C_ISR_BUSY) __NOP();
     I2CRx(sadd | 1, &accel.rawXL, 6);
+}
+
+/*!****************************************************************************
+* @brief    Tilt angle calculation routine from Q16.16 fixed point format
+* @param    X, Y, Z - values in radians (Q16.16)
+* @retval   Angle in degrees (Q16.16)
+*/
+int32_t q16TiltCalc(int32_t X, int32_t Y, int32_t Z){
+    int32_t tilt, Ysq, Zsq, sumSqYZ, div;
+    //Prepare arguments
+    Ysq = fix16_mul(Y, Y);
+    Zsq = fix16_mul(Z, Z);
+    sumSqYZ = fix16_add(Ysq, Zsq);
+    //Divide-by-zero protection
+    if(sumSqYZ == 0) sumSqYZ = 1;
+    //Tilt calculation
+    div = fix16_div(X, sumSqYZ);
+    tilt = fix16_atan(div);
+    return tilt;
+}
+
+/*!****************************************************************************
+* @brief    Tilt angle calculation routine
+* @param    X, Y, Z - normalized projections to axises
+* @retval   Angle in degrees (float)
+*/
+float tiltAngCalc(float X, float Y, float Z){
+    float tilt, Ysq, Zsq, sumSqYZ, div;
+    //Prepare arguments
+    Ysq = Y*Y;
+    Zsq = Z*Z;
+    sumSqYZ = Ysq + Zsq;
+    //Divide-by-zero protection
+    if(sumSqYZ == 0) sumSqYZ = 0.000000000000001;
+    //Tilt calculation
+    div = X/sumSqYZ;
+    tilt = (atan(div))*degRad;
+    return tilt;
+}
+
+/*!****************************************************************************
+* @brief    Signed 16-bit variable normalizer
+* @param    Signed 16-bit value
+* @retval   Normalized (-1...1) float value
+*/
+float s16fNorm(int16_t val){
+    return val/16383.;
+}
+
+/*!****************************************************************************
+* @brief    Get tilt data from accelerometer readings
+* @param    
+* @retval   
+*/
+void trxAccData(void){
+    uint8_t reg, numSamples = ACCEL_N_SAMPLES;
+    int32_t X, Y, Z, tmpRoll, tmpPitch, tmpConv;
+    //Settings
+    lis3_write(0x10, accel.offsetX);                                            //Offsets
+    lis3_write(0x11, accel.offsetY);
+    lis3_write(0x12, accel.offsetZ);
+    lis3_write(0x20, 0x87);                                                     //1600 Hz sample rate
+    //Get the samples
+    while(numSamples != 0){
+        reg = lis3_read(0x27);                                                  //Check if data is ready
+        if((reg & 0x3) != 0){
+            lis3_getXYZ();                                                      //Get sampled data
+            lis3AxisCal.calAxisX = accel.corrX = lpfAccPrim(&lpfPrim.x, ((int16_t)(accel.rawXL | (accel.rawXH << 8))));
+            lis3AxisCal.calAxisY = accel.corrY = lpfAccPrim(&lpfPrim.y, ((int16_t)(accel.rawYL | (accel.rawYH << 8))));
+            lis3AxisCal.calAxisZ = accel.corrZ = lpfAccPrim(&lpfPrim.z, ((int16_t)(accel.rawZL | (accel.rawZH << 8))));
+            numSamples--;
+        }
+    }
+    lis3_write(0x20, 0x00);                                                     //Off
+    //Data filtering
+    accel.corrX = kalmanAccCorr(&kalman.x, accel.corrX);
+    accel.corrY = kalmanAccCorr(&kalman.y, accel.corrY);
+    accel.corrZ = kalmanAccCorr(&kalman.z, accel.corrZ);
+    //Axises scaling by calculated gain
+    X = (accel.corrX * fix16_one) / accel.gainX;
+    Y = (accel.corrY * fix16_one) / accel.gainY;
+    Z = (accel.corrZ * fix16_one) / accel.gainZ;
+    //Calculate values
+//    if(X > fix16_one) X = fix16_one - 1; else if(X < -fix16_one) X = -fix16_one + 1;
+//    if(Y > fix16_one) Y = fix16_one - 1; else if(Y < -fix16_one) Y = -fix16_one + 1;
+//    if(Z > fix16_one) Z = fix16_one - 1; else if(Z < -fix16_one) Z = -fix16_one + 1;
+//    X = fix16_asin(X);
+//    Y = fix16_asin(Y);
+//    Z = fix16_asin(Z);
+//    X = fix16_sin(X);
+//    Y = fix16_sin(Y);
+//    Z = fix16_sin(Z);
+    //Roll calculation
+    tmpConv = Q16_RAD_DEG;
+    tmpRoll = q16TiltCalc(Y, X, Z);
+    tmpRoll = fix16_mul(tmpConv, tmpRoll);
+    meas.accRoll = ((tmpRoll) * 100) >> 16;
+    //Pitch calculation
+    tmpPitch = q16TiltCalc(Z, X, Y);
+    tmpPitch = fix16_mul(tmpConv, tmpPitch);
+    meas.accPitch = ((tmpPitch) * 100) >> 16;
 }
 
 /*!****************************************************************************
