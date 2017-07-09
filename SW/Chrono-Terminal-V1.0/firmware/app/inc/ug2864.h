@@ -26,6 +26,7 @@
 #define WHITE                           1
 #define INVERSE                         2
 #define SSD1306_LCDWIDTH                128
+#define SSD1306_LCDWIDTH_LSH            (SSD1306_LCDWIDTH / 16) - 1
 #define SSD1306_LCDHEIGHT               64
 #define PRECISION                       100
 #define SCROLL_X_OFF                    124

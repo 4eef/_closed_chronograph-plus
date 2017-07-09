@@ -30,7 +30,8 @@ void initClocks(void){
     FLASH->ACR      |= FLASH_ACR_PRFTBE;
     while((FLASH->ACR & FLASH_ACR_PRFTBS) == 0) __NOP();
     FLASH->ACR      |= (1 << FLASH_ACR_LATENCY_Pos);
-    RCC->CFGR3      &= ~(RCC_CFGR3_USBSW | RCC_CFGR3_I2C1SW);
+    RCC->CFGR3      &= ~RCC_CFGR3_USBSW;
+    RCC->CFGR3      |= RCC_CFGR3_I2C1SW;
 }
 
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

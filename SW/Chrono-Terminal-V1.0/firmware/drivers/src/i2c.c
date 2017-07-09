@@ -40,10 +40,11 @@ void initI2C1(void){
     RCC->APB1ENR    |= RCC_APB1ENR_I2C1EN;
     RCC->APB1RSTR   |= RCC_APB1RSTR_I2C1RST;
     RCC->APB1RSTR   &= ~RCC_APB1RSTR_I2C1RST;
-    I2C1->TIMINGR   |= (0x9 << I2C_TIMINGR_SCLL_Pos);           //400 kHz settings
-    I2C1->TIMINGR   |= (0x3 << I2C_TIMINGR_SCLH_Pos);
-    I2C1->TIMINGR   |= (0x3 << I2C_TIMINGR_SDADEL_Pos);
-    I2C1->TIMINGR   |= (0x3 << I2C_TIMINGR_SCLDEL_Pos);
+    I2C1->TIMINGR   |= (0x5 << I2C_TIMINGR_PRESC_Pos);          //48 MHz clock
+    I2C1->TIMINGR   |= (0x3 << I2C_TIMINGR_SCLL_Pos);           //1 MHz settings
+    I2C1->TIMINGR   |= (0x1 << I2C_TIMINGR_SCLH_Pos);
+    I2C1->TIMINGR   |= (0x0 << I2C_TIMINGR_SDADEL_Pos);
+    I2C1->TIMINGR   |= (0x1 << I2C_TIMINGR_SCLDEL_Pos);
 //    I2C1->CR1       |= (I2C_CR1_ERRIE | I2C_CR1_TCIE | I2C_CR1_STOPIE | I2C_CR1_NACKIE | I2C_CR1_RXIE | I2C_CR1_TXIE);
 //    NVIC_EnableIRQ(I2C1_IRQn);
 //    NVIC_SetPriority(I2C1_IRQn, 1);

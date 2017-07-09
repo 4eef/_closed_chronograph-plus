@@ -15,6 +15,7 @@
 #include "stdint.h"
 #include "string.h"
 #include "stdio.h"
+#include "ug2864.h"
 
 /*!****************************************************************************
 * User define
@@ -119,6 +120,7 @@ void Menu_Navigate(Menu_Item_t* const NewMenu);
 //void Menu_SetGenericWriteCallback(void (*WriteFunc)(const char* Text));
 void Menu_EnterCurrentItem(void);
 //void Generic_Write(const char* Text);
+void Menu_drawMenu(void);
 
 #endif //MicroMenu_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

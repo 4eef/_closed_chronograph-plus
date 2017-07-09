@@ -152,27 +152,27 @@ void trxAccData(void){
     accel.corrX = kalmanAccCorr(&kalman.x, accel.corrX);
     accel.corrY = kalmanAccCorr(&kalman.y, accel.corrY);
     accel.corrZ = kalmanAccCorr(&kalman.z, accel.corrZ);
-    //Axises scaling by calculated gain
+    //Axises scaling by measured gain
     X = (accel.corrX * fix16_one) / accel.gainX;
     Y = (accel.corrY * fix16_one) / accel.gainY;
     Z = (accel.corrZ * fix16_one) / accel.gainZ;
-    //Calculate values
-//    if(X > fix16_one) X = fix16_one - 1; else if(X < -fix16_one) X = -fix16_one + 1;
-//    if(Y > fix16_one) Y = fix16_one - 1; else if(Y < -fix16_one) Y = -fix16_one + 1;
-//    if(Z > fix16_one) Z = fix16_one - 1; else if(Z < -fix16_one) Z = -fix16_one + 1;
+    //Clipping
+    if(X >= fix16_one) X = fix16_one - 10; else if(X <= -fix16_one) X = -fix16_one + 10;
+    if(Y >= fix16_one) Y = fix16_one - 10; else if(Y <= -fix16_one) Y = -fix16_one + 10;
+    if(Z >= fix16_one) Z = fix16_one - 10; else if(Z <= -fix16_one) Z = -fix16_one + 10;
+    //Linearization
 //    X = fix16_asin(X);
 //    Y = fix16_asin(Y);
 //    Z = fix16_asin(Z);
 //    X = fix16_sin(X);
 //    Y = fix16_sin(Y);
 //    Z = fix16_sin(Z);
-    //Roll calculation
+    //Calculate values
     tmpConv = Q16_RAD_DEG;
-    tmpRoll = q16TiltCalc(Y, X, Z);
+    tmpRoll = q16TiltCalc(Y, X, Z);                                             //Roll calculation
     tmpRoll = fix16_mul(tmpConv, tmpRoll);
     meas.accRoll = ((tmpRoll) * 100) >> 16;
-    //Pitch calculation
-    tmpPitch = q16TiltCalc(Z, X, Y);
+    tmpPitch = q16TiltCalc(Z, X, Y);                                            //Pitch calculation
     tmpPitch = fix16_mul(tmpConv, tmpPitch);
     meas.accPitch = ((tmpPitch) * 100) >> 16;
 }

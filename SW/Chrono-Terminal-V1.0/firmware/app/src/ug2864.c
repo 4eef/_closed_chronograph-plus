@@ -167,10 +167,10 @@ void ssd_putRollBar(int16_t angle, uint16_t border, uint8_t y, uint8_t height){
                 yy = (j << 2) + fillYBias;
                 if(angle >= zero){
                     x = k + i;
-                    ssdVideoBff.video[x + (yy >> 3) * SSD1306_LCDWIDTH] |=  (0xF << (yy & 7));
+                    ssdVideoBff.video[x + ((yy >> 3) << SSD1306_LCDWIDTH_LSH)] |=  (0xF << (yy & 7));
                 }else{
                     x = k - i - 1;
-                    ssdVideoBff.video[x + (yy >> 3) * SSD1306_LCDWIDTH] |=  (0xF << (yy & 7));
+                    ssdVideoBff.video[x + ((yy >> 3) << SSD1306_LCDWIDTH_LSH)] |=  (0xF << (yy & 7));
                 }
             }
         }
@@ -178,10 +178,10 @@ void ssd_putRollBar(int16_t angle, uint16_t border, uint8_t y, uint8_t height){
         for(i = 0; i < SSD1306_LCDWIDTH; i++){
             k = i;
             //Pasting the one in the beginning
-            if(i >= SSD1306_LCDWIDTH/2) k = i - SSD1306_LCDWIDTH/2;
+            if(i >= (SSD1306_LCDWIDTH >> 1)) k = i - (SSD1306_LCDWIDTH >> 1);
             //Draw lines
             for(j = 0; j < height; j++){
-                if(i == (SSD1306_LCDWIDTH/2-1) || (i == (SSD1306_LCDWIDTH/2))){
+                if((i == ((SSD1306_LCDWIDTH >> 1) - 1)) || (i == (SSD1306_LCDWIDTH >> 1))){
                     l = centerStrt;
                     m = centerEnd;
                 }else{
@@ -190,12 +190,12 @@ void ssd_putRollBar(int16_t angle, uint16_t border, uint8_t y, uint8_t height){
                 }
                 //Draw pattern
                 if((k%ROLL_PERIOD == 0) || (k == 0)){
-                    if((j == 0) || (j > l) && (j < m) || (j == height-1)) ssdVideoBff.video[i + ((y + j) >> 3) * SSD1306_LCDWIDTH] |=  (1 << ((y + j) & 7));
+                    if((j == 0) || (j > l) && (j < m) || (j == height - 1)) ssdVideoBff.video[i + (((y + j) >> 3) << SSD1306_LCDWIDTH_LSH)] |=  (1 << ((y + j) & 7));
                 }
             }
         }
         ssdSettings.status = DISPLAY_REFRESH;
-    }
+    } 
 }
 
 /*!****************************************************************************
