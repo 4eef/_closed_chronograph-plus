@@ -15,6 +15,7 @@
 #include "stdint.h"
 #include "string.h"
 #include "stdio.h"
+#include "stdbool.h"
 #include "ug2864.h"
 
 /*!****************************************************************************
@@ -42,23 +43,95 @@
 /*!****************************************************************************
 * User typedef
 */
+typedef enum{
+    eHybrid = 0,
+    eChronograph,
+    eInclinometer
+}eDispMode_type;
+
+typedef enum{
+    eDisplay = 0,
+    eMenu,
+    eParWnd,
+    eInfoWnd
+}eMenuMode_type;
+
+typedef enum{
+    eNoFract = 0,
+    eTenths,
+    eHundreds
+}eParFract_type;
+
+typedef enum{
+    eWait = 0,
+    eBack,
+    eBackLng,
+    eUp,
+    eDown,
+    eSave,
+    eSaveLng
+}eNavEvent_type;
+
 typedef struct{
-    char        parent[20];
-    char        child[10][20];
-    char        message[20];
-    char        parName[20];
-    char        parText[20];
-    uint8_t     currItem;
-    uint8_t     totItems;
-    uint8_t     offs;
-    uint8_t     msgCnt;
-    int16_t     parValue;
-    int16_t     parBorderMax;
-    int16_t     parBorderMin;
-    uint8_t     parEdit;
-    uint8_t     parSign;
-    uint8_t     parStat;
-    uint8_t     parFract;
+    char            message[20];
+    uint8_t         msgCnt;
+}message_type;
+
+typedef struct{
+    bool            isBkBtnUsed;
+    bool            isSvBtnUsed;
+    bool            isUpBtnUsed;
+    bool            isDnBtnUsed;
+    char            title[20];
+    char            parUnits;
+    char            parName[3];
+    int16_t         parValue[3];
+    int16_t         parBorderMax[3];
+    int16_t         parBorderMin[3];
+    eParFract_type  parFract;
+    uint8_t         totStrs;
+}parWnd_type;
+
+typedef struct{
+    char            title[20];
+    char            string[240];
+    uint8_t         totStrs;
+    uint8_t         wndOffs;
+}infoWnd_type;
+
+typedef struct{
+    char            parent[20];
+    char            child[10][20];
+    uint8_t         currItem;
+    uint8_t         totItems;
+    uint8_t         wndOffs;
+}menuItems_type;
+
+typedef struct{
+    message_type    message;
+    parWnd_type     parWindow;
+    infoWnd_type    infoWindow;
+    menuItems_type  menuItems;
+    eMenuMode_type  menuMode;
+    eNavEvent_type  navEvent;
+}menuTmp_type;
+
+typedef struct{
+    char            parent[20];
+    char            child[10][20];
+    char            message[20];
+    char            parName[20];
+    char            parText[20];
+    uint8_t         currItem;
+    uint8_t         totItems;
+    uint8_t         offs;
+    uint8_t         msgCnt;
+    int16_t         parValue;
+    int16_t         parBorderMax;
+    int16_t         parBorderMin;
+    uint8_t         parEdit;
+    uint8_t         parStat;
+    uint8_t         parFract;
 }menu_type;
 
 /** Type define for a menu item. Menu items should be initialized via the helper

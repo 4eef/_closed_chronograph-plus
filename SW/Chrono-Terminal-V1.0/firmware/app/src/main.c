@@ -16,7 +16,6 @@
 */
 extern menu_type            menu;
 extern adcData_type         adcData;
-extern ssdSettings_type     ssdSettings;
 extern lis3AxisCal_type     lis3AxisCal;
 extern power_type           power;
 extern buttons_type         buttons;
@@ -81,7 +80,6 @@ void main(void){
     meas.accPitchBorder = 90;
     meas.chron.clipCapacity = PELLET_MIN;
     meas.chron.sensDist = CHR_DIST_DEFAULT;
-    //ssdSettings.enable = DISPLAY_ENABLE;
     kalman.x.F = 0.5;
     kalman.x.covariance = 0.1;
     kalman.x.gain = 0.5;
@@ -107,12 +105,11 @@ void main(void){
         currMenuItem = Menu_GetCurrentMenu();
         //Syncronize cycle
         sync();
-        meas.chron.speed0 = meas.stats.cycBroken;
+        //meas.chron.speed0 = meas.stats.cycBroken;
         battCalc();                                                             //Calculate battery parameters
         //MicroMenu navigation
         switch(getButtonState()){
         case UP:
-            ssdSettings.status = DISPLAY_CLEAR;
             if(menu.parEdit == PAR_EDIT_ENABLE){
                 if(menu.parValue >= menu.parBorderMax){
                     menu.parValue = menu.parBorderMin;
@@ -130,7 +127,6 @@ void main(void){
             }
             break;
         case DOWN:
-            ssdSettings.status = DISPLAY_CLEAR;
             if(menu.parEdit == PAR_EDIT_ENABLE){
                 if(menu.parValue <= menu.parBorderMin){
                     menu.parValue = menu.parBorderMax;
@@ -148,7 +144,6 @@ void main(void){
             }
             break;
         case OK:
-            ssdSettings.status = DISPLAY_CLEAR;
             if((menu.parEdit == PAR_EDIT_ENABLE) || (pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
                 ssd_putMessage("Saved", MSG_CNT);
                 if(menu.parEdit == PAR_EDIT_ENABLE){
@@ -171,10 +166,8 @@ void main(void){
             }
             break;
         case OKLNG:
-            ssdSettings.status = DISPLAY_CLEAR;
             break;
         case CANCEL:
-            ssdSettings.status = DISPLAY_CLEAR;
             if((menu.parEdit == PAR_EDIT_ENABLE) || (pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
                 sysPars.sysSettings.chrBind = 0;
                 ssd_putMessage("Cancelled", MSG_CNT);
@@ -194,7 +187,6 @@ void main(void){
             }
             break;
         case CLLNG:
-            ssdSettings.status = DISPLAY_CLEAR;
             if((Menu_GetCurrentMenu() == &display) && (power.mode == POWER_RUN)){
                 if((sysPars.sysSettings.clipEn != 0) && (meas.chron.clipCurrent != meas.chron.clipCapacity)){
                     meas.chron.clipCurrent = meas.chron.clipCapacity;
@@ -310,7 +302,7 @@ void drawDisplay(void){
     uint32_t val1, val2;
     uint8_t offs, len;
     char text[20], par[6], axis1[10], axis2[10], axis3[10], dir[2];
-    if(ssdSettings.status == DISPLAY_CLEAR) ssd_clearVidBff();                  //Clear buffer if needed
+    ssd_clearVidBff();
     ssd_putBatt(meas.battery.battCharge, meas.battery.battChgStat);
     if(Menu_GetCurrentMenu() == &display){
         switch(sysPars.sysSettings.dispMode){
@@ -324,7 +316,7 @@ void drawDisplay(void){
             drawIncScr();
             break;
         default:
-            ssdSettings.status = DISPLAY_REFRESH;
+            //ssdSettings.status = DISPLAY_REFRESH;
             ssd_clearVidBff();
             break;
         }

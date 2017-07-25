@@ -16,7 +16,6 @@
 */
 extern menu_type    menu;
 ssdVideoBff_type    ssdVideoBff;
-ssdSettings_type    ssdSettings;
 
 /*!****************************************************************************
 * @brief    Put string and clear its previous contents
@@ -111,7 +110,6 @@ void ssd_putMessage(char *newStr, uint8_t newCnt){
         }
         offset = SSD1306_LCDWIDTH/2 - (msgLen*6)/2;
         ssd_putString6x8(offset, 28, &msgStr[0]);
-        if(msgCnt == 0) ssdSettings.status = DISPLAY_CLEAR;
     }
 }
 
@@ -140,7 +138,6 @@ void ssd_putMsgBox(uint8_t msgLen){
 * @brief    Put roll progress bar and fill it
 */
 void ssd_putRollBar(int16_t angle, uint16_t border, uint8_t y, uint8_t height){
-    static uint8_t prvFillEnd;
     uint8_t i, j, k, l, m, centerStrt, centerEnd, periphStrt, periphEnd, fillYBias, fillHgt, fillEnd;
     uint16_t x, yy, absAngle;
     int16_t zero = 0;
@@ -149,53 +146,49 @@ void ssd_putRollBar(int16_t angle, uint16_t border, uint8_t y, uint8_t height){
     absAngle = abs(angle);
     if(absAngle > border) absAngle = border;
     fillEnd = (absAngle * (SSD1306_LCDWIDTH >> 1)) / border;
-    if((prvFillEnd != fillEnd) || (ssdSettings.status != DISPLAY_OK)){
-        prvFillEnd = fillEnd;
-        //Parameters calculation
-        centerStrt = 1;
-        centerEnd = height - centerStrt - 1;
-        periphStrt = (height / 3) - 1;
-        periphEnd = ((height << 1) / 3) + 1;
-        fillYBias = y + centerStrt + 1;
-        fillHgt = (centerEnd - centerStrt - 1) >> 2;
-        k = SSD1306_LCDWIDTH >> 1;                                              //Progress bar center setting
-        //Erase area
-        ssd_clrAreaBff(0, y, height, SSD1306_LCDWIDTH);
-        //Fill the line
-        for(i = 0; i < fillEnd; i++){
-            for(j = 0; j < fillHgt; j++){
-                yy = (j << 2) + fillYBias;
-                if(angle >= zero){
-                    x = k + i;
-                    ssdVideoBff.video[x + ((yy >> 3) << SSD1306_LCDWIDTH_LSH)] |=  (0xF << (yy & 7));
-                }else{
-                    x = k - i - 1;
-                    ssdVideoBff.video[x + ((yy >> 3) << SSD1306_LCDWIDTH_LSH)] |=  (0xF << (yy & 7));
-                }
+    //Parameters calculation
+    centerStrt = 1;
+    centerEnd = height - centerStrt - 1;
+    periphStrt = (height / 3) - 1;
+    periphEnd = ((height << 1) / 3) + 1;
+    fillYBias = y + centerStrt + 1;
+    fillHgt = (centerEnd - centerStrt - 1) >> 2;
+    k = SSD1306_LCDWIDTH >> 1;                                              //Progress bar center setting
+    //Erase area
+    ssd_clrAreaBff(0, y, height, SSD1306_LCDWIDTH);
+    //Fill the line
+    for(i = 0; i < fillEnd; i++){
+        for(j = 0; j < fillHgt; j++){
+            yy = (j << 2) + fillYBias;
+            if(angle >= zero){
+                x = k + i;
+                ssdVideoBff.video[x + ((yy >> 3) << SSD1306_LCDWIDTH_LSH)] |=  (0xF << (yy & 7));
+            }else{
+                x = k - i - 1;
+                ssdVideoBff.video[x + ((yy >> 3) << SSD1306_LCDWIDTH_LSH)] |=  (0xF << (yy & 7));
             }
         }
-        //Draw the pattern
-        for(i = 0; i < SSD1306_LCDWIDTH; i++){
-            k = i;
-            //Pasting the one in the beginning
-            if(i >= (SSD1306_LCDWIDTH >> 1)) k = i - (SSD1306_LCDWIDTH >> 1);
-            //Draw lines
-            for(j = 0; j < height; j++){
-                if((i == ((SSD1306_LCDWIDTH >> 1) - 1)) || (i == (SSD1306_LCDWIDTH >> 1))){
-                    l = centerStrt;
-                    m = centerEnd;
-                }else{
-                    l = periphStrt;
-                    m = periphEnd;
-                }
-                //Draw pattern
-                if((k%ROLL_PERIOD == 0) || (k == 0)){
-                    if((j == 0) || (j > l) && (j < m) || (j == height - 1)) ssdVideoBff.video[i + (((y + j) >> 3) << SSD1306_LCDWIDTH_LSH)] |=  (1 << ((y + j) & 7));
-                }
+    }
+    //Draw the pattern
+    for(i = 0; i < SSD1306_LCDWIDTH; i++){
+        k = i;
+        //Pasting the one in the beginning
+        if(i >= (SSD1306_LCDWIDTH >> 1)) k = i - (SSD1306_LCDWIDTH >> 1);
+        //Draw lines
+        for(j = 0; j < height; j++){
+            if((i == ((SSD1306_LCDWIDTH >> 1) - 1)) || (i == (SSD1306_LCDWIDTH >> 1))){
+                l = centerStrt;
+                m = centerEnd;
+            }else{
+                l = periphStrt;
+                m = periphEnd;
+            }
+            //Draw pattern
+            if((k%ROLL_PERIOD == 0) || (k == 0)){
+                if((j == 0) || (j > l) && (j < m) || (j == height - 1)) ssdVideoBff.video[i + (((y + j) >> 3) << SSD1306_LCDWIDTH_LSH)] |=  (1 << ((y + j) & 7));
             }
         }
-        ssdSettings.status = DISPLAY_REFRESH;
-    } 
+    }
 }
 
 /*!****************************************************************************
@@ -231,7 +224,6 @@ void ssd_putMenuScroll(void){
 * @brief    Put pitch progress bar and fill it
 */
 void ssd_putPitchBar(int16_t angle, uint16_t border){
-    static uint8_t prvFillEnd;
     uint8_t i, j, k, fillEnd;
     uint16_t x, y, absAngle;
     int16_t zero = 0;
@@ -241,32 +233,28 @@ void ssd_putPitchBar(int16_t angle, uint16_t border){
     absAngle = abs(angle);
     if(absAngle > border) absAngle = border;
     fillEnd = (absAngle * (PITCH_HEIGHT >> 1)) / border;
-    if((prvFillEnd != fillEnd) || (ssdSettings.status != DISPLAY_OK)){
-        prvFillEnd = fillEnd;
-        //Erase area
-        ssd_clrAreaBff(PITCH_X, 8, PITCH_HEIGHT, PITCH_WIDTH);
-        //Fill the line
-        for(i = 0; i < fillEnd; i++){
-            for(j = 0; j < 4; j++){
-                x = PITCH_X + j;
-                if(angle >= zero){
-                    y = k - i - 1;
-                    ssdVideoBff.video[x + (y >> 3) * SSD1306_LCDWIDTH] |=  (1 << (y & 7));
-                }else{
-                    y = k + i;
-                    ssdVideoBff.video[x + (y >> 3) * SSD1306_LCDWIDTH] |=  (1 << (y & 7));
-                }
-            }
-        }
-        //Draw the center
-        for(i = 0; i < 2; i++){
-            y = k - i;
-            for(j = 0; j < 4; j++){
-                x = PITCH_X + j;
+    //Erase area
+    ssd_clrAreaBff(PITCH_X, 8, PITCH_HEIGHT, PITCH_WIDTH);
+    //Fill the line
+    for(i = 0; i < fillEnd; i++){
+        for(j = 0; j < 4; j++){
+            x = PITCH_X + j;
+            if(angle >= zero){
+                y = k - i - 1;
+                ssdVideoBff.video[x + (y >> 3) * SSD1306_LCDWIDTH] |=  (1 << (y & 7));
+            }else{
+                y = k + i;
                 ssdVideoBff.video[x + (y >> 3) * SSD1306_LCDWIDTH] |=  (1 << (y & 7));
             }
         }
-        ssdSettings.status = DISPLAY_REFRESH;
+    }
+    //Draw the center
+    for(i = 0; i < 2; i++){
+        y = k - i;
+        for(j = 0; j < 4; j++){
+            x = PITCH_X + j;
+            ssdVideoBff.video[x + (y >> 3) * SSD1306_LCDWIDTH] |=  (1 << (y & 7));
+        }
     }
 }
 
@@ -497,11 +485,8 @@ void ug2864_com(uint8_t com){
 * @retval   
 */
 void ug2864_refresh(void){
-    if(ssdSettings.status == DISPLAY_REFRESH){
-        ssdSettings.status = DISPLAY_OK;
-        uint8_t sadd = 0x78;
-        while(I2C1->ISR & I2C_ISR_BUSY) __NOP();
-        I2CTx(sadd | 1, &ssdVideoBff.data, 1025);
-    }
+    uint8_t sadd = 0x78;
+    while(I2C1->ISR & I2C_ISR_BUSY) __NOP();
+    I2CTx(sadd | 1, &ssdVideoBff.data, 1025);
 }
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

@@ -71,10 +71,6 @@ typedef struct{
     uint8_t     video[SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8];
 }ssdVideoBff_type;
 
-typedef struct{
-    uint8_t     status;
-}ssdSettings_type;
-
 /*!****************************************************************************
 * Extern viriables
 */

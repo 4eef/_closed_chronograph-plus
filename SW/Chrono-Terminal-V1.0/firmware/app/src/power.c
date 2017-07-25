@@ -14,7 +14,6 @@
 /*!****************************************************************************
 * MEMORY
 */
-extern ssdSettings_type         ssdSettings;
 extern buttons_type             buttons;
 power_type                      power;
 
