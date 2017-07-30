@@ -52,14 +52,20 @@ typedef enum{
 typedef enum{
     eDisplay = 0,
     eMenu,
-    eParWnd,
+    eParEditWnd,
+    eTxtEditWnd,
     eInfoWnd
 }eMenuMode_type;
 
 typedef enum{
-    eNoFract = 0,
-    eTenths,
-    eHundreds
+    eNumber = 0,
+    eText
+}eParType_type;
+
+typedef enum{
+    eNoFract = 1,
+    eTenths = 10,
+    eHundreds = 100
 }eParFract_type;
 
 typedef enum{
@@ -73,24 +79,29 @@ typedef enum{
 }eNavEvent_type;
 
 typedef struct{
-    char            message[20];
+    bool            toDisplay;
+    char            msgStr[20];
+    uint8_t         msgLen;
     uint8_t         msgCnt;
 }message_type;
 
 typedef struct{
-    bool            isBkBtnUsed;
-    bool            isSvBtnUsed;
-    bool            isUpBtnUsed;
-    bool            isDnBtnUsed;
+    eParType_type   parType;
     char            title[20];
-    char            parUnits;
-    char            parName[3];
-    int16_t         parValue[3];
-    int16_t         parBorderMax[3];
-    int16_t         parBorderMin[3];
+    char            parUnits[5];
+    char            parName[20];
+    int16_t         parValue;
+    int16_t         parBorderMax;
+    int16_t         parBorderMin;
     eParFract_type  parFract;
-    uint8_t         totStrs;
-}parWnd_type;
+}parEditWnd_type;
+
+typedef struct{
+    char            title[20];
+    char            string[20];
+    char            symbol;
+    uint8_t         symPos;
+}txtEditWnd_type;
 
 typedef struct{
     char            title[20];
@@ -109,29 +120,12 @@ typedef struct{
 
 typedef struct{
     message_type    message;
-    parWnd_type     parWindow;
+    parEditWnd_type parEditWnd;
+    txtEditWnd_type txtEditWnd;
     infoWnd_type    infoWindow;
     menuItems_type  menuItems;
     eMenuMode_type  menuMode;
     eNavEvent_type  navEvent;
-}menuTmp_type;
-
-typedef struct{
-    char            parent[20];
-    char            child[10][20];
-    char            message[20];
-    char            parName[20];
-    char            parText[20];
-    uint8_t         currItem;
-    uint8_t         totItems;
-    uint8_t         offs;
-    uint8_t         msgCnt;
-    int16_t         parValue;
-    int16_t         parBorderMax;
-    int16_t         parBorderMin;
-    uint8_t         parEdit;
-    uint8_t         parStat;
-    uint8_t         parFract;
 }menu_type;
 
 /** Type define for a menu item. Menu items should be initialized via the helper
@@ -144,7 +138,7 @@ typedef const struct Menu_Item {
     const struct Menu_Item *Child; /**< Pointer to the child menu item of this menu item */
     void (*SelectCallback)(void); /**< Pointer to the optional menu-specific select callback of this menu item */
     void (*EnterCallback)(void); /**< Pointer to the optional menu-specific enter callback of this menu item */
-    const char Text[]; /**< Menu item text to pass to the menu display callback function */
+    char Text[]; /**< Menu item text to pass to the menu display callback function */
 } Menu_Item_t;
 
 /*!****************************************************************************
@@ -193,7 +187,12 @@ void Menu_Navigate(Menu_Item_t* const NewMenu);
 //void Menu_SetGenericWriteCallback(void (*WriteFunc)(const char* Text));
 void Menu_EnterCurrentItem(void);
 //void Generic_Write(const char* Text);
-void Menu_drawMenu(void);
+void Menu_listParse(Menu_Item_t* const NewMenu);
+void Menu_putMessage(char *newStr, uint8_t newCnt);
+void Menu_rfrshParWnd(char *parName, int16_t parVal);
+void Menu_putParWnd(eParType_type parType, eParFract_type parFract,
+                    char *title, char *parUnits, char *parName,
+                    int16_t parVal, int16_t brdMax, int16_t brdMin);
 
 #endif //MicroMenu_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

@@ -45,29 +45,84 @@ void Menu_commonRun(eNavEvent_type navEvent){
 /*!****************************************************************************
 * @brief    
 */
-void Menu_listRun(void){
+void Menu_listParse(Menu_Item_t* const NewMenu){
+    Menu_Item_t *tmpItem, *tmpPrntItem;
+    //Clear offset if passed to other level
+    if((NewMenu == MENU_CHILD) || (NewMenu == MENU_PARENT)) menu.menuItems.wndOffs = 0;
+    tmpItem = CurrentMenuItem;
+    tmpPrntItem = tmpItem->Parent;
+    strcpy(menu.menuItems.parent, tmpPrntItem->Text);
+    //Get to the upper position of the menu list
+    menu.menuItems.currItem = 0;
+    while(1){
+        menu.menuItems.currItem++;
+        if(tmpItem->Previous == &NULL_MENU) break;
+        tmpItem = tmpItem->Previous;
+    }
+    //Copy all strings on current level
+    menu.menuItems.totItems = 0;
+    while(1){
+        strcpy(menu.menuItems.child[menu.menuItems.totItems], tmpItem->Text);
+        menu.menuItems.totItems++;
+        if(tmpItem->Next == &NULL_MENU) break;
+        tmpItem = tmpItem->Next;
+    }
+}
+
+/*!****************************************************************************
+* @brief    
+*/
+void Menu_putInfoWnd(void){
     
 }
 
 /*!****************************************************************************
 * @brief    
 */
-void Menu_infoWndRun(void){
+void Menu_putTxtWnd(void){
     
 }
 
 /*!****************************************************************************
 * @brief    
 */
-void Menu_parWndRun(void){
-    
+void Menu_putParWnd(eParType_type parType, eParFract_type parFract,
+                    char *title, char *parUnits, char *parName,
+                    int16_t parVal, int16_t brdMax, int16_t brdMin){
+    //Set up menu mode
+    menu.menuMode = eParEditWnd;
+    //Copy parameters
+    strcpy(menu.parEditWnd.title, title);
+    strcpy(menu.parEditWnd.parUnits, parUnits);
+    strcpy(menu.parEditWnd.parName, parName);
+    menu.parEditWnd.parType = parType;
+    menu.parEditWnd.parFract = parFract;
+    menu.parEditWnd.parValue = parVal;
+    menu.parEditWnd.parBorderMax = brdMax;
+    menu.parEditWnd.parBorderMin = brdMin;
 }
 
 /*!****************************************************************************
 * @brief    
 */
-void Menu_msgRun(void){
-    
+void Menu_rfrshParWnd(char *parName, int16_t parVal){
+    if(menu.parEditWnd.parType == eNumber){
+        menu.parEditWnd.parValue = parVal;
+    }else{
+        strcpy(menu.parEditWnd.parName, parName);
+    }
+}
+
+/*!****************************************************************************
+* @brief    
+*/
+void Menu_putMessage(char *newStr, uint8_t newCnt){
+    if((newStr != NULL) && (newCnt != 0)){
+        strcpy(menu.message.msgStr, newStr);
+        menu.message.msgLen = strlen(menu.message.msgStr);
+        menu.message.msgCnt = newCnt;
+        menu.message.toDisplay = true;
+    }
 }
 
 /*!****************************************************************************
@@ -86,35 +141,9 @@ Menu_Item_t* Menu_GetCurrentMenu(void){
 * @retval   
 */
 void Menu_Navigate(Menu_Item_t* const NewMenu){
-    Menu_Item_t *tmpItem, *tmpParItem;
-    uint8_t i;
     if((NewMenu == &NULL_MENU) || (NewMenu == NULL)) return;
-    if((NewMenu == MENU_CHILD) || (NewMenu == MENU_PARENT)) menu.offs = 0;//Clear offset if passed to other level
     CurrentMenuItem = NewMenu;
-    tmpItem = CurrentMenuItem;
-    //Get to the upper position of the menu list
-    i = 0;
-    while(1){
-        tmpParItem = tmpItem->Parent;
-        i++;                                                    //Current menu item
-        menu.currItem = i;
-        if(tmpItem->Previous == &NULL_MENU) break;
-        tmpItem = tmpItem->Previous;
-    }
-    //Clear strings
-    for(i = 0; i < 10; i++){
-        memset(menu.child[i], 0, sizeof(menu.child[i]));
-    }
-    //Copy all menu listing
-    strcpy(menu.parent, tmpParItem->Text);                      //Parent text string
-    i = 0;
-    while(1){                                                   //Child text strings
-        strcpy(menu.child[i], tmpItem->Text);
-        i++;
-        menu.totItems = i;                                      //Total menu elements
-        if(tmpItem->Next == &NULL_MENU) break;
-        tmpItem = tmpItem->Next;
-    }
+    Menu_listParse(NewMenu);
 //    if(MenuWriteFunc) MenuWriteFunc(CurrentMenuItem->Text);
 //    void (*SelectCallback)(void) = CurrentMenuItem->SelectCallback;
 //    if(SelectCallback) SelectCallback();

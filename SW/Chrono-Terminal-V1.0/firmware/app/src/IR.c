@@ -27,10 +27,10 @@ void hndlIRData(void){
         sgn = (IRRXData.rxByte[IR_MAX_BYTES-1]) | (IRRXData.rxByte[IR_MAX_BYTES-2])<<8 | (IRRXData.rxByte[IR_MAX_BYTES-3])<<16 | (IRRXData.rxByte[IR_MAX_BYTES-4])<<24;
         if((sysPars.sysSettings.dispMode != MODE_INC) && ((meas.chron.chrSgntr == sgn) || (sysPars.sysSettings.chrBind != 0))){
             power.uptimeCurr = 0;
-            if(sysPars.sysSettings.chrBind != 0){
-                sysPars.sysSettings.chrBind = 0;
+            if(meas.chron.chrBindCnt != 0){
+                meas.chron.chrBindCnt = 0;
                 meas.chron.chrSgntr = sgn;
-                ssd_putMessage("Binded", MSG_CNT);
+                Menu_putMessage("Binded", MSG_CNT);
             }
             meas.stats.shotsTotal++;
             //Measurements
@@ -55,9 +55,9 @@ void hndlIRData(void){
             if(meas.chron.clipCapacity > 1){
                 if(meas.chron.clipCurrent == 0){
                     meas.chron.clipCurrent = meas.chron.clipCapacity;
-                    ssd_putMessage("Clip reloaded", MSG_CNT);
+                    Menu_putMessage("Clip reloaded", MSG_CNT);
                 }else if(meas.chron.clipCurrent == 1){
-                    ssd_putMessage("Replace clip", MSG_CNT);
+                    Menu_putMessage("Replace clip", MSG_CNT);
                 }
                 meas.chron.clipCurrent--;
             }
@@ -105,7 +105,7 @@ void hndlIRData(void){
                         pellets.newSgnCnt = 0;
                         pellets.newSgnSum = 0;
                     }else if(pellets.newSgnErrCnt >= PELLET_NEW_SGN_BOUND){
-                        ssd_putMessage("Error pellet ID", MSG_CNT);
+                        Menu_putMessage("Error pellet ID", MSG_CNT);
                         pellets.pelStat = PELLET_OK;
                         pellets.newSgnErrCnt = 0;
                         pellets.newSgnCnt = 0;
@@ -116,7 +116,7 @@ void hndlIRData(void){
             //Statistics calculation
             if(sysPars.sysSettings.dispMode == MODE_CHR){
                 if(meas.chron.statShots >= STAT_SHOTS_MAX){
-                    ssd_putMessage("Buffer is full", MSG_CNT);
+                    Menu_putMessage("Buffer is full", MSG_CNT);
                 }else{
                     meas.chron.statSpeeds[meas.chron.statShots] = meas.chron.speed0;
                     meas.chron.statSpeedsSum += meas.chron.statSpeeds[meas.chron.statShots];

@@ -50,7 +50,8 @@ void syncInit(void){
 * @retval   Returns 1 if cycle is broken; 0 if everything is ok
 */
 void sync(void){
-    uint8_t cntDown;
+    char msg[20];
+    uint8_t cntDn;
     uint16_t timeSet, timeDiff;
     if(TIM1->CR1 & TIM_CR1_CEN){
         while(TIM1->CR1 & TIM_CR1_CEN) __NOP();
@@ -62,9 +63,9 @@ void sync(void){
     timeSet = (power.uptimeSet*MIN_TO_US)/CYC_PERIOD_US;
     timeDiff = timeSet - power.uptimeCurr;
     if((timeDiff < FIVE_SEC_WARNING) && (timeDiff > 0)){
-        cntDown = 1 + (timeDiff*CYC_PERIOD_US)/S_TO_US;
-        sprintf(menu.message, "Shutdown in %u...", cntDown);
-        menu.msgCnt = MSG_FOR_TIMER;
+        cntDn = 1 + (timeDiff*CYC_PERIOD_US)/S_TO_US;
+        sprintf(msg, "Shutdown in %u...", cntDn);
+        Menu_putMessage(msg, MSG_FOR_TIMER);
     }else if((power.uptimeCurr > timeSet) && (power.mode == POWER_RUN)) powerOff();
     else if((power.uptimeCurr > CYC_POFF_MAX) && (power.mode == POWER_STOP)) powerOff();
     TIM1->CR1       |= TIM_CR1_CEN;

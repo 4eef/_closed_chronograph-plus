@@ -99,7 +99,7 @@ void main(void){
     initPeriphs();
     powerOff();
 //    adcInit();
-//    powerOn();
+//    powerOn();    
     
     while(1){
         currMenuItem = Menu_GetCurrentMenu();
@@ -110,11 +110,11 @@ void main(void){
         //MicroMenu navigation
         switch(getButtonState()){
         case UP:
-            if(menu.parEdit == PAR_EDIT_ENABLE){
-                if(menu.parValue >= menu.parBorderMax){
-                    menu.parValue = menu.parBorderMin;
+            if(menu.menuMode == eParEditWnd){
+                if(menu.parEditWnd.parValue >= menu.parEditWnd.parBorderMax){
+                    menu.parEditWnd.parValue = menu.parEditWnd.parBorderMin;
                 }else{
-                    menu.parValue++;
+                    menu.parEditWnd.parValue++;
                 }
             }else if((pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
                 if(pellets.matchedSgnNum >= PELLET_DB_NUM-1){
@@ -127,11 +127,11 @@ void main(void){
             }
             break;
         case DOWN:
-            if(menu.parEdit == PAR_EDIT_ENABLE){
-                if(menu.parValue <= menu.parBorderMin){
-                    menu.parValue = menu.parBorderMax;
+            if(menu.menuMode == eParEditWnd){
+                if(menu.parEditWnd.parValue <= menu.parEditWnd.parBorderMin){
+                    menu.parEditWnd.parValue = menu.parEditWnd.parBorderMax;
                 }else{
-                    menu.parValue--;
+                    menu.parEditWnd.parValue--;
                 }
             }else if((pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
                 if(pellets.matchedSgnNum <= PELLET_DB_NULL){
@@ -144,13 +144,13 @@ void main(void){
             }
             break;
         case OK:
-            if((menu.parEdit == PAR_EDIT_ENABLE) || (pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
-                ssd_putMessage("Saved", MSG_CNT);
-                if(menu.parEdit == PAR_EDIT_ENABLE){
+            if((menu.menuMode == eParEditWnd) || (pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
+                Menu_putMessage("Saved", MSG_CNT);
+                if(menu.menuMode == eParEditWnd){
                     if(lis3AxisCal.calState == ACCEL_CAL_WAIT){
                         lis3AxisCal.calState = ACCEL_CAL_SAVE;
                     }else{
-                        menu.parStat = PAR_SAVE;
+                        menu.navEvent = eSave;
                     }
                 }else{
                     pellets.pelSgntrs[pellets.matchedSgnNum] = pellets.newSgn;
@@ -168,14 +168,14 @@ void main(void){
         case OKLNG:
             break;
         case CANCEL:
-            if((menu.parEdit == PAR_EDIT_ENABLE) || (pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
+            if((menu.menuMode == eParEditWnd) || (pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
                 sysPars.sysSettings.chrBind = 0;
-                ssd_putMessage("Cancelled", MSG_CNT);
-                if(menu.parEdit == PAR_EDIT_ENABLE){
+                Menu_putMessage("Cancelled", MSG_CNT);
+                if(menu.menuMode == eParEditWnd){
                     if(lis3AxisCal.calState == ACCEL_CAL_WAIT){
                         lis3AxisCal.calState = ACCEL_CAL_CANCEL;
                     }else{
-                        menu.parStat = PAR_CANCEL;
+                        menu.navEvent = eBack;
                     }
                 }else{
                     meas.chron.pellet = 0;
@@ -190,24 +190,24 @@ void main(void){
             if((Menu_GetCurrentMenu() == &display) && (power.mode == POWER_RUN)){
                 if((sysPars.sysSettings.clipEn != 0) && (meas.chron.clipCurrent != meas.chron.clipCapacity)){
                     meas.chron.clipCurrent = meas.chron.clipCapacity;
-                    ssd_putMessage("Clip reloaded", MSG_CNT);
+                    Menu_putMessage("Clip reloaded", MSG_CNT);
                 }else if((meas.chron.statShots != 0) && (sysPars.sysSettings.dispMode == MODE_CHR)){
                     meas.chron.statShots = 0;
                     meas.chron.statSpeedsSum = 0;
                     meas.chron.statSdev = 0;
                     meas.chron.statMean = 0;
-                    ssd_putMessage("Stats cleared", MSG_CNT);
+                    Menu_putMessage("Stats cleared", MSG_CNT);
                 }else{
                     powerOff();
                 }
             }else if(power.mode == POWER_STOP){
                 powerOn();
-            }else if(menu.parEdit == PAR_EDIT_DISABLE){
+            }else if(menu.menuMode == eDisplay){
                 Menu_Navigate(&display);
             }
             break;
         default:
-            menu.parStat = PAR_NONE;
+            menu.navEvent = eWait;
             break;
         }
         if(power.mode == POWER_RUN){
@@ -224,32 +224,35 @@ void main(void){
 * @retval   
 */
 void parEditRedir(void){
-    menu.parFract = FRACT_NOFRACT;
+    menu.parEditWnd.parFract = eNoFract;
     if(currMenuItem == &sclipc){                                             //Magazine capacity
-        menu.parBorderMax = PELLET_MAX;
-        menu.parBorderMin = PELLET_MIN;
+        menu.menuMode = eParEditWnd;
+        menu.parEditWnd.parBorderMax = PELLET_MAX;
+        menu.parEditWnd.parBorderMin = PELLET_MIN;
         meas.chron.clipCapacity = parEdit(meas.chron.clipCapacity);
         meas.chron.clipCurrent = meas.chron.clipCapacity;
     }else if(currMenuItem == &sibrdr){                                       //Inclinometer roll level border
-        menu.parBorderMax = INC_BORDER_MAX;
-        menu.parBorderMin = INC_BORDER_MIN;
+        menu.menuMode = eParEditWnd;
+        menu.parEditWnd.parBorderMax = INC_BORDER_MAX;
+        menu.parEditWnd.parBorderMin = INC_BORDER_MIN;
         meas.accRollBorder = parEdit(meas.accRollBorder);
     }else if(currMenuItem == &scbind){                                       //Bind new chronograph
-        strcpy(menu.message, "Waiting...");
-        menu.msgCnt = MSG_CNT_BIND;
-        sysPars.sysSettings.chrBind = 1;
+        Menu_putMessage("Waiting...", MSG_CNT_BIND);
+        meas.chron.chrBindCnt = MSG_CNT_BIND;
     }else if(currMenuItem == &scdist){                                       //Edit sensor distance
-        menu.parBorderMax = CHR_DIST_MAX;
-        menu.parBorderMin = CHR_DIST_MIN;
+        menu.menuMode = eParEditWnd;
+        menu.parEditWnd.parBorderMax = CHR_DIST_MAX;
+        menu.parEditWnd.parBorderMin = CHR_DIST_MIN;
         meas.chron.sensDist = parEdit(meas.chron.sensDist);
-        menu.parFract = FRACT_TENTHS;
+        menu.parEditWnd.parFract = eTenths;
     }else if(currMenuItem == &siofcal){
         
     }else if(currMenuItem == &sigacal){
         accGainCal();
     }else if(currMenuItem == &spofft){
-        menu.parBorderMax = POWER_RUN_MAX;
-        menu.parBorderMin = POWER_RUN_MIN;
+        menu.menuMode = eParEditWnd;
+        menu.parEditWnd.parBorderMax = POWER_RUN_MAX;
+        menu.parEditWnd.parBorderMin = POWER_RUN_MIN;
         power.uptimeSet = parEdit(power.uptimeSet);
         power.uptimeCurr = 0;
     }else if(currMenuItem == &sswrst){
@@ -264,18 +267,18 @@ void parEditRedir(void){
 */
 int16_t parEdit(int16_t param){
     int16_t retVal = param;
-    if(menu.parEdit == PAR_EDIT_ENABLE){
-        if(menu.parStat == PAR_SAVE){
-            retVal = menu.parValue;
-            menu.parEdit = PAR_EDIT_DISABLE;
+    if(menu.menuMode == eParEditWnd){
+        if(menu.navEvent == eSave){
+            retVal = menu.parEditWnd.parValue;
+            menu.menuMode = eMenu;
             return retVal;
-        }else if(menu.parStat == PAR_CANCEL){
-            menu.parEdit = PAR_EDIT_DISABLE;
+        }else if(menu.navEvent == eBack){
+            menu.menuMode = eMenu;
             return retVal;
         }
     }else{
-        menu.parValue = param;
-        menu.parEdit = PAR_EDIT_ENABLE;
+        menu.parEditWnd.parValue = param;
+        menu.menuMode = eParEditWnd;
     }
     return retVal;
 }
@@ -289,7 +292,7 @@ void modeEdit(void){
     if(currMenuItem == &mcommon)sysPars.sysSettings.dispMode = MODE_COM;
     else if(currMenuItem == &mchron)sysPars.sysSettings.dispMode = MODE_CHR;
     else if(currMenuItem == &mincline)sysPars.sysSettings.dispMode = MODE_INC;
-    ssd_putMessage("OK", MSG_CNT);
+    Menu_putMessage("OK", MSG_CNT);
     if(currMenuItem->Parent == &mode) Menu_Navigate(&display);
 }
 
@@ -324,9 +327,9 @@ void drawDisplay(void){
         drawMenu();
     }
     //Edit function
-    if(menu.parStat != PAR_NONE || lis3AxisCal.calState != ACCEL_CAL_READY) parEditRedir();
+    if(menu.navEvent != eWait || lis3AxisCal.calState != ACCEL_CAL_READY) parEditRedir();
     //Draw parameter edit box
-    if(menu.parEdit == PAR_EDIT_ENABLE){
+    if(menu.menuMode == eParEditWnd){
         if(lis3AxisCal.calState != ACCEL_CAL_READY){
             switch(lis3AxisCal.calAxisState){
             case ACCEL_X_CAL_SAVE_NEG:
@@ -376,12 +379,12 @@ void drawDisplay(void){
         }else{
             strcpy(text, currMenuItem->Text);
             ssd_putParBox(&text[0], PAR_BOX_ARROWS_EN);
-            if(menu.parFract != 0){
-                val1 = menu.parValue/menu.parFract;
-                val2 = menu.parValue%val1;
+            if(menu.parEditWnd.parFract != eNoFract){
+                val1 = menu.parEditWnd.parValue/menu.parEditWnd.parFract;
+                val2 = menu.parEditWnd.parValue%val1;
                 sprintf(par, "%u.%u", val1, val2);
             }else{
-                sprintf(par, "%u", menu.parValue);
+                sprintf(par, "%u", menu.parEditWnd.parValue);
             }
             len = strlen(par);
             offs = SSD1306_LCDWIDTH/2 - (len*6)/2;
@@ -395,22 +398,14 @@ void drawDisplay(void){
         offs = SSD1306_LCDWIDTH/2 - (len*6)/2;
         ssd_putString6x8(offs, 28, &text[0]);
     }
-    //Draw message
-    ssd_putMessage(NULL, NULL);
-    if(menu.msgCnt != 0){
-        menu.msgCnt--;
-        if((sysPars.sysSettings.chrBind != 0) && (menu.msgCnt == 0)){
-            sysPars.sysSettings.chrBind = 0;
-            strcpy(menu.message, "Failed");
-            menu.msgCnt = MSG_CNT;
-        }
-        len = strlen(menu.message);
-        ssd_putMsgBox(len);
-        offs = SSD1306_LCDWIDTH/2 - (len*6)/2;
-        ssd_putString6x8(offs, 28, &menu.message[0]);
+    //Chronograph binding
+    if(meas.chron.chrBindCnt != 0){
+        meas.chron.chrBindCnt--;
+        if(meas.chron.chrBindCnt == 0) Menu_putMessage("Failed", MSG_CNT);
     }
+    //Draw message
+    ssd_putMessage();
     //Refresh GDDRAM
-    //Add drawing flag if something on display is changed
     ug2864_refresh();
 }
 

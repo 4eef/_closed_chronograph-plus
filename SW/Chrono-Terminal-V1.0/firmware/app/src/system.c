@@ -27,24 +27,29 @@ pellets_type                pellets;
 */
 void drawMenu(void){
     char arrow[2] = {26, 0};
-    uint8_t i, pos, offs;
+    uint8_t i, pos, offs, numItems;
     ssd_putMenuFolder();                                                        //Folder for parent position
-    if(menu.totItems > MENU_POSITIONS) ssd_putMenuScroll();                     //Put scroll bar
+    if(menu.menuItems.totItems > MENU_POSITIONS) ssd_putMenuScroll();                     //Put scroll bar
     //Offset calculation
-    offs = menu.offs;
-    if(((menu.currItem - MENU_POSITIONS) > offs) && (menu.currItem > MENU_POSITIONS)){
-        offs = menu.currItem - MENU_POSITIONS;
-    }else if(((menu.currItem - MENU_POSITIONS) < offs) && ((offs - (menu.currItem - MENU_POSITIONS)) > (MENU_POSITIONS-1))){
+    offs = menu.menuItems.wndOffs;
+    if(((menu.menuItems.currItem - MENU_POSITIONS) > offs) && (menu.menuItems.currItem > MENU_POSITIONS)){
+        offs = menu.menuItems.currItem - MENU_POSITIONS;
+    }else if(((menu.menuItems.currItem - MENU_POSITIONS) < offs) && ((offs - (menu.menuItems.currItem - MENU_POSITIONS)) > (MENU_POSITIONS-1))){
         offs--;
     }
-    menu.offs = offs;
+    menu.menuItems.wndOffs = offs;
     //Calculate arrow position
-    pos = menu.currItem - offs;
+    pos = menu.menuItems.currItem - offs;
     //Put strings
-    ssd_putString6x8(14, 1, &menu.parent[0]);
+    ssd_putString6x8(14, 1, &menu.menuItems.parent[0]);
     ssd_putString6x8(0, (MENU_START+MENU_INTERVAL*(pos-1)), &arrow[0]);         //Arrow to current position
-    for(i = 0; i < MENU_POSITIONS; i++){
-        ssd_putString6x8(8, MENU_START+MENU_INTERVAL*i, &menu.child[offs+i][0]);
+    if(menu.menuItems.totItems <= MENU_POSITIONS){
+        numItems = menu.menuItems.totItems;
+    }else{
+        numItems = MENU_POSITIONS;
+    }
+    for(i = 0; i < numItems; i++){
+        ssd_putString6x8(8, MENU_START+MENU_INTERVAL*i, &menu.menuItems.child[offs+i][0]);
     }
 }
 

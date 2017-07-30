@@ -185,7 +185,7 @@ void trxAccData(void){
 void accGainCal(void){
     switch(lis3AxisCal.calState){
     case ACCEL_CAL_READY:
-        menu.parEdit = PAR_EDIT_ENABLE;
+        menu.menuMode = eParEditWnd;
         lis3AxisCal.calState = ACCEL_CAL_WAIT;
         lis3AxisCal.calAxisState = ACCEL_X_CAL_SAVE_NEG;
         break;
@@ -229,11 +229,11 @@ void accGainCal(void){
         accel.gainX = (lis3AxisCal.calTmpMaxX-lis3AxisCal.calTmpMinX)/2;
         accel.gainY = (lis3AxisCal.calTmpMaxY-lis3AxisCal.calTmpMinY)/2;
         accel.gainZ = (lis3AxisCal.calTmpMaxZ-lis3AxisCal.calTmpMinZ)/2;
-        menu.parEdit = PAR_EDIT_DISABLE;
+        menu.navEvent = eSave;
         lis3AxisCal.calState = ACCEL_CAL_READY;
         break;
     case ACCEL_CAL_CANCEL:
-        menu.parEdit = PAR_EDIT_DISABLE;
+        menu.navEvent = eBack;
         lis3AxisCal.calState = ACCEL_CAL_READY;
         break;
     default:

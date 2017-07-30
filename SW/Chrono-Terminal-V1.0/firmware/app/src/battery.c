@@ -42,9 +42,9 @@ void battCalc(void){
         //Put message
         if(meas.battery.battMsgPer == 0){
             if(volt <= BATT_VOLT_LOW){
-                ssd_putMessage("Battery depleted", MSG_CNT_LONG);
+                Menu_putMessage("Battery depleted", MSG_CNT_LONG);
             }else{
-                ssd_putMessage("Low charge", MSG_CNT_LONG);
+                Menu_putMessage("Low charge", MSG_CNT_LONG);
             }
             meas.battery.battMsgPer = BATT_MSG_PERIOD;
         }

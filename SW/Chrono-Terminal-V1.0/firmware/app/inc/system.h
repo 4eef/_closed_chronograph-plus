@@ -97,6 +97,7 @@ typedef struct{
     uint16_t        speed4;
     uint16_t        pelSgntr;
     uint32_t        chrSgntr;
+    uint16_t        chrBindCnt;
     uint16_t        sensDist;
     uint16_t        statSpeeds[STAT_SHOTS_MAX];
     uint32_t        statSpeedsSum;

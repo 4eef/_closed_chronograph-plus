@@ -85,31 +85,14 @@ void ssd_putParBox(char *text, uint8_t enArrows){
 /*!****************************************************************************
 * @brief    Put text message at the center of display
 */
-void ssd_putMessage(char *newStr, uint8_t newCnt){
-    static char msgStr[22];
-    static uint8_t msgCnt;
-    uint8_t i, j, x, y, boxLength, msgLen, offset;
-    if(newCnt != NULL) msgCnt = newCnt + 1;
-    if(msgCnt != 0){
-        msgCnt--;
-        if(newStr != NULL) strcpy(msgStr, newStr);
-        msgLen = strlen(msgStr);
-        //Put message box
-        boxLength = msgLen*6 + 8;
-        x = SSD1306_LCDWIDTH/2 - boxLength/2;
-        y = SSD1306_LCDHEIGHT/2 - MSG_BOX_HEIGHT/2 - 1;
-        //Put box
-        for(i = 0; i <= boxLength; i++){
-            for(j = 0; j <= MSG_BOX_HEIGHT; j++){
-                if(j == 0 || j == MSG_BOX_HEIGHT || i == 0 || i == boxLength){
-                    ssd_setpix(x+i, y+j, WHITE);
-                }else{
-                    ssd_setpix(x+i, y+j, BLACK);
-                }
-            }
-        }
-        offset = SSD1306_LCDWIDTH/2 - (msgLen*6)/2;
-        ssd_putString6x8(offset, 28, &msgStr[0]);
+void ssd_putMessage(void){
+    uint8_t offs;
+    if(menu.message.toDisplay == true){
+        menu.message.msgCnt--;
+        if(menu.message.msgCnt == 0) menu.message.toDisplay = false;
+        ssd_putMsgBox(menu.message.msgLen);
+        offs = SSD1306_LCDWIDTH/2 - (menu.message.msgLen*6)/2;
+        ssd_putString6x8(offs, 28, &menu.message.msgStr[0]);
     }
 }
 
@@ -207,7 +190,7 @@ void ssd_putMenuScroll(void){
     }
     //Put scroll onto line
     x = SCROLL_X_OFF;
-    off = (menu.currItem-1)*length/menu.totItems;   //Calculate scroll offset
+    off = (menu.menuItems.currItem-1)*length/menu.menuItems.totItems;   //Calculate scroll offset
     y = SCROLL_Y_OFF + off;
     for(i=0; i<sizeof(menuScroll); i++){
         for (j=0; j<8; j++){
