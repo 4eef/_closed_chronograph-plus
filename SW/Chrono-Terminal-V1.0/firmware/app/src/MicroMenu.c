@@ -76,38 +76,6 @@ void Menu_run(void){
 /*!****************************************************************************
 * @brief    
 */
-void Menu_listParse(Menu_Item_t* const NewMenu){
-    Menu_Item_t *tmpItem, *tmpPrntItem;
-    //Clear offset if passed to other level
-    if((NewMenu == MENU_CHILD) || (NewMenu == MENU_PARENT)) menu.menuItems.wndOffs = 0;
-    tmpItem = CurrentMenuItem;
-    //Menu title
-    if(tmpItem->Parent != &NULL_MENU){
-        tmpPrntItem = tmpItem->Parent;
-        strcpy(menu.menuItems.parent, tmpPrntItem->Text);
-    }else{
-        strcpy(menu.menuItems.parent, "Menu");
-    }
-    //Get to the upper position of the menu list
-    menu.menuItems.currItem = 0;
-    while(1){
-        menu.menuItems.currItem++;
-        if(tmpItem->Previous == &NULL_MENU) break;
-        tmpItem = tmpItem->Previous;
-    }
-    //Copy all strings on current level
-    menu.menuItems.totItems = 0;
-    while(1){
-        strcpy(menu.menuItems.child[menu.menuItems.totItems], tmpItem->Text);
-        menu.menuItems.totItems++;
-        if(tmpItem->Next == &NULL_MENU) break;
-        tmpItem = tmpItem->Next;
-    }
-}
-
-/*!****************************************************************************
-* @brief    
-*/
 void Menu_putInfoWnd(void){
     
 }
@@ -263,9 +231,35 @@ Menu_Item_t* Menu_GetCurrentMenu(void){
 * @retval   
 */
 void Menu_Navigate(Menu_Item_t* const NewMenu){
+    Menu_Item_t *tmpItem, *tmpPrntItem;
     if((NewMenu == &NULL_MENU) || (NewMenu == NULL)) return;
-    CurrentMenuItem = NewMenu;
-    Menu_listParse(NewMenu);
+    //Clear offset if passed to other level
+    if((NewMenu == MENU_CHILD) || (NewMenu == MENU_PARENT)) menu.menuItems.wndOffs = 0;
+    //Save new menu item
+    tmpItem = CurrentMenuItem = NewMenu;
+    //Parse menu list parameters
+    //Menu title
+    if(tmpItem->Parent != &NULL_MENU){
+        tmpPrntItem = tmpItem->Parent;
+        strcpy(menu.menuItems.parent, tmpPrntItem->Text);
+    }else{
+        strcpy(menu.menuItems.parent, "Menu");
+    }
+    //Get to the upper position of the menu list
+    menu.menuItems.currItem = 0;
+    while(1){
+        menu.menuItems.currItem++;
+        if(tmpItem->Previous == &NULL_MENU) break;
+        tmpItem = tmpItem->Previous;
+    }
+    //Copy all strings on current level
+    menu.menuItems.totItems = 0;
+    while(1){
+        strcpy(menu.menuItems.child[menu.menuItems.totItems], tmpItem->Text);
+        menu.menuItems.totItems++;
+        if(tmpItem->Next == &NULL_MENU) break;
+        tmpItem = tmpItem->Next;
+    }
 //    if(MenuWriteFunc) MenuWriteFunc(CurrentMenuItem->Text);
 //    void (*SelectCallback)(void) = CurrentMenuItem->SelectCallback;
 //    if(SelectCallback) SelectCallback();

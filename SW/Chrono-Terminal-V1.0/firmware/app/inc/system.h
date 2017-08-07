@@ -65,6 +65,12 @@ typedef enum{
 }eDispMode_type;
 
 typedef struct{
+    char            pelString[18];
+    uint16_t        pelWght;
+    uint16_t        pelSgntr;
+}pellet_type;
+
+typedef struct{
     char            pelStrings[PELLET_DB_NUM][18];
     uint16_t        pelWghts[PELLET_DB_NUM];
     uint16_t        pelSgntrs[PELLET_DB_NUM];

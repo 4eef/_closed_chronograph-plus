@@ -107,7 +107,7 @@ typedef struct{
 
 typedef struct{
     char            parent[20];
-    char            child[10][20];
+    char            child[20][20];
     uint8_t         currItem;
     uint8_t         totItems;
     uint8_t         wndOffs;
@@ -134,7 +134,7 @@ typedef const struct Menu_Item {
     const struct Menu_Item *Child; /**< Pointer to the child menu item of this menu item */
     void (*SelectCallback)(void); /**< Pointer to the optional menu-specific select callback of this menu item */
     void (*EnterCallback)(void); /**< Pointer to the optional menu-specific enter callback of this menu item */
-    char Text[]; /**< Menu item text to pass to the menu display callback function */
+    char *Text; /**< Menu item text to pass to the menu display callback function */
 } Menu_Item_t;
 
 /*!****************************************************************************
