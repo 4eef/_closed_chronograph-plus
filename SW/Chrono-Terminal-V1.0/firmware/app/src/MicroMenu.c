@@ -38,8 +38,39 @@ static Menu_Item_t* CurrentMenuItem = &NULL_MENU;
 /*!****************************************************************************
 * @brief    
 */
-void Menu_commonRun(eNavEvent_type navEvent){
-    
+void Menu_run(void){
+    eNavEvent_type navEvent;
+    navEvent = menu.navEvent;
+    menu.navEvent = eWait;
+    switch(menu.menuMode){
+        case eDisplay:
+            if(navEvent == eOk){
+                menu.menuMode = eMenu;
+                //Go to the root
+                while(MENU_PARENT != &NULL_MENU){
+                    Menu_Navigate(MENU_PARENT);
+                }
+                //Navigate to first element in list
+                while(MENU_PREVIOUS != &NULL_MENU){
+                    Menu_Navigate(MENU_PREVIOUS);
+                }
+            }
+            break;
+        case eMenu:
+            Menu_navRun(navEvent);
+            break;
+        case eParEditWnd:
+            Menu_parWndRun(navEvent);
+            break;
+        case eTxtEditWnd:
+            Menu_txtWndRun(navEvent);
+            break;
+        case eInfoWnd:
+            Menu_infoWndRun(navEvent);
+            break;
+        default:
+            break;
+    }
 }
 
 /*!****************************************************************************
@@ -50,8 +81,13 @@ void Menu_listParse(Menu_Item_t* const NewMenu){
     //Clear offset if passed to other level
     if((NewMenu == MENU_CHILD) || (NewMenu == MENU_PARENT)) menu.menuItems.wndOffs = 0;
     tmpItem = CurrentMenuItem;
-    tmpPrntItem = tmpItem->Parent;
-    strcpy(menu.menuItems.parent, tmpPrntItem->Text);
+    //Menu title
+    if(tmpItem->Parent != &NULL_MENU){
+        tmpPrntItem = tmpItem->Parent;
+        strcpy(menu.menuItems.parent, tmpPrntItem->Text);
+    }else{
+        strcpy(menu.menuItems.parent, "Menu");
+    }
     //Get to the upper position of the menu list
     menu.menuItems.currItem = 0;
     while(1){
@@ -79,6 +115,30 @@ void Menu_putInfoWnd(void){
 /*!****************************************************************************
 * @brief    
 */
+void Menu_infoWndRun(eNavEvent_type navEvent){
+    switch(navEvent){
+        case eWait:
+            break;
+        case eBack:
+            break;
+        case eBackLng:
+            break;
+        case eUp:
+            break;
+        case eDown:
+            break;
+        case eOk:
+            break;
+        case eOkLng:
+            break;
+        default:
+            break;
+    }
+}
+
+/*!****************************************************************************
+* @brief    
+*/
 void Menu_putTxtWnd(void){
     
 }
@@ -86,18 +146,44 @@ void Menu_putTxtWnd(void){
 /*!****************************************************************************
 * @brief    
 */
+void Menu_txtWndRun(eNavEvent_type navEvent){
+    switch(navEvent){
+        case eWait:
+            break;
+        case eBack:
+            break;
+        case eBackLng:
+            break;
+        case eUp:
+            break;
+        case eDown:
+            break;
+        case eOk:
+            break;
+        case eOkLng:
+            break;
+        default:
+            break;
+    }
+}
+
+/*!****************************************************************************
+* @brief    
+*/
 void Menu_putParWnd(eParType_type parType, eParFract_type parFract,
-                    char *title, char *parUnits, char *parName,
-                    int16_t parVal, int16_t brdMax, int16_t brdMin){
+                    char *title, char *parUnits, char *parText,
+                    uint16_t *pParOrigin, int16_t brdMax, int16_t brdMin){
     //Set up menu mode
+    menu.menuPrevMode = menu.menuMode;
     menu.menuMode = eParEditWnd;
     //Copy parameters
     strcpy(menu.parEditWnd.title, title);
     strcpy(menu.parEditWnd.parUnits, parUnits);
-    strcpy(menu.parEditWnd.parName, parName);
+    strcpy(menu.parEditWnd.parText, parText);
+    menu.parEditWnd.pParOrigin = pParOrigin;
     menu.parEditWnd.parType = parType;
     menu.parEditWnd.parFract = parFract;
-    menu.parEditWnd.parValue = parVal;
+    menu.parEditWnd.parValue = *pParOrigin;
     menu.parEditWnd.parBorderMax = brdMax;
     menu.parEditWnd.parBorderMin = brdMin;
 }
@@ -105,11 +191,47 @@ void Menu_putParWnd(eParType_type parType, eParFract_type parFract,
 /*!****************************************************************************
 * @brief    
 */
-void Menu_rfrshParWnd(char *parName, int16_t parVal){
+void Menu_parWndRun(eNavEvent_type navEvent){
     if(menu.parEditWnd.parType == eNumber){
-        menu.parEditWnd.parValue = parVal;
+        switch(navEvent){
+            case eWait:
+                break;
+            case eBack:
+                menu.menuMode = menu.menuPrevMode;
+                Menu_putMessage("Cancelled", MSG_CNT);
+                break;
+            case eBackLng:
+                break;
+            case eUp:
+                if(menu.parEditWnd.parValue >= menu.parEditWnd.parBorderMax){
+                    menu.parEditWnd.parValue = menu.parEditWnd.parBorderMin;
+                }else{
+                    menu.parEditWnd.parValue++;
+                }
+                break;
+            case eDown:
+                if(menu.parEditWnd.parValue <= menu.parEditWnd.parBorderMin){
+                    menu.parEditWnd.parValue = menu.parEditWnd.parBorderMax;
+                }else{
+                    menu.parEditWnd.parValue--;
+                }
+                break;
+            case eOk:
+                if(menu.parEditWnd.pParOrigin != NULL){
+                    *menu.parEditWnd.pParOrigin = menu.parEditWnd.parValue;
+                    Menu_putMessage("Saved", MSG_CNT);
+                }else{
+                    Menu_putMessage("Error", MSG_CNT);
+                }
+                menu.menuMode = menu.menuPrevMode;
+                break;
+            case eOkLng:
+                break;
+            default:
+                break;
+        }
     }else{
-        strcpy(menu.parEditWnd.parName, parName);
+        
     }
 }
 
@@ -147,6 +269,43 @@ void Menu_Navigate(Menu_Item_t* const NewMenu){
 //    if(MenuWriteFunc) MenuWriteFunc(CurrentMenuItem->Text);
 //    void (*SelectCallback)(void) = CurrentMenuItem->SelectCallback;
 //    if(SelectCallback) SelectCallback();
+}
+
+/*!****************************************************************************
+* @brief    
+*/
+void Menu_navRun(eNavEvent_type navEvent){
+    switch(navEvent){
+        case eWait:
+            break;
+        case eBack:
+            if(MENU_PARENT ==  &NULL_MENU){
+                menu.menuMode = eDisplay;
+            }else{
+                Menu_Navigate(MENU_PARENT);
+            }
+            break;
+        case eBackLng:
+            menu.menuMode = eDisplay;
+            break;
+        case eUp:
+            Menu_Navigate(MENU_PREVIOUS);
+            break;
+        case eDown:
+            Menu_Navigate(MENU_NEXT);
+            break;
+        case eOk:
+            if((MENU_CHILD == &NULL_MENU) || (MENU_CHILD == NULL)){
+                Menu_EnterCurrentItem();
+            }else{
+                Menu_Navigate(MENU_CHILD);
+            }
+            break;
+        case eOkLng:
+            break;
+        default:
+            break;
+    }
 }
 
 /*!****************************************************************************

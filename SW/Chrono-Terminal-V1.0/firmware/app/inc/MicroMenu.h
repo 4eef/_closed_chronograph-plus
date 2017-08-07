@@ -44,12 +44,6 @@
 * User typedef
 */
 typedef enum{
-    eHybrid = 0,
-    eChronograph,
-    eInclinometer
-}eDispMode_type;
-
-typedef enum{
     eDisplay = 0,
     eMenu,
     eParEditWnd,
@@ -74,8 +68,8 @@ typedef enum{
     eBackLng,
     eUp,
     eDown,
-    eSave,
-    eSaveLng
+    eOk,
+    eOkLng
 }eNavEvent_type;
 
 typedef struct{
@@ -89,10 +83,11 @@ typedef struct{
     eParType_type   parType;
     char            title[20];
     char            parUnits[5];
-    char            parName[20];
-    int16_t         parValue;
-    int16_t         parBorderMax;
-    int16_t         parBorderMin;
+    char            parText[20];
+    uint16_t        parValue;
+    uint16_t        parBorderMax;
+    uint16_t        parBorderMin;
+    uint16_t        *pParOrigin;
     eParFract_type  parFract;
 }parEditWnd_type;
 
@@ -125,6 +120,7 @@ typedef struct{
     infoWnd_type    infoWindow;
     menuItems_type  menuItems;
     eMenuMode_type  menuMode;
+    eMenuMode_type  menuPrevMode;
     eNavEvent_type  navEvent;
 }menu_type;
 
@@ -189,10 +185,14 @@ void Menu_EnterCurrentItem(void);
 //void Generic_Write(const char* Text);
 void Menu_listParse(Menu_Item_t* const NewMenu);
 void Menu_putMessage(char *newStr, uint8_t newCnt);
-void Menu_rfrshParWnd(char *parName, int16_t parVal);
+void Menu_parWndRun(eNavEvent_type navEvent);
 void Menu_putParWnd(eParType_type parType, eParFract_type parFract,
-                    char *title, char *parUnits, char *parName,
-                    int16_t parVal, int16_t brdMax, int16_t brdMin);
+                    char *title, char *parUnits, char *parText,
+                    uint16_t *pParOrigin, int16_t brdMax, int16_t brdMin);
+void Menu_infoWndRun(eNavEvent_type navEvent);
+void Menu_txtWndRun(eNavEvent_type navEvent);
+void Menu_navRun(eNavEvent_type navEvent);
+void Menu_run(void);
 
 #endif //MicroMenu_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

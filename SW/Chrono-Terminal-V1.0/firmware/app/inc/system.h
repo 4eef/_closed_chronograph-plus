@@ -58,11 +58,17 @@
 /*!****************************************************************************
 * User typedef
 */
+typedef enum{
+    eHybrid = 0,
+    eChronograph,
+    eInclinometer
+}eDispMode_type;
+
 typedef struct{
     char            pelStrings[PELLET_DB_NUM][18];
     uint16_t        pelWghts[PELLET_DB_NUM];
     uint16_t        pelSgntrs[PELLET_DB_NUM];
-    uint8_t         matchedSgnNum;
+    uint16_t        matchedSgnNum;
     uint16_t        newSgn;
     uint32_t        newSgnSum;
     uint8_t         newSgnCnt;
@@ -80,16 +86,9 @@ typedef struct{
 }stats_type;
 
 typedef struct{
-    uint8_t         __reserv        :4;
-    uint8_t         chrBind         :1;
-    uint8_t         dispMode        :2;
-    uint8_t         clipEn          :1;
-}sysStngs_type;
-
-typedef struct{
     uint16_t        pellet;
-    uint8_t         clipCurrent;
-    uint8_t         clipCapacity;
+    uint16_t        clipCurrent;
+    uint16_t        clipCapacity;
     uint16_t        speed0;
     uint16_t        speed1;
     uint16_t        speed2;
@@ -127,7 +126,7 @@ typedef struct{
 }meas_type;
 
 typedef struct{
-    sysStngs_type   sysSettings;
+    eDispMode_type  dispMode;
 }sysPars_type;
 
 /*!****************************************************************************

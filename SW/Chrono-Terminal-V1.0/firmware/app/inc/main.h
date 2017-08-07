@@ -58,7 +58,7 @@
 * Prototypes for the functions
 */
 void main(void);
-void parEditRedir(void);
+void parEditInit(void);
 int16_t parEdit(int16_t param);
 void modeEdit(void);
 void drawDisplay(void);

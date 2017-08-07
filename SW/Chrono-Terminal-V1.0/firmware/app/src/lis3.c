@@ -229,7 +229,7 @@ void accGainCal(void){
         accel.gainX = (lis3AxisCal.calTmpMaxX-lis3AxisCal.calTmpMinX)/2;
         accel.gainY = (lis3AxisCal.calTmpMaxY-lis3AxisCal.calTmpMinY)/2;
         accel.gainZ = (lis3AxisCal.calTmpMaxZ-lis3AxisCal.calTmpMinZ)/2;
-        menu.navEvent = eSave;
+        menu.navEvent = eOk;
         lis3AxisCal.calState = ACCEL_CAL_READY;
         break;
     case ACCEL_CAL_CANCEL:

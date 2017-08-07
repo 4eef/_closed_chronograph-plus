@@ -56,7 +56,7 @@ void ssd_putStrClr(uint8_t x, uint8_t y, char *text, uint8_t maxLen, uint8_t fon
 */
 void ssd_putParBox(char *text, uint8_t enArrows){
     uint8_t i, j, x, y;
-    char tmp[20], uArrow[2]={24, 0}, dArrow[2]={25, 0};
+    char uArrow[2]={24, 0}, dArrow[2]={25, 0}, tBack[6]={"Back"}, tSave[6]={"Save"};
     //Parameters
     x = (SSD1306_LCDWIDTH - PAR_BOX_WIDTH)/2;
     y = (SSD1306_LCDHEIGHT - PAR_BOX_HEIGHT)/2;
@@ -73,47 +73,71 @@ void ssd_putParBox(char *text, uint8_t enArrows){
     //Put text
     ssd_putString6x8(10, 10, text);
     if(enArrows == PAR_BOX_ARROWS_EN){
-        ssd_putString6x8(46, 46, &uArrow[0]);
-        ssd_putString6x8(76, 46, &dArrow[0]);
+        ssd_putString6x8(46, 46, uArrow);
+        ssd_putString6x8(76, 46, dArrow);
     }
-    strcpy(tmp, "Back");
-    ssd_putString6x8(10, 46, &tmp[0]);
-    strcpy(tmp, "Save");
-    ssd_putString6x8(94, 46, &tmp[0]);
+    ssd_putString6x8(10, 46, tBack);
+    ssd_putString6x8(94, 46, tSave);
+}
+
+/*!****************************************************************************
+* @brief    Put text message at the center of display
+*/
+void ssd_putParWnd(void){
+    uint16_t val1, val2;
+    uint8_t len, offs;
+    char tPar[20], uArrow[2]={24, 0}, dArrow[2]={25, 0}, tBack[6]={"Back"}, tSave[6]={"Save"};
+    //Put title
+    ssd_putString6x8(0, 0, menu.parEditWnd.title);
+    //Put parameter
+    if(menu.parEditWnd.parType == eNumber){
+        if(menu.parEditWnd.parFract != eNoFract){
+            val1 = menu.parEditWnd.parValue/menu.parEditWnd.parFract;
+            val2 = menu.parEditWnd.parValue%val1;
+            sprintf(tPar, "%u.%u ", val1, val2);
+        }else{
+            sprintf(tPar, "%u ", menu.parEditWnd.parValue);
+        }
+        strcat(tPar, menu.parEditWnd.parUnits);
+        len = strlen(tPar);
+        offs = SSD1306_LCDWIDTH/2 - (len*6)/2;
+        ssd_putString6x8(offs, 28, tPar);
+    }else{
+        len = strlen(menu.parEditWnd.parText);
+        offs = SSD1306_LCDWIDTH/2 - (len*6)/2;
+        ssd_putString6x8(offs, 28, menu.parEditWnd.parText);
+    }
+    //Buttons labels
+    ssd_putString6x8(0, 56, tBack);
+    ssd_putString6x8(40, 56, uArrow);
+    ssd_putString6x8(82, 56, dArrow);
+    ssd_putString6x8(104, 56, tSave);
 }
 
 /*!****************************************************************************
 * @brief    Put text message at the center of display
 */
 void ssd_putMessage(void){
-    uint8_t offs;
+    uint8_t i, j, x, y, boxLength, offs;
     if(menu.message.toDisplay == true){
         menu.message.msgCnt--;
         if(menu.message.msgCnt == 0) menu.message.toDisplay = false;
-        ssd_putMsgBox(menu.message.msgLen);
-        offs = SSD1306_LCDWIDTH/2 - (menu.message.msgLen*6)/2;
-        ssd_putString6x8(offs, 28, &menu.message.msgStr[0]);
-    }
-}
-
-/*!****************************************************************************
-* @brief    Put box for text at the center of display
-*/
-void ssd_putMsgBox(uint8_t msgLen){
-    uint8_t i, j, x, y, boxLength;
-    //Parameters
-    boxLength = msgLen*6 + 8;
-    x = SSD1306_LCDWIDTH/2 - boxLength/2;
-    y = SSD1306_LCDHEIGHT/2 - MSG_BOX_HEIGHT/2 - 1;
-    //Put box
-    for(i = 0; i <= boxLength; i++){
-        for(j = 0; j <= MSG_BOX_HEIGHT; j++){
-            if(j == 0 || j == MSG_BOX_HEIGHT || i == 0 || i == boxLength){
-                ssd_setpix(x+i, y+j, WHITE);
-            }else{
-                ssd_setpix(x+i, y+j, BLACK);
+        //Message box parameters
+        boxLength = menu.message.msgLen*6 + 8;
+        x = SSD1306_LCDWIDTH/2 - boxLength/2;
+        y = SSD1306_LCDHEIGHT/2 - MSG_BOX_HEIGHT/2 - 1;
+        //Put box
+        for(i = 0; i <= boxLength; i++){
+            for(j = 0; j <= MSG_BOX_HEIGHT; j++){
+                if(j == 0 || j == MSG_BOX_HEIGHT || i == 0 || i == boxLength){
+                    ssd_setpix(x+i, y+j, WHITE);
+                }else{
+                    ssd_setpix(x+i, y+j, BLACK);
+                }
             }
         }
+        offs = SSD1306_LCDWIDTH/2 - (menu.message.msgLen*6)/2;
+        ssd_putString6x8(offs, 28, &menu.message.msgStr[0]);
     }
 }
 

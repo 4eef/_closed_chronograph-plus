@@ -25,7 +25,7 @@ void hndlIRData(void){
     uint8_t i;
     if(IRRXData.rxState == IR_DATA_READY){
         sgn = (IRRXData.rxByte[IR_MAX_BYTES-1]) | (IRRXData.rxByte[IR_MAX_BYTES-2])<<8 | (IRRXData.rxByte[IR_MAX_BYTES-3])<<16 | (IRRXData.rxByte[IR_MAX_BYTES-4])<<24;
-        if((sysPars.sysSettings.dispMode != MODE_INC) && ((meas.chron.chrSgntr == sgn) || (sysPars.sysSettings.chrBind != 0))){
+        if((sysPars.dispMode != eInclinometer) && ((meas.chron.chrSgntr == sgn) || (meas.chron.chrBindCnt != 0))){
             power.uptimeCurr = 0;
             if(meas.chron.chrBindCnt != 0){
                 meas.chron.chrBindCnt = 0;
@@ -114,7 +114,7 @@ void hndlIRData(void){
                 }
             }
             //Statistics calculation
-            if(sysPars.sysSettings.dispMode == MODE_CHR){
+            if(sysPars.dispMode == eChronograph){
                 if(meas.chron.statShots >= STAT_SHOTS_MAX){
                     Menu_putMessage("Buffer is full", MSG_CNT);
                 }else{
