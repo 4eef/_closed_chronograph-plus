@@ -199,35 +199,6 @@ void ssd_putRollBar(int16_t angle, uint16_t border, uint8_t y, uint8_t height){
 }
 
 /*!****************************************************************************
-* @brief    Calculate menu's progress bar position and put it
-*/
-void ssd_putMenuScroll(void){
-    uint8_t i, j, length, x, y, off;
-    length = SCROLL_LINE_LENGTH;
-    //Put the line
-    x = SCROLL_LINE_X_OFF;
-    y = SCROLL_Y_OFF;
-    for(i = 0; i < length; i++){
-        for(j = 0; j < SCROLL_LINE_WIDTH; j++){
-            ssd_setpix((x + j), (y + i), WHITE);
-        }
-    }
-    //Put scroll onto line
-    x = SCROLL_X_OFF;
-    off = (menu.menuItems.currItem-1)*length/menu.menuItems.totItems;   //Calculate scroll offset
-    y = SCROLL_Y_OFF + off;
-    for(i=0; i<sizeof(menuScroll); i++){
-        for (j=0; j<8; j++){
-            if(menuScroll[i] & (1 << j)){
-                ssd_setpix(x+i, y+j, WHITE);
-            }else{
-                ssd_setpix(x+i, y+j, BLACK);
-            }
-        }
-    }
-}
-
-/*!****************************************************************************
 * @brief    Put pitch progress bar and fill it
 */
 void ssd_putPitchBar(int16_t angle, uint16_t border){
@@ -261,23 +232,6 @@ void ssd_putPitchBar(int16_t angle, uint16_t border){
         for(j = 0; j < 4; j++){
             x = PITCH_X + j;
             ssdVideoBff.video[x + (y >> 3) * SSD1306_LCDWIDTH] |=  (1 << (y & 7));
-        }
-    }
-}
-
-/*!****************************************************************************
-* @brief    Put menu folder pattern on top corner of the display area
-*/
-void ssd_putMenuFolder(void){
-    uint8_t i, j, x = 0, y = 0;
-    //Draw the folder
-    for(i=0; i<sizeof(menuFolder); i++){
-        for (j=0; j<8; j++){
-            if(menuFolder[i] & (1 << j)){
-                ssd_setpix(x+i, y+j, WHITE);
-            }else{
-                ssd_setpix(x+i, y+j, BLACK);
-            }
         }
     }
 }

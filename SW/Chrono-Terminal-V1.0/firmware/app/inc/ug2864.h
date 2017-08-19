@@ -94,8 +94,6 @@ void ssd_putString6x8(uint8_t x, uint8_t y, const char *s);
 void ssd_setpix(uint8_t x, uint8_t y, uint8_t color);
 void ssd_putBatt(uint8_t percentage, uint8_t chrgStat);
 void ssd_putPitchBar(int16_t aabs, uint16_t border);
-void ssd_putMenuFolder(void);
-void ssd_putMenuScroll(void);
 void ssd_putRollBar(int16_t angle, uint16_t border, uint8_t y, uint8_t height);
 void ssd_putMessage(void);
 void ssd_putParWnd(void);

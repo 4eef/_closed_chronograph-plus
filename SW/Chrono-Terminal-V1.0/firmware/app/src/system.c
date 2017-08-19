@@ -27,9 +27,40 @@ pellets_type                pellets;
 */
 void drawMenu(void){
     char arrow[2] = {26, 0};
-    uint8_t i, pos, offs, numItems;
-    ssd_putMenuFolder();                                                        //Folder for parent position
-    if(menu.menuItems.totItems > MENU_POSITIONS) ssd_putMenuScroll();                     //Put scroll bar
+    uint8_t i, j, x, y, pos, offs, numItems;
+    //Draw the folder
+    for(i=0; i<sizeof(menuFolder); i++){
+        for (j=0; j<8; j++){
+            if(menuFolder[i] & (1 << j)){
+                ssd_setpix(x+i, y+j, WHITE);
+            }else{
+                ssd_setpix(x+i, y+j, BLACK);
+            }
+        }
+    }
+    if(menu.menuItems.totItems > MENU_POSITIONS){
+        //Put the line
+        x = SCROLL_LINE_X_OFF;
+        y = SCROLL_Y_OFF;
+        for(i = 0; i < SCROLL_LINE_LENGTH; i++){
+            for(j = 0; j < SCROLL_LINE_WIDTH; j++){
+                ssd_setpix((x + j), (y + i), WHITE);
+            }
+        }
+        //Put scroll onto line
+        x = SCROLL_X_OFF;
+        offs = (menu.menuItems.currItem-1)*(SCROLL_LINE_LENGTH-8)/(menu.menuItems.totItems-1);   //Calculate scroll offset
+        y = SCROLL_Y_OFF + offs;
+        for(i=0; i<sizeof(menuScroll); i++){
+            for (j=0; j<8; j++){
+                if(menuScroll[i] & (1 << j)){
+                    ssd_setpix(x+i, y+j, WHITE);
+                }else{
+                    ssd_setpix(x+i, y+j, BLACK);
+                }
+            }
+        }
+    }
     //Offset calculation
     offs = menu.menuItems.wndOffs;
     if(((menu.menuItems.currItem - MENU_POSITIONS) > offs) && (menu.menuItems.currItem > MENU_POSITIONS)){
