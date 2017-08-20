@@ -252,6 +252,12 @@ void Menu_Navigate(Menu_Item_t* const NewMenu){
         if(tmpItem->Previous == &NULL_MENU) break;
         tmpItem = tmpItem->Previous;
     }
+    //Window offset calculation
+    if((menu.menuItems.currItem - menu.menuItems.wndOffs - MENU_POSITIONS) > 0){
+        menu.menuItems.wndOffs = menu.menuItems.currItem - MENU_POSITIONS;
+    }else if((menu.menuItems.wndOffs - menu.menuItems.currItem + 1) > 0){
+        menu.menuItems.wndOffs = menu.menuItems.currItem - 1;
+    }
     //Copy all strings on current level
     menu.menuItems.totItems = 0;
     while(1){

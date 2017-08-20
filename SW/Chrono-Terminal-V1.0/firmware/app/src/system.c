@@ -29,6 +29,8 @@ void drawMenu(void){
     char arrow[2] = {26, 0};
     uint8_t i, j, x, y, pos, offs, numItems;
     //Draw the folder
+    x = 0;
+    y = 0;
     for(i=0; i<sizeof(menuFolder); i++){
         for (j=0; j<8; j++){
             if(menuFolder[i] & (1 << j)){
@@ -49,7 +51,7 @@ void drawMenu(void){
         }
         //Put scroll onto line
         x = SCROLL_X_OFF;
-        offs = (menu.menuItems.currItem-1)*(SCROLL_LINE_LENGTH-8)/(menu.menuItems.totItems-1);   //Calculate scroll offset
+        offs = (menu.menuItems.currItem-1)*(SCROLL_LINE_LENGTH-8)/(menu.menuItems.totItems-1);
         y = SCROLL_Y_OFF + offs;
         for(i=0; i<sizeof(menuScroll); i++){
             for (j=0; j<8; j++){
@@ -61,16 +63,8 @@ void drawMenu(void){
             }
         }
     }
-    //Offset calculation
-    offs = menu.menuItems.wndOffs;
-    if(((menu.menuItems.currItem - MENU_POSITIONS) > offs) && (menu.menuItems.currItem > MENU_POSITIONS)){
-        offs = menu.menuItems.currItem - MENU_POSITIONS;
-    }else if(((menu.menuItems.currItem - MENU_POSITIONS) < offs) && ((offs - (menu.menuItems.currItem - MENU_POSITIONS)) > (MENU_POSITIONS-1))){
-        offs--;
-    }
-    menu.menuItems.wndOffs = offs;
     //Calculate arrow position
-    pos = menu.menuItems.currItem - offs;
+    pos = menu.menuItems.currItem - menu.menuItems.wndOffs;
     //Put strings
     ssd_putString6x8(14, 1, &menu.menuItems.parent[0]);
     ssd_putString6x8(0, (MENU_START+MENU_INTERVAL*(pos-1)), &arrow[0]);         //Arrow to current position
@@ -80,7 +74,7 @@ void drawMenu(void){
         numItems = MENU_POSITIONS;
     }
     for(i = 0; i < numItems; i++){
-        ssd_putString6x8(8, MENU_START+MENU_INTERVAL*i, &menu.menuItems.child[offs+i][0]);
+        ssd_putString6x8(8, MENU_START+MENU_INTERVAL*i, &menu.menuItems.child[menu.menuItems.wndOffs+i][0]);
     }
 }
 
