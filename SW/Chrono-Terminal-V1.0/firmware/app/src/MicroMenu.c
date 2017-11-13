@@ -15,6 +15,7 @@
 * MEMORY
 */
 menu_type                   menu;
+extern power_type           power;
 
 /** This is used when an invalid menu handle is required in
  *  a \ref MENU_ITEM() definition, i.e. to indicate that a
@@ -38,35 +39,139 @@ static Menu_Item_t* CurrentMenuItem = &NULL_MENU;
 /*!****************************************************************************
 * @brief    
 */
-void Menu_run(void){
-    eNavEvent_type navEvent;
-    navEvent = menu.navEvent;
-    menu.navEvent = eWait;
+void Menu_run(eNavEvent_type navEvent){
+    if(navEvent != eWait) power.uptimeCurr = 0;                                 //Reset uptime counter
     switch(menu.menuMode){
+        case eOff:
+            Menu_navPwrOff(navEvent);
+            break;
         case eDisplay:
-            if(navEvent == eOk){
-                menu.menuMode = eMenu;
-                //Go to the root
-                while(MENU_PARENT != &NULL_MENU){
-                    Menu_Navigate(MENU_PARENT);
-                }
-                //Navigate to first element in list
-                while(MENU_PREVIOUS != &NULL_MENU){
-                    Menu_Navigate(MENU_PREVIOUS);
-                }
-            }
+            Menu_navDisp(navEvent);
             break;
         case eMenu:
-            Menu_navRun(navEvent);
+            Menu_navMenu(navEvent);
             break;
         case eParEditWnd:
             Menu_parWndRun(navEvent);
             break;
+        case eTxtParSelWnd:
+            Menu_txtParSelWndRun(navEvent);
+            break;
         case eTxtEditWnd:
-            Menu_txtWndRun(navEvent);
+            Menu_txtEditWndRun(navEvent);
             break;
         case eInfoWnd:
             Menu_infoWndRun(navEvent);
+            break;
+        default:
+            break;
+    }
+}
+
+/*!****************************************************************************
+* @brief    
+*/
+void Menu_pwrOnOff(ePwrState_type ePwrState){
+    if(ePwrState == ePwrOff){
+        menu.menuMode = eOff;
+        powerOff();
+    }else{
+        menu.menuMode = eDisplay;
+        powerOn();
+    }
+}
+
+/*!****************************************************************************
+* @brief    
+*/
+void Menu_navPwrOff(eNavEvent_type navEvent){
+    switch(navEvent){
+        case eWait:
+            break;
+        case eBack:
+            break;
+        case eBackLng:
+            Menu_pwrOnOff(ePwrOn);
+            break;
+        case eUp:
+            break;
+        case eDown:
+            break;
+        case eOk:
+            break;
+        case eOkLng:
+            break;
+        default:
+            break;
+    }
+}
+
+/*!****************************************************************************
+* @brief    
+*/
+void Menu_navDisp(eNavEvent_type navEvent){
+    switch(navEvent){
+        case eWait:
+            break;
+        case eBack:
+            break;
+        case eBackLng:
+            Menu_pwrOnOff(ePwrOff);
+            break;
+        case eUp:
+            break;
+        case eDown:
+            break;
+        case eOk:
+            menu.menuMode = eMenu;
+            //Go to the root
+            while(MENU_PARENT != &NULL_MENU){
+                Menu_Navigate(MENU_PARENT);
+            }
+            //Navigate to first element in list
+            while(MENU_PREVIOUS != &NULL_MENU){
+                Menu_Navigate(MENU_PREVIOUS);
+            }
+            break;
+        case eOkLng:
+            chrSetsRst();
+            break;
+        default:
+            break;
+    }
+}
+
+/*!****************************************************************************
+* @brief    
+*/
+void Menu_navMenu(eNavEvent_type navEvent){
+    switch(navEvent){
+        case eWait:
+            break;
+        case eBack:
+            if(MENU_PARENT == &NULL_MENU){
+                menu.menuMode = eDisplay;
+            }else{
+                Menu_Navigate(MENU_PARENT);
+            }
+            break;
+        case eBackLng:
+            menu.menuMode = eDisplay;
+            break;
+        case eUp:
+            Menu_Navigate(MENU_PREVIOUS);
+            break;
+        case eDown:
+            Menu_Navigate(MENU_NEXT);
+            break;
+        case eOk:
+            if((MENU_CHILD == &NULL_MENU) || (MENU_CHILD == NULL)){
+                Menu_EnterCurrentItem();
+            }else{
+                Menu_Navigate(MENU_CHILD);
+            }
+            break;
+        case eOkLng:
             break;
         default:
             break;
@@ -107,14 +212,83 @@ void Menu_infoWndRun(eNavEvent_type navEvent){
 /*!****************************************************************************
 * @brief    
 */
-void Menu_putTxtWnd(void){
+void Menu_putTxtParSelWnd(char *title, char *pFirstPar, uint16_t *pTxtParOrigin,
+                          uint16_t currTxtPar, uint16_t qtyTxtPar, uint16_t txtStrLen){
+    //Set up menu mode
+    menu.menuPrevMode = menu.menuMode;
+    menu.menuMode = eTxtParSelWnd;
+    //Copy parameters
+    strcpy(menu.txtParSelWnd.title, title);
+    strcpy(menu.txtParSelWnd.parText, (pFirstPar + (txtStrLen * (currTxtPar - 1))));
+    menu.txtParSelWnd.pFirstPar = pFirstPar;
+    menu.txtParSelWnd.txtStrLen = txtStrLen;
+    menu.txtParSelWnd.currTxtPar = currTxtPar;
+    menu.txtParSelWnd.pTxtParOrigin = pTxtParOrigin;
+    menu.txtParSelWnd.qtyTxtPar = qtyTxtPar;
+}
+
+/*!****************************************************************************
+* @brief    
+*/
+void Menu_txtParSelWndRun(eNavEvent_type navEvent){
+    char *pFirstPar;
+    uint8_t txtStrLen, currTxtPar;
+    switch(navEvent){
+        case eWait:
+            break;
+        case eBack:
+            menu.menuMode = menu.menuPrevMode;
+            Menu_putMessage("Cancelled", MSG_CNT);
+            break;
+        case eBackLng:
+            break;
+        case eUp:
+            if(menu.txtParSelWnd.currTxtPar >= menu.txtParSelWnd.qtyTxtPar){
+                menu.txtParSelWnd.currTxtPar = TXT_PAR_MIN_VAL;
+            }else{
+                menu.txtParSelWnd.currTxtPar++;
+            }
+            break;
+        case eDown:
+            if(menu.txtParSelWnd.currTxtPar <= TXT_PAR_MIN_VAL){
+                menu.txtParSelWnd.currTxtPar = menu.txtParSelWnd.qtyTxtPar;
+            }else{
+                menu.txtParSelWnd.currTxtPar--;
+            }
+            break;
+        case eOk:
+            if(menu.txtParSelWnd.pTxtParOrigin != NULL){
+                *menu.txtParSelWnd.pTxtParOrigin = menu.txtParSelWnd.currTxtPar;
+                Menu_putMessage("Saved", MSG_CNT);
+            }else{
+                Menu_putMessage("Error", MSG_CNT);
+            }
+            menu.menuMode = menu.menuPrevMode;
+            break;
+        case eOkLng:
+            break;
+        default:
+            break;
+    }
+    if((navEvent == eUp) || (navEvent == eDown)){
+        pFirstPar = menu.txtParSelWnd.pFirstPar;
+        txtStrLen = menu.txtParSelWnd.txtStrLen;
+        currTxtPar = menu.txtParSelWnd.currTxtPar;
+        strcpy(menu.txtParSelWnd.parText, (pFirstPar + (txtStrLen * (currTxtPar - 1))));
+    }
+}
+
+/*!****************************************************************************
+* @brief    
+*/
+void Menu_putTxtEditWnd(void){
     
 }
 
 /*!****************************************************************************
 * @brief    
 */
-void Menu_txtWndRun(eNavEvent_type navEvent){
+void Menu_txtEditWndRun(eNavEvent_type navEvent){
     switch(navEvent){
         case eWait:
             break;
@@ -136,20 +310,19 @@ void Menu_txtWndRun(eNavEvent_type navEvent){
 }
 
 /*!****************************************************************************
-* @brief    
+* @brief    Configure menu to display a parameter edit window
 */
-void Menu_putParWnd(eParType_type parType, eParFract_type parFract,
-                    char *title, char *parUnits, char *parText,
-                    uint16_t *pParOrigin, int16_t brdMax, int16_t brdMin){
+void Menu_putParWnd(char *title, char *parUnits, eParFract_type parFract,
+                    uint16_t *pParOrigin, uint16_t *pParCopy,
+                    int16_t brdMax, int16_t brdMin){
     //Set up menu mode
     menu.menuPrevMode = menu.menuMode;
     menu.menuMode = eParEditWnd;
     //Copy parameters
     strcpy(menu.parEditWnd.title, title);
     strcpy(menu.parEditWnd.parUnits, parUnits);
-    strcpy(menu.parEditWnd.parText, parText);
     menu.parEditWnd.pParOrigin = pParOrigin;
-    menu.parEditWnd.parType = parType;
+    menu.parEditWnd.pParCopy = pParCopy;
     menu.parEditWnd.parFract = parFract;
     menu.parEditWnd.parValue = *pParOrigin;
     menu.parEditWnd.parBorderMax = brdMax;
@@ -157,54 +330,53 @@ void Menu_putParWnd(eParType_type parType, eParFract_type parFract,
 }
 
 /*!****************************************************************************
-* @brief    
+* @brief    Parameter edit window run function
 */
 void Menu_parWndRun(eNavEvent_type navEvent){
-    if(menu.parEditWnd.parType == eNumber){
-        switch(navEvent){
-            case eWait:
-                break;
-            case eBack:
-                menu.menuMode = menu.menuPrevMode;
-                Menu_putMessage("Cancelled", MSG_CNT);
-                break;
-            case eBackLng:
-                break;
-            case eUp:
-                if(menu.parEditWnd.parValue >= menu.parEditWnd.parBorderMax){
-                    menu.parEditWnd.parValue = menu.parEditWnd.parBorderMin;
-                }else{
-                    menu.parEditWnd.parValue++;
-                }
-                break;
-            case eDown:
-                if(menu.parEditWnd.parValue <= menu.parEditWnd.parBorderMin){
-                    menu.parEditWnd.parValue = menu.parEditWnd.parBorderMax;
-                }else{
-                    menu.parEditWnd.parValue--;
-                }
-                break;
-            case eOk:
-                if(menu.parEditWnd.pParOrigin != NULL){
-                    *menu.parEditWnd.pParOrigin = menu.parEditWnd.parValue;
-                    Menu_putMessage("Saved", MSG_CNT);
-                }else{
-                    Menu_putMessage("Error", MSG_CNT);
-                }
-                menu.menuMode = menu.menuPrevMode;
-                break;
-            case eOkLng:
-                break;
-            default:
-                break;
-        }
-    }else{
-        
+    switch(navEvent){
+        case eWait:
+            break;
+        case eBack:
+            menu.menuMode = menu.menuPrevMode;
+            Menu_putMessage("Cancelled", MSG_CNT);
+            break;
+        case eBackLng:
+            break;
+        case eUp:
+            if(menu.parEditWnd.parValue >= menu.parEditWnd.parBorderMax){
+                menu.parEditWnd.parValue = menu.parEditWnd.parBorderMin;
+            }else{
+                menu.parEditWnd.parValue++;
+            }
+            break;
+        case eDown:
+            if(menu.parEditWnd.parValue <= menu.parEditWnd.parBorderMin){
+                menu.parEditWnd.parValue = menu.parEditWnd.parBorderMax;
+            }else{
+                menu.parEditWnd.parValue--;
+            }
+            break;
+        case eOk:
+            if(menu.parEditWnd.pParOrigin != NULL){
+                *menu.parEditWnd.pParOrigin = menu.parEditWnd.parValue;
+                Menu_putMessage("Saved", MSG_CNT);
+            }else{
+                Menu_putMessage("Error", MSG_CNT);
+            }
+            if(menu.parEditWnd.pParCopy != NULL){
+                *menu.parEditWnd.pParCopy = menu.parEditWnd.parValue;
+            }
+            menu.menuMode = menu.menuPrevMode;
+            break;
+        case eOkLng:
+            break;
+        default:
+            break;
     }
 }
 
 /*!****************************************************************************
-* @brief    
+* @brief    Put message on screen
 */
 void Menu_putMessage(char *newStr, uint8_t newCnt){
     if((newStr != NULL) && (newCnt != 0)){
@@ -217,8 +389,6 @@ void Menu_putMessage(char *newStr, uint8_t newCnt){
 
 /*!****************************************************************************
 * @brief    Retrieves the currently selected meny item
-* @param    Pointer to the currently selected meny item
-* @retval   
 */
 Menu_Item_t* Menu_GetCurrentMenu(void){
 	return CurrentMenuItem;
@@ -269,43 +439,6 @@ void Menu_Navigate(Menu_Item_t* const NewMenu){
 //    if(MenuWriteFunc) MenuWriteFunc(CurrentMenuItem->Text);
 //    void (*SelectCallback)(void) = CurrentMenuItem->SelectCallback;
 //    if(SelectCallback) SelectCallback();
-}
-
-/*!****************************************************************************
-* @brief    
-*/
-void Menu_navRun(eNavEvent_type navEvent){
-    switch(navEvent){
-        case eWait:
-            break;
-        case eBack:
-            if(MENU_PARENT ==  &NULL_MENU){
-                menu.menuMode = eDisplay;
-            }else{
-                Menu_Navigate(MENU_PARENT);
-            }
-            break;
-        case eBackLng:
-            menu.menuMode = eDisplay;
-            break;
-        case eUp:
-            Menu_Navigate(MENU_PREVIOUS);
-            break;
-        case eDown:
-            Menu_Navigate(MENU_NEXT);
-            break;
-        case eOk:
-            if((MENU_CHILD == &NULL_MENU) || (MENU_CHILD == NULL)){
-                Menu_EnterCurrentItem();
-            }else{
-                Menu_Navigate(MENU_CHILD);
-            }
-            break;
-        case eOkLng:
-            break;
-        default:
-            break;
-    }
 }
 
 /*!****************************************************************************

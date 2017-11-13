@@ -66,8 +66,8 @@ void sync(void){
         cntDn = 1 + (timeDiff*CYC_PERIOD_US)/S_TO_US;
         sprintf(msg, "Shutdown in %u...", cntDn);
         Menu_putMessage(msg, MSG_FOR_TIMER);
-    }else if((power.uptimeCurr > timeSet) && (power.mode == POWER_RUN)) powerOff();
-    else if((power.uptimeCurr > CYC_POFF_MAX) && (power.mode == POWER_STOP)) powerOff();
+    }else if((power.uptimeCurr > timeSet) && (power.pwrMode == ePwrRun)) Menu_pwrOnOff(ePwrOff);
+    else if((power.uptimeCurr > CYC_POFF_MAX) && (power.pwrMode == ePwrStop)) Menu_pwrOnOff(ePwrOff);
     TIM1->CR1       |= TIM_CR1_CEN;
     ADC1->CR        |= ADC_CR_ADSTART;
 }

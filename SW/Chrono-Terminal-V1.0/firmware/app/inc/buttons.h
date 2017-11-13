@@ -12,7 +12,6 @@
 * Include
 */
 #include "gpio.h"
-#include "power.h"
 
 /*!****************************************************************************
 * User define
@@ -29,21 +28,18 @@
 #define BUTTON_MAX              100
 
 /*!****************************************************************************
-* User enum
-*/
-enum buttonValues{
-    NONE = 1,
-    UP,
-    DOWN,
-    OK,
-    CANCEL,
-    OKLNG,
-    CLLNG,
-};
-
-/*!****************************************************************************
 * User typedef
 */
+typedef enum{
+    eWait = 0,
+    eBack,
+    eBackLng,
+    eUp,
+    eDown,
+    eOk,
+    eOkLng
+}eNavEvent_type;
+
 typedef struct{
     uint8_t         cntUp;
     uint8_t         cntDn;
@@ -60,17 +56,9 @@ typedef struct{
 }buttons_type;
 
 /*!****************************************************************************
-* Extern viriables
-*/
-
-/*!****************************************************************************
-* Macro functions
-*/
-
-/*!****************************************************************************
 * Prototypes for the functions
 */
-enum buttonValues getButtonState(void);
+eNavEvent_type getNavEvent(void);
 void btnCntsClr(void);
 
 #endif //buttons_H

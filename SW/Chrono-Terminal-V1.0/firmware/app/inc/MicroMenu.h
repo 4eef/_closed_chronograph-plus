@@ -17,6 +17,8 @@
 #include "stdio.h"
 #include "stdbool.h"
 #include "ug2864.h"
+#include "power.h"
+#include "buttons.h"
 
 /*!****************************************************************************
 * User define
@@ -24,53 +26,35 @@
 #define MENU_POSITIONS          5
 #define MENU_INTERVAL           10
 #define MENU_START              12
-#define PAR_NONE                0
-#define PAR_SAVE                1
-#define PAR_CANCEL              2
-#define PAR_EDIT_DISABLE        0
-#define PAR_EDIT_ENABLE         1
-#define PAR_UNSIGNED            0
-#define PAR_SIGNED              1
+#define TXT_PAR_MIN_VAL         1
 #define MSG_FOR_TIMER           2
 #define MSG_CNT                 30
 #define MSG_CNT_LONG            60
 #define MSG_CNT_BIND            100
 
 /*!****************************************************************************
-* User enum
-*/
-
-/*!****************************************************************************
 * User typedef
 */
 typedef enum{
-    eDisplay = 0,
+    ePwrOff = 0,
+    ePwrOn
+}ePwrState_type;
+
+typedef enum{
+    eOff = 0,
+    eDisplay,
     eMenu,
     eParEditWnd,
+    eTxtParSelWnd,
     eTxtEditWnd,
     eInfoWnd
 }eMenuMode_type;
-
-typedef enum{
-    eNumber = 0,
-    eText
-}eParType_type;
 
 typedef enum{
     eNoFract = 1,
     eTenths = 10,
     eHundreds = 100
 }eParFract_type;
-
-typedef enum{
-    eWait = 0,
-    eBack,
-    eBackLng,
-    eUp,
-    eDown,
-    eOk,
-    eOkLng
-}eNavEvent_type;
 
 typedef struct{
     bool            toDisplay;
@@ -80,16 +64,25 @@ typedef struct{
 }message_type;
 
 typedef struct{
-    eParType_type   parType;
     char            title[20];
     char            parUnits[5];
-    char            parText[20];
     uint16_t        parValue;
     uint16_t        parBorderMax;
     uint16_t        parBorderMin;
     uint16_t        *pParOrigin;
+    uint16_t        *pParCopy;
     eParFract_type  parFract;
 }parEditWnd_type;
+
+typedef struct{
+    char            title[20];
+    char            *pFirstPar;
+    char            parText[20];
+    uint16_t        txtStrLen;
+    uint16_t        currTxtPar;
+    uint16_t        *pTxtParOrigin;
+    uint16_t        qtyTxtPar;
+}txtParSelWnd_type;
 
 typedef struct{
     char            title[20];
@@ -114,14 +107,14 @@ typedef struct{
 }menuItems_type;
 
 typedef struct{
-    message_type    message;
-    parEditWnd_type parEditWnd;
-    txtEditWnd_type txtEditWnd;
-    infoWnd_type    infoWindow;
-    menuItems_type  menuItems;
-    eMenuMode_type  menuMode;
-    eMenuMode_type  menuPrevMode;
-    eNavEvent_type  navEvent;
+    message_type        message;
+    parEditWnd_type     parEditWnd;
+    txtParSelWnd_type   txtParSelWnd;
+    txtEditWnd_type     txtEditWnd;
+    infoWnd_type        infoWindow;
+    menuItems_type      menuItems;
+    eMenuMode_type      menuMode;
+    eMenuMode_type      menuPrevMode;
 }menu_type;
 
 /** Type define for a menu item. Menu items should be initialized via the helper
@@ -186,13 +179,19 @@ void Menu_EnterCurrentItem(void);
 void Menu_listParse(Menu_Item_t* const NewMenu);
 void Menu_putMessage(char *newStr, uint8_t newCnt);
 void Menu_parWndRun(eNavEvent_type navEvent);
-void Menu_putParWnd(eParType_type parType, eParFract_type parFract,
-                    char *title, char *parUnits, char *parText,
-                    uint16_t *pParOrigin, int16_t brdMax, int16_t brdMin);
+void Menu_putParWnd(char *title, char *parUnits, eParFract_type parFract,
+                    uint16_t *pParOrigin, uint16_t *pParCopy,
+                    int16_t brdMax, int16_t brdMin);
 void Menu_infoWndRun(eNavEvent_type navEvent);
-void Menu_txtWndRun(eNavEvent_type navEvent);
-void Menu_navRun(eNavEvent_type navEvent);
-void Menu_run(void);
+void Menu_txtEditWndRun(eNavEvent_type navEvent);
+void Menu_txtParSelWndRun(eNavEvent_type navEvent);
+void Menu_putTxtParSelWnd(char *title, char *pFirstPar, uint16_t *pTxtParOrigin,
+                          uint16_t currTxtPar, uint16_t qtyTxtPar, uint16_t txtStrLen);
+void Menu_navMenu(eNavEvent_type navEvent);
+void Menu_navDisp(eNavEvent_type navEvent);
+void Menu_navPwrOff(eNavEvent_type navEvent);
+void Menu_pwrOnOff(ePwrState_type ePwrState);
+void Menu_run(eNavEvent_type navEvent);
 
 #endif //MicroMenu_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

@@ -78,7 +78,7 @@ void battCalc(void){
     }
     //Counters managing
     if(meas.battery.battMsgPer != 0) meas.battery.battMsgPer--;
-    if((meas.battery.battMsgPer == 0) && (meas.battery.battVolt <= BATT_VOLT_LOW)) powerOff();
+    if((meas.battery.battMsgPer == 0) && (meas.battery.battVolt <= BATT_VOLT_LOW)) Menu_pwrOnOff(ePwrOff);
 }
 
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

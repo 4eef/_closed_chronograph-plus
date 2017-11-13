@@ -15,6 +15,7 @@
 * MEMORY
 */
 extern buttons_type             buttons;
+extern menu_type                menu;
 power_type                      power;
 
 /*!****************************************************************************
@@ -57,7 +58,7 @@ void stopModeConfig(void){
 * @retval   
 */
 void powerOff(void){
-    power.mode = POWER_STOP;
+    power.pwrMode = ePwrStop;
     power.uptimeCurr = 0;
     buttons.okLck = BUTTON_ENABLE;
     buttons.clLck = BUTTON_ENABLE;
@@ -76,7 +77,7 @@ void powerOff(void){
 * @retval   
 */
 void powerOn(void){
-    power.mode = POWER_RUN;
+    power.pwrMode = ePwrRun;
     //initI2C1();
     ug2864on();
     initIRConfig();

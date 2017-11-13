@@ -14,7 +14,6 @@
 /*!****************************************************************************
 * MEMORY
 */
-extern power_type           power;
 buttons_type                buttons;
 
 /*!****************************************************************************
@@ -22,7 +21,7 @@ buttons_type                buttons;
 * @param    
 * @retval   enum button value
 */
-enum buttonValues getButtonState(void){
+eNavEvent_type getNavEvent(void){
     //Sense the buttons
     if((gppin_get(BUTTON_UP) == 0) && (buttons.cnts.cntUp <= BUTTON_MAX)) buttons.cnts.cntUp++;
     if((gppin_get(BUTTON_DOWN) == 0) && (buttons.cnts.cntDn <= BUTTON_MAX)) buttons.cnts.cntDn++;
@@ -31,55 +30,54 @@ enum buttonValues getButtonState(void){
     //Up
     if((gppin_get(BUTTON_UP) != 0) && (buttons.upLck == BUTTON_ENABLE) && (buttons.cnts.cntUp >= BUTTON_SHORT) && (buttons.cnts.cntUp < BUTTON_LONG)){
         btnCntsClr();
-        return UP;
+        return eUp;
     }else if((gppin_get(BUTTON_UP) == 0) && (buttons.upLck == BUTTON_ENABLE) && (buttons.cnts.cntUp >= BUTTON_LONG)){
         btnCntsClr();
         buttons.upLck = BUTTON_DISABLE;                                         //Lock button
-        return UP;
+        return eUp;
     }else if((gppin_get(BUTTON_UP) == 0) && (buttons.upLck == BUTTON_DISABLE) && (buttons.cnts.cntUp >= BUTTON_LOCKED)){
         btnCntsClr();
-        return UP;
+        return eUp;
     }else if((gppin_get(BUTTON_UP) != 0) && (buttons.upLck == BUTTON_DISABLE)){
         buttons.upLck = BUTTON_ENABLE;
     }else
     //Down
     if((gppin_get(BUTTON_DOWN) != 0) && (buttons.dnLck == BUTTON_ENABLE) && (buttons.cnts.cntDn >= BUTTON_SHORT) && (buttons.cnts.cntDn < BUTTON_LONG)){
         btnCntsClr();
-        return DOWN;
+        return eDown;
     }else if((gppin_get(BUTTON_DOWN) == 0) && (buttons.dnLck == BUTTON_ENABLE) && (buttons.cnts.cntDn >= BUTTON_LONG)){
         btnCntsClr();
         buttons.dnLck = BUTTON_DISABLE;
-        return DOWN;
+        return eDown;
     }else if((gppin_get(BUTTON_DOWN) == 0) && (buttons.dnLck == BUTTON_DISABLE) && (buttons.cnts.cntDn >= BUTTON_LOCKED)){
         btnCntsClr();
-        return DOWN;
+        return eDown;
     }else if((gppin_get(BUTTON_DOWN) != 0) && (buttons.dnLck == BUTTON_DISABLE)){
         buttons.dnLck = BUTTON_ENABLE;
     }else
     //Ok
     if((gppin_get(BUTTON_OK) != 0) && (buttons.okLck == BUTTON_ENABLE) && (buttons.cnts.cntOK >= BUTTON_SHORT)){
         btnCntsClr();
-        return OK;
+        return eOk;
     }else if((gppin_get(BUTTON_OK) == 0) && (buttons.okLck == BUTTON_ENABLE) && (buttons.cnts.cntOK >= BUTTON_LONG)){
         btnCntsClr();
         buttons.okLck = BUTTON_DISABLE;
-        return OKLNG;
+        return eOkLng;
     }else if((gppin_get(BUTTON_OK) != 0) && (buttons.okLck == BUTTON_DISABLE) && (buttons.cnts.cntOK < BUTTON_SHORT)){
         buttons.okLck = BUTTON_ENABLE;
     }else
     //Cancel
     if((gppin_get(BUTTON_CANCEL) != 0) && (buttons.clLck == BUTTON_ENABLE) && (buttons.cnts.cntCl >= BUTTON_SHORT) && (buttons.cnts.cntCl < BUTTON_LONG)){
         btnCntsClr();
-        power.uptimeCurr = 0;                                                   //Reset uptime counter
-        return CANCEL;
+        return eBack;
     }else if((gppin_get(BUTTON_CANCEL) == 0) && (buttons.clLck == BUTTON_ENABLE) && (buttons.cnts.cntCl >= BUTTON_LONG)){
         btnCntsClr();
         buttons.clLck = BUTTON_DISABLE;
-        return CLLNG;
+        return eBackLng;
     }else if((gppin_get(BUTTON_CANCEL) != 0) && (buttons.clLck == BUTTON_DISABLE) && (buttons.cnts.cntCl < BUTTON_SHORT)){
         buttons.clLck = BUTTON_ENABLE;
     }
-    return NONE;
+    return eWait;
 };
 
 /*!****************************************************************************

@@ -17,96 +17,51 @@
 extern menu_type    menu;
 ssdVideoBff_type    ssdVideoBff;
 
-/*!****************************************************************************
-* @brief    Put string and clear its previous contents
-*/
-void ssd_putStrClr(uint8_t x, uint8_t y, char *text, uint8_t maxLen, uint8_t fontSize){
-    char string[STR_MAX_LEN];
-    uint8_t i, currLen, empty;
-    currLen = strlen(text);
-    if((currLen > maxLen) || (maxLen > STR_MAX_LEN)) return;
-    //Set corresponding sign number
-    if(fontSize == FONT_6X8){
-        empty = 7;
-    }else{
-        empty = 62;
-    }
-    //Fill string with text and empty signs
-    for(i = 0; i < maxLen; i++){
-        if(*text != 0){
-            string[i] = *text;
-            string[i+1] = 0;
-            text++;
-        }else{
-            string[i] = empty;
-            string[i+1] = 0;
-        }
-    }
-    //Put string
-    if(fontSize == FONT_6X8){
-        ssd_putString6x8(x, y, &string[0]);
-    }else{
-        ssd_putString12x16(x, y, &string[0]);
-    }
-}
-
-
-/*!****************************************************************************
-* @brief    Put box for text at the center of display
-*/
-void ssd_putParBox(char *text, uint8_t enArrows){
-    uint8_t i, j, x, y;
-    char uArrow[2]={24, 0}, dArrow[2]={25, 0}, tBack[6]={"Back"}, tSave[6]={"Save"};
-    //Parameters
-    x = (SSD1306_LCDWIDTH - PAR_BOX_WIDTH)/2;
-    y = (SSD1306_LCDHEIGHT - PAR_BOX_HEIGHT)/2;
-    //Put box
-    for(i = 0; i <= PAR_BOX_WIDTH; i++){
-        for(j = 0; j <= PAR_BOX_HEIGHT; j++){
-            if(j == 0 || j == PAR_BOX_HEIGHT || i == 0 || i == PAR_BOX_WIDTH){
-                ssd_setpix(x+i, y+j, WHITE);
-            }else{
-                ssd_setpix(x+i, y+j, BLACK);
-            }
-        }
-    }
-    //Put text
-    ssd_putString6x8(10, 10, text);
-    if(enArrows == PAR_BOX_ARROWS_EN){
-        ssd_putString6x8(46, 46, uArrow);
-        ssd_putString6x8(76, 46, dArrow);
-    }
-    ssd_putString6x8(10, 46, tBack);
-    ssd_putString6x8(94, 46, tSave);
-}
+///*!****************************************************************************
+//* @brief    Put string and clear its previous contents
+//*/
+//void ssd_putStrClr(uint8_t x, uint8_t y, char *text, uint8_t maxLen, uint8_t fontSize){
+//    char string[STR_MAX_LEN];
+//    uint8_t i, currLen, empty;
+//    currLen = strlen(text);
+//    if((currLen > maxLen) || (maxLen > STR_MAX_LEN)) return;
+//    //Set corresponding sign number
+//    if(fontSize == FONT_6X8){
+//        empty = 7;
+//    }else{
+//        empty = 62;
+//    }
+//    //Fill string with text and empty signs
+//    for(i = 0; i < maxLen; i++){
+//        if(*text != 0){
+//            string[i] = *text;
+//            string[i+1] = 0;
+//            text++;
+//        }else{
+//            string[i] = empty;
+//            string[i+1] = 0;
+//        }
+//    }
+//    //Put string
+//    if(fontSize == FONT_6X8){
+//        ssd_putString6x8(x, y, &string[0]);
+//    }else{
+//        ssd_putString12x16(x, y, &string[0]);
+//    }
+//}
 
 /*!****************************************************************************
-* @brief    Put text message at the center of display
+* @brief    Put text parameter select window at the center of display
 */
-void ssd_putParWnd(void){
-    uint16_t val1, val2;
+void ssd_putTxtParSelWnd(void){
     uint8_t len, offs;
-    char tPar[20], uArrow[2]={24, 0}, dArrow[2]={25, 0}, tBack[6]={"Back"}, tSave[6]={"Save"};
+    char uArrow[2]={24, 0}, dArrow[2]={25, 0}, tBack[6]={"Back"}, tSave[6]={"Save"};
     //Put title
-    ssd_putString6x8(0, 0, menu.parEditWnd.title);
-    //Put parameter
-    if(menu.parEditWnd.parType == eNumber){
-        if(menu.parEditWnd.parFract != eNoFract){
-            val1 = menu.parEditWnd.parValue/menu.parEditWnd.parFract;
-            val2 = menu.parEditWnd.parValue%val1;
-            sprintf(tPar, "%u.%u ", val1, val2);
-        }else{
-            sprintf(tPar, "%u ", menu.parEditWnd.parValue);
-        }
-        strcat(tPar, menu.parEditWnd.parUnits);
-        len = strlen(tPar);
-        offs = SSD1306_LCDWIDTH/2 - (len*6)/2;
-        ssd_putString6x8(offs, 28, tPar);
-    }else{
-        len = strlen(menu.parEditWnd.parText);
-        offs = SSD1306_LCDWIDTH/2 - (len*6)/2;
-        ssd_putString6x8(offs, 28, menu.parEditWnd.parText);
-    }
+    ssd_putString6x8(0, 0, menu.txtParSelWnd.title);
+    //Put text parameter
+    len = strlen(menu.txtParSelWnd.parText);
+    offs = SSD1306_LCDWIDTH/2 - (len*6)/2;
+    ssd_putString6x8(offs, 28, menu.txtParSelWnd.parText);
     //Buttons labels
     ssd_putString6x8(0, 56, tBack);
     ssd_putString6x8(40, 56, uArrow);
@@ -115,7 +70,35 @@ void ssd_putParWnd(void){
 }
 
 /*!****************************************************************************
-* @brief    Put text message at the center of display
+* @brief    Put parameter select window at the center of display
+*/
+void ssd_putParWnd(void){
+    uint16_t val1, val2;
+    uint8_t len, offs;
+    char tPar[20], uArrow[2]={24, 0}, dArrow[2]={25, 0}, tBack[6]={"Back"}, tSave[6]={"Save"};
+    //Put title
+    ssd_putString6x8(0, 0, menu.parEditWnd.title);
+    //Put parameter
+    if(menu.parEditWnd.parFract != eNoFract){
+        val1 = menu.parEditWnd.parValue/menu.parEditWnd.parFract;
+        val2 = menu.parEditWnd.parValue%val1;
+        sprintf(tPar, "%u.%u ", val1, val2);
+    }else{
+        sprintf(tPar, "%u ", menu.parEditWnd.parValue);
+    }
+    strcat(tPar, menu.parEditWnd.parUnits);
+    len = strlen(tPar);
+    offs = SSD1306_LCDWIDTH/2 - (len*6)/2;
+    ssd_putString6x8(offs, 28, tPar);
+    //Buttons labels
+    ssd_putString6x8(0, 56, tBack);
+    ssd_putString6x8(40, 56, uArrow);
+    ssd_putString6x8(82, 56, dArrow);
+    ssd_putString6x8(104, 56, tSave);
+}
+
+/*!****************************************************************************
+* @brief    Put text message box at the center of display
 */
 void ssd_putMessage(void){
     uint8_t i, j, x, y, boxLength, offs;

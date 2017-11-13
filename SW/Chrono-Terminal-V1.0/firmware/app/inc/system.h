@@ -18,8 +18,9 @@
 /*!****************************************************************************
 * User define
 */
-#define PELLET_DB_NULL          1
-#define PELLET_DB_NUM           16
+#define PELLET_DB_QTY           16
+#define PELLET_KNOWN_LIST       PELLET_DB_QTY - 1
+#define PELLET_DB_STR_LEN       18
 #define PELLET_SGN_TOLERANCE    10
 #define PELLET_CHANGE_THR       5
 #define PELLET_NEW_SGN_THR      10
@@ -71,9 +72,9 @@ typedef struct{
 }pellet_type;
 
 typedef struct{
-    char            pelStrings[PELLET_DB_NUM][18];
-    uint16_t        pelWghts[PELLET_DB_NUM];
-    uint16_t        pelSgntrs[PELLET_DB_NUM];
+    char            pelStrings[PELLET_DB_QTY][PELLET_DB_STR_LEN];
+    uint16_t        pelWghts[PELLET_DB_QTY];
+    uint16_t        pelSgntrs[PELLET_DB_QTY];
     uint16_t        matchedSgnNum;
     uint16_t        newSgn;
     uint32_t        newSgnSum;
@@ -150,6 +151,7 @@ void drawIncScr(void);
 void drawChrScr(void);
 void drawHybrScr(void);
 void drawMenu(void);
+void chrSetsRst(void);
 
 #endif //system_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

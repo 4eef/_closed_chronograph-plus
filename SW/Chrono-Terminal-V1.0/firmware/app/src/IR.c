@@ -79,7 +79,7 @@ void hndlIRData(void){
                         pellets.matchedSgnNum = 0;
                         val3 = pellets.newSgn-pellets.newSgn/PELLET_SGN_TOLERANCE;
                         val4 = pellets.newSgn+pellets.newSgn/PELLET_SGN_TOLERANCE;
-                        for(i = 1; i < PELLET_DB_NUM; i++){
+                        for(i = 1; i < PELLET_DB_QTY; i++){
                             if(pellets.pelSgntrs[i] >= val3 && pellets.pelSgntrs[i] <= val4){
                                 pellets.matchedSgnNum = i;
                                 pellets.pelStat = PELLET_CONFIRM;

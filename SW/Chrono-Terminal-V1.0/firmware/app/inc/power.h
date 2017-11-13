@@ -19,12 +19,11 @@
 #include "lis3.h"
 #include "i2c.h"
 #include "buttons.h"
+#include "MicroMenu.h"
 
 /*!****************************************************************************
 * User define
 */
-#define POWER_STOP              0
-#define POWER_RUN               1
 #define POWER_RUN_MAX           30
 #define POWER_RUN_MIN           1
 #define POWER_RUN_DEFAULT       5
@@ -32,12 +31,16 @@
 /*!****************************************************************************
 * User enum
 */
+typedef enum{
+    ePwrStop = 0,
+    ePwrRun
+}ePwrMode_type;
 
 /*!****************************************************************************
 * User typedef
 */
 typedef struct{
-    uint8_t         mode;
+    ePwrMode_type   pwrMode;
     uint16_t        uptimeCurr;
     uint16_t        uptimeSet;
 }power_type;
