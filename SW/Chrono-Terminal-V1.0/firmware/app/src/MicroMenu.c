@@ -261,7 +261,7 @@ void Menu_txtParSelWndRun(eNavEvent_type navEvent){
                 *menu.txtParSelWnd.pTxtParOrigin = menu.txtParSelWnd.currTxtPar;
                 Menu_putMessage("Saved", MSG_CNT);
             }else{
-                Menu_putMessage("Error", MSG_CNT);
+                Menu_putMessage("Ptr. error", MSG_CNT);
             }
             menu.menuMode = menu.menuPrevMode;
             break;
@@ -281,28 +281,67 @@ void Menu_txtParSelWndRun(eNavEvent_type navEvent){
 /*!****************************************************************************
 * @brief    
 */
-void Menu_putTxtEditWnd(void){
-    
+void Menu_putTxtEditWnd(char *title, char *pStrOrig){
+    //Set up menu mode
+    menu.menuPrevMode = menu.menuMode;
+    menu.menuMode = eTxtEditWnd;
+    //Copy parameters
+    strcpy(menu.txtEditWnd.title, title);
+    strcpy(menu.txtEditWnd.string, pStrOrig);
+    menu.txtEditWnd.string[MENU_STR_LEN_MAX - 1] = 0;
+    menu.txtEditWnd.pStrOrig = pStrOrig;
 }
 
 /*!****************************************************************************
 * @brief    
 */
 void Menu_txtEditWndRun(eNavEvent_type navEvent){
+    uint8_t i;
     switch(navEvent){
         case eWait:
             break;
         case eBack:
+            if(menu.txtEditWnd.symPos == 0){
+                Menu_putMessage("Pos. error", MSG_CNT);
+            }else{
+                for(i = menu.txtEditWnd.symPos; i < (MENU_STR_LEN_MAX - 1); i++){
+                    menu.txtEditWnd.string[i] = 0;
+                }
+                Menu_putMessage("Cleared", MSG_CNT);
+            }
             break;
         case eBackLng:
+            menu.menuMode = menu.menuPrevMode;
+            Menu_putMessage("Cancelled", MSG_CNT);
             break;
         case eUp:
+            if(menu.txtEditWnd.string[menu.txtEditWnd.symPos] >= SYM_ZSMALL_NO){
+                menu.txtEditWnd.string[menu.txtEditWnd.symPos] = SYM_SPACE_NO;
+            }else{
+                menu.txtEditWnd.string[menu.txtEditWnd.symPos]++;
+            }
             break;
         case eDown:
+            if(menu.txtEditWnd.string[menu.txtEditWnd.symPos] <= SYM_SPACE_NO){
+                menu.txtEditWnd.string[menu.txtEditWnd.symPos] = SYM_ZSMALL_NO;
+            }else{
+                menu.txtEditWnd.string[menu.txtEditWnd.symPos]--;
+            }
             break;
         case eOk:
+            if(menu.txtEditWnd.symPos >= (MENU_STR_LEN_MAX - 1)){
+                menu.txtEditWnd.symPos = 0;
+            }else{
+                menu.txtEditWnd.symPos++;
+            }
             break;
         case eOkLng:
+            if(menu.txtEditWnd.pStrOrig != NULL){
+                strcpy(menu.txtEditWnd.pStrOrig, menu.txtEditWnd.string);
+                Menu_putMessage("Saved", MSG_CNT);
+            }else{
+                Menu_putMessage("Ptr. error", MSG_CNT);
+            }
             break;
         default:
             break;
@@ -361,7 +400,7 @@ void Menu_parWndRun(eNavEvent_type navEvent){
                 *menu.parEditWnd.pParOrigin = menu.parEditWnd.parValue;
                 Menu_putMessage("Saved", MSG_CNT);
             }else{
-                Menu_putMessage("Error", MSG_CNT);
+                Menu_putMessage("Ptr. error", MSG_CNT);
             }
             if(menu.parEditWnd.pParCopy != NULL){
                 *menu.parEditWnd.pParCopy = menu.parEditWnd.parValue;

@@ -26,11 +26,16 @@
 #define MENU_POSITIONS          5
 #define MENU_INTERVAL           10
 #define MENU_START              12
+#define MENU_STR_LEN_MAX        20
+#define MENU_MSG_LEN_MAX        240
+#define MENU_ITEMS_QTY_MAX      20
 #define TXT_PAR_MIN_VAL         1
 #define MSG_FOR_TIMER           2
 #define MSG_CNT                 30
 #define MSG_CNT_LONG            60
 #define MSG_CNT_BIND            100
+#define SYM_SPACE_NO            32
+#define SYM_ZSMALL_NO           122
 
 /*!****************************************************************************
 * User typedef
@@ -58,14 +63,14 @@ typedef enum{
 
 typedef struct{
     bool            toDisplay;
-    char            msgStr[20];
+    char            msgStr[MENU_STR_LEN_MAX];
     uint8_t         msgLen;
     uint8_t         msgCnt;
 }message_type;
 
 typedef struct{
-    char            title[20];
-    char            parUnits[5];
+    char            title[MENU_STR_LEN_MAX];
+    char            parUnits[MENU_STR_LEN_MAX];
     uint16_t        parValue;
     uint16_t        parBorderMax;
     uint16_t        parBorderMin;
@@ -75,9 +80,9 @@ typedef struct{
 }parEditWnd_type;
 
 typedef struct{
-    char            title[20];
+    char            title[MENU_STR_LEN_MAX];
     char            *pFirstPar;
-    char            parText[20];
+    char            parText[MENU_STR_LEN_MAX];
     uint16_t        txtStrLen;
     uint16_t        currTxtPar;
     uint16_t        *pTxtParOrigin;
@@ -85,22 +90,22 @@ typedef struct{
 }txtParSelWnd_type;
 
 typedef struct{
-    char            title[20];
-    char            string[20];
-    char            symbol;
+    char            title[MENU_STR_LEN_MAX];
+    char            string[MENU_STR_LEN_MAX];
+    char            *pStrOrig;
     uint8_t         symPos;
 }txtEditWnd_type;
 
 typedef struct{
-    char            title[20];
-    char            string[240];
+    char            title[MENU_STR_LEN_MAX];
+    char            string[MENU_MSG_LEN_MAX];
     uint8_t         totStrs;
     uint8_t         wndOffs;
 }infoWnd_type;
 
 typedef struct{
-    char            parent[20];
-    char            child[20][20];
+    char            parent[MENU_STR_LEN_MAX];
+    char            child[MENU_STR_LEN_MAX][MENU_ITEMS_QTY_MAX];
     uint8_t         currItem;
     uint8_t         totItems;
     uint8_t         wndOffs;
@@ -184,6 +189,7 @@ void Menu_putParWnd(char *title, char *parUnits, eParFract_type parFract,
                     int16_t brdMax, int16_t brdMin);
 void Menu_infoWndRun(eNavEvent_type navEvent);
 void Menu_txtEditWndRun(eNavEvent_type navEvent);
+void Menu_putTxtEditWnd(char *title, char *pStrOrig);
 void Menu_txtParSelWndRun(eNavEvent_type navEvent);
 void Menu_putTxtParSelWnd(char *title, char *pFirstPar, uint16_t *pTxtParOrigin,
                           uint16_t currTxtPar, uint16_t qtyTxtPar, uint16_t txtStrLen);
