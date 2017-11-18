@@ -52,21 +52,21 @@ MENU_ITEM(sibrdr,       siofcal,        NULL_MENU,      sincline,       NULL_MEN
 MENU_ITEM(siofcal,      sigacal,        sibrdr,         sincline,       NULL_MENU,      NULL,           parEditInit,    "Offset calibration");
 MENU_ITEM(sigacal,      NULL_MENU,      siofcal,        sincline,       NULL_MENU,      NULL,           parEditInit,    "Gain calibration");
 //Menu/Settings/Pellets database
-MENU_ITEM(spdbp1,       spdbp2,         NULL_MENU,      speldb,         NULL_MENU,      NULL,           NULL,           pellets.pelStrings[1]);
-MENU_ITEM(spdbp2,       spdbp3,         spdbp1,         speldb,         NULL_MENU,      NULL,           NULL,           pellets.pelStrings[2]);
-MENU_ITEM(spdbp3,       spdbp4,         spdbp2,         speldb,         NULL_MENU,      NULL,           NULL,           pellets.pelStrings[3]);
-MENU_ITEM(spdbp4,       spdbp5,         spdbp3,         speldb,         NULL_MENU,      NULL,           NULL,           pellets.pelStrings[4]);
-MENU_ITEM(spdbp5,       spdbp6,         spdbp4,         speldb,         NULL_MENU,      NULL,           NULL,           pellets.pelStrings[5]);
-MENU_ITEM(spdbp6,       spdbp7,         spdbp5,         speldb,         NULL_MENU,      NULL,           NULL,           pellets.pelStrings[6]);
-MENU_ITEM(spdbp7,       spdbp8,         spdbp6,         speldb,         NULL_MENU,      NULL,           NULL,           pellets.pelStrings[7]);
-MENU_ITEM(spdbp8,       spdbp9,         spdbp7,         speldb,         NULL_MENU,      NULL,           NULL,           pellets.pelStrings[8]);
-MENU_ITEM(spdbp9,       spdbp10,        spdbp8,         speldb,         NULL_MENU,      NULL,           NULL,           pellets.pelStrings[9]);
-MENU_ITEM(spdbp10,      spdbp11,        spdbp9,         speldb,         NULL_MENU,      NULL,           NULL,           pellets.pelStrings[10]);
-MENU_ITEM(spdbp11,      spdbp12,        spdbp10,        speldb,         NULL_MENU,      NULL,           NULL,           pellets.pelStrings[11]);
-MENU_ITEM(spdbp12,      spdbp13,        spdbp11,        speldb,         NULL_MENU,      NULL,           NULL,           pellets.pelStrings[12]);
-MENU_ITEM(spdbp13,      spdbp14,        spdbp12,        speldb,         NULL_MENU,      NULL,           NULL,           pellets.pelStrings[13]);
-MENU_ITEM(spdbp14,      spdbp15,        spdbp13,        speldb,         NULL_MENU,      NULL,           NULL,           pellets.pelStrings[14]);
-MENU_ITEM(spdbp15,      NULL_MENU,      spdbp14,        speldb,         NULL_MENU,      NULL,           NULL,           pellets.pelStrings[15]);
+MENU_ITEM(spdbp1,       spdbp2,         NULL_MENU,      speldb,         NULL_MENU,      NULL,           txtEditInit,    pellets.pelStrings[1]);
+MENU_ITEM(spdbp2,       spdbp3,         spdbp1,         speldb,         NULL_MENU,      NULL,           txtEditInit,    pellets.pelStrings[2]);
+MENU_ITEM(spdbp3,       spdbp4,         spdbp2,         speldb,         NULL_MENU,      NULL,           txtEditInit,    pellets.pelStrings[3]);
+MENU_ITEM(spdbp4,       spdbp5,         spdbp3,         speldb,         NULL_MENU,      NULL,           txtEditInit,    pellets.pelStrings[4]);
+MENU_ITEM(spdbp5,       spdbp6,         spdbp4,         speldb,         NULL_MENU,      NULL,           txtEditInit,    pellets.pelStrings[5]);
+MENU_ITEM(spdbp6,       spdbp7,         spdbp5,         speldb,         NULL_MENU,      NULL,           txtEditInit,    pellets.pelStrings[6]);
+MENU_ITEM(spdbp7,       spdbp8,         spdbp6,         speldb,         NULL_MENU,      NULL,           txtEditInit,    pellets.pelStrings[7]);
+MENU_ITEM(spdbp8,       spdbp9,         spdbp7,         speldb,         NULL_MENU,      NULL,           txtEditInit,    pellets.pelStrings[8]);
+MENU_ITEM(spdbp9,       spdbp10,        spdbp8,         speldb,         NULL_MENU,      NULL,           txtEditInit,    pellets.pelStrings[9]);
+MENU_ITEM(spdbp10,      spdbp11,        spdbp9,         speldb,         NULL_MENU,      NULL,           txtEditInit,    pellets.pelStrings[10]);
+MENU_ITEM(spdbp11,      spdbp12,        spdbp10,        speldb,         NULL_MENU,      NULL,           txtEditInit,    pellets.pelStrings[11]);
+MENU_ITEM(spdbp12,      spdbp13,        spdbp11,        speldb,         NULL_MENU,      NULL,           txtEditInit,    pellets.pelStrings[12]);
+MENU_ITEM(spdbp13,      spdbp14,        spdbp12,        speldb,         NULL_MENU,      NULL,           txtEditInit,    pellets.pelStrings[13]);
+MENU_ITEM(spdbp14,      spdbp15,        spdbp13,        speldb,         NULL_MENU,      NULL,           txtEditInit,    pellets.pelStrings[14]);
+MENU_ITEM(spdbp15,      NULL_MENU,      spdbp14,        speldb,         NULL_MENU,      NULL,           txtEditInit,    pellets.pelStrings[15]);
 
 /*!****************************************************************************
 * @brief    Main function
@@ -128,6 +128,45 @@ void main(void){
             if(sysPars.dispMode != eChronograph) trxAccData();                  //Perform data transmition with accelerometer
             drawDisplay();                                                      //Perform display refresh
         }
+    }
+}
+
+/*!****************************************************************************
+* @brief    Redirect routine to edit text string
+*/
+void txtEditInit(void){
+    char title[20];
+    strcpy(title, "Edit name...");
+    if(currMenuItem == &spdbp1){
+        Menu_putTxtEditWnd(title, pellets.pelStrings[1], PELLET_DB_STR_LEN - 1);
+    }else if(currMenuItem == &spdbp2){
+        Menu_putTxtEditWnd(title, pellets.pelStrings[2], PELLET_DB_STR_LEN - 1);
+    }else if(currMenuItem == &spdbp3){
+        Menu_putTxtEditWnd(title, pellets.pelStrings[3], PELLET_DB_STR_LEN - 1);
+    }else if(currMenuItem == &spdbp4){
+        Menu_putTxtEditWnd(title, pellets.pelStrings[4], PELLET_DB_STR_LEN - 1);
+    }else if(currMenuItem == &spdbp5){
+        Menu_putTxtEditWnd(title, pellets.pelStrings[5], PELLET_DB_STR_LEN - 1);
+    }else if(currMenuItem == &spdbp6){
+        Menu_putTxtEditWnd(title, pellets.pelStrings[6], PELLET_DB_STR_LEN - 1);
+    }else if(currMenuItem == &spdbp7){
+        Menu_putTxtEditWnd(title, pellets.pelStrings[7], PELLET_DB_STR_LEN - 1);
+    }else if(currMenuItem == &spdbp8){
+        Menu_putTxtEditWnd(title, pellets.pelStrings[8], PELLET_DB_STR_LEN - 1);
+    }else if(currMenuItem == &spdbp9){
+        Menu_putTxtEditWnd(title, pellets.pelStrings[9], PELLET_DB_STR_LEN - 1);
+    }else if(currMenuItem == &spdbp10){
+        Menu_putTxtEditWnd(title, pellets.pelStrings[10], PELLET_DB_STR_LEN - 1);
+    }else if(currMenuItem == &spdbp11){
+        Menu_putTxtEditWnd(title, pellets.pelStrings[11], PELLET_DB_STR_LEN - 1);
+    }else if(currMenuItem == &spdbp12){
+        Menu_putTxtEditWnd(title, pellets.pelStrings[12], PELLET_DB_STR_LEN - 1);
+    }else if(currMenuItem == &spdbp13){
+        Menu_putTxtEditWnd(title, pellets.pelStrings[13], PELLET_DB_STR_LEN - 1);
+    }else if(currMenuItem == &spdbp14){
+        Menu_putTxtEditWnd(title, pellets.pelStrings[14], PELLET_DB_STR_LEN - 1);
+    }else if(currMenuItem == &spdbp15){
+        Menu_putTxtEditWnd(title, pellets.pelStrings[15], PELLET_DB_STR_LEN - 1);
     }
 }
 
@@ -200,6 +239,7 @@ void drawDisplay(void){
             ssd_putTxtParSelWnd();
             break;
         case eTxtEditWnd:
+            ssd_putTxtEditWnd();
             break;
         case eInfoWnd:
             break;

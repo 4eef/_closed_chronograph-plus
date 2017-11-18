@@ -20,7 +20,7 @@
 */
 #define PELLET_DB_QTY           16
 #define PELLET_KNOWN_LIST       PELLET_DB_QTY - 1
-#define PELLET_DB_STR_LEN       18
+#define PELLET_DB_STR_LEN       19
 #define PELLET_SGN_TOLERANCE    10
 #define PELLET_CHANGE_THR       5
 #define PELLET_NEW_SGN_THR      10

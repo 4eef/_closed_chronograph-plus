@@ -34,7 +34,14 @@
 #define MSG_CNT                 30
 #define MSG_CNT_LONG            60
 #define MSG_CNT_BIND            100
+#define SYM_TERMINATOR_NO       0
 #define SYM_SPACE_NO            32
+#define SYM_POINT_NO            46
+#define SYM_ZERO_NO             48
+#define SYM_NINE_NO             57
+#define SYM_ABIG_NO             65
+#define SYM_ZBIG_NO             90
+#define SYM_ASMALL_NO           97
 #define SYM_ZSMALL_NO           122
 
 /*!****************************************************************************
@@ -94,6 +101,7 @@ typedef struct{
     char            string[MENU_STR_LEN_MAX];
     char            *pStrOrig;
     uint8_t         symPos;
+    uint8_t         strMaxLen;
 }txtEditWnd_type;
 
 typedef struct{
@@ -189,7 +197,7 @@ void Menu_putParWnd(char *title, char *parUnits, eParFract_type parFract,
                     int16_t brdMax, int16_t brdMin);
 void Menu_infoWndRun(eNavEvent_type navEvent);
 void Menu_txtEditWndRun(eNavEvent_type navEvent);
-void Menu_putTxtEditWnd(char *title, char *pStrOrig);
+void Menu_putTxtEditWnd(char *title, char *pStrOrig, uint8_t strMaxLen);
 void Menu_txtParSelWndRun(eNavEvent_type navEvent);
 void Menu_putTxtParSelWnd(char *title, char *pFirstPar, uint16_t *pTxtParOrigin,
                           uint16_t currTxtPar, uint16_t qtyTxtPar, uint16_t txtStrLen);

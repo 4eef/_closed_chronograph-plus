@@ -281,15 +281,17 @@ void Menu_txtParSelWndRun(eNavEvent_type navEvent){
 /*!****************************************************************************
 * @brief    
 */
-void Menu_putTxtEditWnd(char *title, char *pStrOrig){
+void Menu_putTxtEditWnd(char *title, char *pStrOrig, uint8_t strMaxLen){
     //Set up menu mode
     menu.menuPrevMode = menu.menuMode;
     menu.menuMode = eTxtEditWnd;
     //Copy parameters
     strcpy(menu.txtEditWnd.title, title);
+    memset(menu.txtEditWnd.string, SYM_TERMINATOR_NO, MENU_STR_LEN_MAX);
     strcpy(menu.txtEditWnd.string, pStrOrig);
-    menu.txtEditWnd.string[MENU_STR_LEN_MAX - 1] = 0;
     menu.txtEditWnd.pStrOrig = pStrOrig;
+    menu.txtEditWnd.symPos = strlen(menu.txtEditWnd.string) - 1;
+    menu.txtEditWnd.strMaxLen = strMaxLen;
 }
 
 /*!****************************************************************************
@@ -297,17 +299,27 @@ void Menu_putTxtEditWnd(char *title, char *pStrOrig){
 */
 void Menu_txtEditWndRun(eNavEvent_type navEvent){
     uint8_t i;
+    char prevSym;
+    prevSym = menu.txtEditWnd.string[menu.txtEditWnd.symPos];
     switch(navEvent){
         case eWait:
             break;
         case eBack:
-            if(menu.txtEditWnd.symPos == 0){
-                Menu_putMessage("Pos. error", MSG_CNT);
-            }else{
-                for(i = menu.txtEditWnd.symPos; i < (MENU_STR_LEN_MAX - 1); i++){
-                    menu.txtEditWnd.string[i] = 0;
+            if(menu.txtEditWnd.string[menu.txtEditWnd.symPos] != SYM_TERMINATOR_NO){
+                if(menu.txtEditWnd.string[menu.txtEditWnd.symPos + 1] != SYM_TERMINATOR_NO){
+                    i = menu.txtEditWnd.symPos;
+                    while(menu.txtEditWnd.string[i] != SYM_TERMINATOR_NO){
+                        menu.txtEditWnd.string[i] = menu.txtEditWnd.string[i + 1];
+                        i++;
+                    }
+                }else{
+                    menu.txtEditWnd.string[menu.txtEditWnd.symPos] = SYM_TERMINATOR_NO;
                 }
-                Menu_putMessage("Cleared", MSG_CNT);
+            }else{
+                Menu_putMessage("String is empty", MSG_CNT);
+            }
+            if(menu.txtEditWnd.symPos != 0){
+                menu.txtEditWnd.symPos--;
             }
             break;
         case eBackLng:
@@ -315,28 +327,66 @@ void Menu_txtEditWndRun(eNavEvent_type navEvent){
             Menu_putMessage("Cancelled", MSG_CNT);
             break;
         case eUp:
-            if(menu.txtEditWnd.string[menu.txtEditWnd.symPos] >= SYM_ZSMALL_NO){
+            prevSym++;
+            if(prevSym < SYM_SPACE_NO){
+                menu.txtEditWnd.string[menu.txtEditWnd.symPos] = SYM_SPACE_NO;
+            }else if((prevSym < SYM_POINT_NO) && (prevSym > SYM_SPACE_NO)){
+                menu.txtEditWnd.string[menu.txtEditWnd.symPos] = SYM_POINT_NO;
+            }else if((prevSym < SYM_ZERO_NO) && (prevSym > SYM_POINT_NO)){
+                menu.txtEditWnd.string[menu.txtEditWnd.symPos] = SYM_ZERO_NO;
+            }else if((prevSym < SYM_ABIG_NO) && (prevSym > SYM_NINE_NO)){
+                menu.txtEditWnd.string[menu.txtEditWnd.symPos] = SYM_ABIG_NO;
+            }else if((prevSym < SYM_ASMALL_NO) && (prevSym > SYM_ZBIG_NO)){
+                menu.txtEditWnd.string[menu.txtEditWnd.symPos] = SYM_ASMALL_NO;
+            }else if(prevSym > SYM_ZSMALL_NO){
                 menu.txtEditWnd.string[menu.txtEditWnd.symPos] = SYM_SPACE_NO;
             }else{
                 menu.txtEditWnd.string[menu.txtEditWnd.symPos]++;
             }
             break;
         case eDown:
-            if(menu.txtEditWnd.string[menu.txtEditWnd.symPos] <= SYM_SPACE_NO){
+            prevSym--;
+            if(prevSym > SYM_ZSMALL_NO){
+                menu.txtEditWnd.string[menu.txtEditWnd.symPos] = SYM_ZSMALL_NO;
+            }else if((prevSym > SYM_ZBIG_NO) && (prevSym < SYM_ASMALL_NO)){
+                menu.txtEditWnd.string[menu.txtEditWnd.symPos] = SYM_ZBIG_NO;
+            }else if((prevSym > SYM_NINE_NO) && (prevSym < SYM_ABIG_NO)){
+                menu.txtEditWnd.string[menu.txtEditWnd.symPos] = SYM_NINE_NO;
+            }else if((prevSym > SYM_POINT_NO) && (prevSym < SYM_ZERO_NO)){
+                menu.txtEditWnd.string[menu.txtEditWnd.symPos] = SYM_POINT_NO;
+            }else if((prevSym > SYM_SPACE_NO) && (prevSym < SYM_POINT_NO)){
+                menu.txtEditWnd.string[menu.txtEditWnd.symPos] = SYM_SPACE_NO;
+            }else if(prevSym < SYM_SPACE_NO){
                 menu.txtEditWnd.string[menu.txtEditWnd.symPos] = SYM_ZSMALL_NO;
             }else{
                 menu.txtEditWnd.string[menu.txtEditWnd.symPos]--;
             }
             break;
         case eOk:
-            if(menu.txtEditWnd.symPos >= (MENU_STR_LEN_MAX - 1)){
-                menu.txtEditWnd.symPos = 0;
-            }else{
-                menu.txtEditWnd.symPos++;
+            if(!(((menu.txtEditWnd.symPos == 0) && (menu.txtEditWnd.string[menu.txtEditWnd.symPos] == SYM_TERMINATOR_NO)) ||
+                 ((menu.txtEditWnd.symPos == 0) && (menu.txtEditWnd.string[menu.txtEditWnd.symPos] == SYM_SPACE_NO)))){
+                if((menu.txtEditWnd.symPos >= (menu.txtEditWnd.strMaxLen - 1)) ||
+                   ((menu.txtEditWnd.string[menu.txtEditWnd.symPos - 1] == SYM_SPACE_NO) &&
+                    (menu.txtEditWnd.string[menu.txtEditWnd.symPos] == SYM_SPACE_NO))){
+                    menu.txtEditWnd.symPos = 0;
+                }else{
+                    menu.txtEditWnd.symPos++;
+                    if(menu.txtEditWnd.string[menu.txtEditWnd.symPos] == SYM_TERMINATOR_NO){
+                        menu.txtEditWnd.string[menu.txtEditWnd.symPos] = SYM_SPACE_NO;
+                    }
+                }
             }
             break;
         case eOkLng:
-            if(menu.txtEditWnd.pStrOrig != NULL){
+            i = strlen(menu.txtEditWnd.string) - 1;
+            while(menu.txtEditWnd.string[i] == SYM_SPACE_NO){
+                menu.txtEditWnd.string[i] = SYM_TERMINATOR_NO;
+                i--;
+            }
+            if(strlen(menu.txtEditWnd.string) == 0){
+                Menu_putMessage("String is empty", MSG_CNT);
+            }else if(menu.txtEditWnd.pStrOrig != NULL){
+                menu.menuMode = menu.menuPrevMode;
                 strcpy(menu.txtEditWnd.pStrOrig, menu.txtEditWnd.string);
                 Menu_putMessage("Saved", MSG_CNT);
             }else{

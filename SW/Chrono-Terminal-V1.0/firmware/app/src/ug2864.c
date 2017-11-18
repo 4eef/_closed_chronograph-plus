@@ -53,6 +53,27 @@ ssdVideoBff_type    ssdVideoBff;
 /*!****************************************************************************
 * @brief    Put text parameter select window at the center of display
 */
+void ssd_putTxtEditWnd(void){
+    uint8_t len, offs;
+    char uArrow[2]={24, 0}, dArrow[2]={25, 0}, bArrow[2]={27, 0}, fArrow[2]={26, 0}, symPtr[2]={223, 0};
+    //Put title
+    ssd_putString6x8(0, 0, menu.txtEditWnd.title);
+    //Put text parameter
+    len = strlen(menu.txtEditWnd.string);
+    if(len == 0) len = 1;
+    offs = SSD1306_LCDWIDTH/2 - (len*6)/2;
+    ssd_putString6x8(offs, 28, menu.txtEditWnd.string);
+    ssd_putString6x8((offs + (menu.txtEditWnd.symPos*6)), 36, symPtr);
+    //Buttons labels
+    ssd_putString6x8(0, 56, bArrow);
+    ssd_putString6x8(40, 56, uArrow);
+    ssd_putString6x8(82, 56, dArrow);
+    ssd_putString6x8(122, 56, fArrow);
+}
+
+/*!****************************************************************************
+* @brief    Put text parameter select window at the center of display
+*/
 void ssd_putTxtParSelWnd(void){
     uint8_t len, offs;
     char uArrow[2]={24, 0}, dArrow[2]={25, 0}, tBack[6]={"Back"}, tSave[6]={"Save"};

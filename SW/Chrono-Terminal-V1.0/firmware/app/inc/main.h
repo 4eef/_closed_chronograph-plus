@@ -59,6 +59,7 @@
 */
 void main(void);
 void parEditInit(void);
+void txtEditInit(void);
 int16_t parEdit(int16_t param);
 void modeEdit(void);
 void drawDisplay(void);
