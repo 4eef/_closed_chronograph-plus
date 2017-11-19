@@ -310,6 +310,7 @@ void drawDisplay(void){
 //        }
 //    }else
     if((pellets.pelStat == PELLET_CONFIRM) || (pellets.pelStat == PELLET_NEW)){
+        pellets.pelStat = PELLET_OK;
         Menu_putTxtParSelWnd("Choose pellet...", pellets.pelStrings[1], &meas.chron.pellet, pellets.matchedSgnNum, PELLET_KNOWN_LIST, PELLET_DB_STR_LEN);
     }
     //Chronograph binding

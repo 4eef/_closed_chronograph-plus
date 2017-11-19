@@ -23,7 +23,7 @@ pellets_type                pellets;
 * @brief    Fill video buffer with "menu"
 */
 void chrSetsRst(void){
-    if((sysPars.dispMode == eHybrid) && (sysPars.dispMode == eChronograph) && (meas.chron.clipCapacity > 1) && (meas.chron.clipCurrent != meas.chron.clipCapacity)){
+    if(((sysPars.dispMode == eHybrid) || (sysPars.dispMode == eChronograph)) && (meas.chron.clipCapacity > 1) && (meas.chron.clipCurrent != meas.chron.clipCapacity)){
         meas.chron.clipCurrent = meas.chron.clipCapacity;
         Menu_putMessage("Clip reloaded", MSG_CNT);
     }else if((sysPars.dispMode == eChronograph) && (meas.chron.statShots != 0)){
