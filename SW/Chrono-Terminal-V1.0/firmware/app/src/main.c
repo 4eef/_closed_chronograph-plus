@@ -112,7 +112,7 @@ void main(void){
     Menu_Navigate(&mode);
     //Initialize hardware
     initPeriphs();
-    Menu_pwrOnOff(ePwrOff);
+    Menu_pwrSw(ePwrOff);
     //Debug
 //    adcInit();
 //    Menu_pwrOnOff(ePwrOn);

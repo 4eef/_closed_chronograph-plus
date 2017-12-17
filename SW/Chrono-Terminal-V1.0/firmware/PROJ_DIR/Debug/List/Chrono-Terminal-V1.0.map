@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR ELF Linker V7.80.2.11947/W32 for ARM                19/Nov/2017  10:42:30
+# IAR ELF Linker V7.80.2.11947/W32 for ARM                02/Dec/2017  12:27:44
 # Copyright 2007-2016 IAR Systems AB.
 #
 #    Output file  =  
@@ -453,7 +453,7 @@ Menu_putMessage         0x080037ad   0x2e  Code  Gb  MicroMenu.o [1]
 Menu_putParWnd          0x080036a5   0x4c  Code  Gb  MicroMenu.o [1]
 Menu_putTxtEditWnd      0x080032c5   0x4e  Code  Gb  MicroMenu.o [1]
 Menu_putTxtParSelWnd    0x08003195   0x4e  Code  Gb  MicroMenu.o [1]
-Menu_pwrOnOff           0x08003019   0x22  Code  Gb  MicroMenu.o [1]
+Menu_pwrSw              0x08003019   0x22  Code  Gb  MicroMenu.o [1]
 Menu_run                0x08002fa5   0x74  Code  Gb  MicroMenu.o [1]
 Menu_txtEditWndRun      0x0800335d  0x338  Code  Gb  MicroMenu.o [1]
 Menu_txtParSelWndRun    0x080031ed   0xd2  Code  Gb  MicroMenu.o [1]

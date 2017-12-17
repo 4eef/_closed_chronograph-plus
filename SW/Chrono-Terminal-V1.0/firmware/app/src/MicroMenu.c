@@ -69,9 +69,9 @@ void Menu_run(eNavEvent_type navEvent){
 }
 
 /*!****************************************************************************
-* @brief    
+* @brief    Separate menu power switch and power module!!!
 */
-void Menu_pwrOnOff(ePwrState_type ePwrState){
+void Menu_pwrSw(ePwrState_type ePwrState){
     if(ePwrState == ePwrOff){
         menu.menuMode = eOff;
         powerOff();
@@ -91,7 +91,7 @@ void Menu_navPwrOff(eNavEvent_type navEvent){
         case eBack:
             break;
         case eBackLng:
-            Menu_pwrOnOff(ePwrOn);
+            Menu_pwrSw(ePwrOn);
             break;
         case eUp:
             break;
@@ -116,7 +116,7 @@ void Menu_navDisp(eNavEvent_type navEvent){
         case eBack:
             break;
         case eBackLng:
-            Menu_pwrOnOff(ePwrOff);
+            Menu_pwrSw(ePwrOff);
             break;
         case eUp:
             break;

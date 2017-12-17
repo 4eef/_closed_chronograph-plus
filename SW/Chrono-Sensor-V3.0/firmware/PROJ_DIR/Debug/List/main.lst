@@ -1,0 +1,94 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V7.80.2.11947/W32 for ARM       17/Dec/2017  22:47:11
+# Copyright 1999-2016 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Sensor-V3.0\firmware\app\src\main.c
+#    Command line =  
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Sensor-V3.0\firmware\app\src\main.c
+#        -lcN
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Sensor-V3.0\firmware\PROJ_DIR\Debug\List
+#        -o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Sensor-V3.0\firmware\PROJ_DIR\Debug\Obj
+#        --no_cse --no_unroll --no_inline --no_code_motion --no_tbaa
+#        --no_clustering --no_scheduling --debug --endian=little
+#        --cpu=Cortex-M0+ -e --fpu=None --dlib_config "C:\Program Files
+#        (x86)\IAR Systems\Embedded Workbench 7.5\arm\INC\c\DLib_Config_Full.h"
+#        -I
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Sensor-V3.0\firmware\PROJ_DIR/../app/inc/\
+#        -I
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Sensor-V3.0\firmware\PROJ_DIR/../drivers/inc/\
+#        -I
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Sensor-V3.0\firmware\PROJ_DIR/../CMSIS/Device/ST/STM32L0xx/Include/\
+#        -I
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Sensor-V3.0\firmware\PROJ_DIR/../CMSIS/Include/\
+#        -On
+#    Locale       =  Ukrainian_Ukraine.1251
+#    List file    =  
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Sensor-V3.0\firmware\PROJ_DIR\Debug\List\main.lst
+#    Object file  =  
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Sensor-V3.0\firmware\PROJ_DIR\Debug\Obj\main.o
+#
+###############################################################################
+
+C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Sensor-V3.0\firmware\app\src\main.c
+      1          /*!****************************************************************************
+      2          * @file    main.c
+      3          * @author  4eef
+      4          * @version V1.0
+      5          * @date    16.12.2017, 4eef
+      6          * @brief   --
+      7          */
+      8          
+      9          /*!****************************************************************************
+     10          * Include
+     11          */
+     12          #include "main.h"
+     13          
+     14          /*!****************************************************************************
+     15          * MEMORY
+     16          */
+     17          
+     18          /*!****************************************************************************
+     19          * @brief    
+     20          * @param    
+     21          * @retval   
+     22          */
+     23          void main(void){
+     24              RCC->APB1ENR    |= RCC_APB1ENR_PWREN;
+     25              RCC->CFGR       |= RCC_CFGR_STOPWUCK;
+     26              SCB->SCR        |= SCB_SCR_SLEEPDEEP_Msk;
+     27              PWR->CR         &= ~PWR_CR_PDDS;
+     28              PWR->CR         |= PWR_CR_LPSDSR;
+     29              PWR->CR         |= PWR_CR_ULP;
+     30              PWR->CR         |= PWR_CR_CWUF;
+     31              __WFI();
+     32              while(1){
+     33              }
+     34          }
+     35          
+     36          /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       4   main
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+     112  main
+
+ 
+ 112 bytes in section .text
+ 
+ 112 bytes of CODE memory
+
+Errors: none
+Warnings: none

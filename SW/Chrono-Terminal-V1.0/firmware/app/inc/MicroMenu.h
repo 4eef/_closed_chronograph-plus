@@ -204,7 +204,7 @@ void Menu_putTxtParSelWnd(char *title, char *pFirstPar, uint16_t *pTxtParOrigin,
 void Menu_navMenu(eNavEvent_type navEvent);
 void Menu_navDisp(eNavEvent_type navEvent);
 void Menu_navPwrOff(eNavEvent_type navEvent);
-void Menu_pwrOnOff(ePwrState_type ePwrState);
+void Menu_pwrSw(ePwrState_type ePwrState);
 void Menu_run(eNavEvent_type navEvent);
 
 #endif //MicroMenu_H
