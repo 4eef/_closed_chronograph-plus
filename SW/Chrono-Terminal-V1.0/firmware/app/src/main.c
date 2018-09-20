@@ -75,8 +75,8 @@ void main(void){
     initPeriphs();
     Menu_pwrSw(ePwrOff);
     //Debug
-//    adcInit();
-//    Menu_pwrOnOff(ePwrOn);
+    adcInit();
+//    Menu_pwrSw(ePwrOn);
     
     while(1){
         currMenuItem = Menu_GetCurrentMenu();

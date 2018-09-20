@@ -281,7 +281,7 @@ void Menu_txtParSelWndRun(eNavEvent_type navEvent){
         pFirstPar = menu.txtParSelWnd.pFirstPar;
         txtStrLen = menu.txtParSelWnd.txtStrLen;
         currTxtPar = menu.txtParSelWnd.currTxtPar;
-        strcpy(menu.txtParSelWnd.parText, (pFirstPar + (txtStrLen * (currTxtPar - 1))));
+        strcpy(menu.txtParSelWnd.parText, (pFirstPar + (txtStrLen * currTxtPar)));
     }
 }
 
