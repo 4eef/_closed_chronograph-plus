@@ -31,6 +31,7 @@
 #include "battery.h"
 #include "system.h"
 #include "fix16.h"
+#include "menuItems.h"
 
 /*!****************************************************************************
 * User define

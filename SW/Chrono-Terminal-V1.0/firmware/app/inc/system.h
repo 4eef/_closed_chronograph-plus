@@ -18,9 +18,9 @@
 /*!****************************************************************************
 * User define
 */
+#define LIST_STR_LEN            19
 #define PELLET_DB_QTY           16
 #define PELLET_KNOWN_LIST       PELLET_DB_QTY - 1
-#define PELLET_DB_STR_LEN       19
 #define PELLET_SGN_TOLERANCE    10
 #define PELLET_CHANGE_THR       5
 #define PELLET_NEW_SGN_THR      10
@@ -45,9 +45,7 @@
 #define BATT_VOLT_LOW           3400
 #define CYC_OK                  0
 #define CYC_BROKEN              1
-#define MODE_COM                0
-#define MODE_CHR                1
-#define MODE_INC                2
+#define SCR_MODES_NO            3
 #define FRACT_NOFRACT           0
 #define FRACT_TENTHS            10
 #define FRACT_HUNDREDTHS        100
@@ -72,7 +70,7 @@ typedef struct{
 }pellet_type;
 
 typedef struct{
-    char            pelStrings[PELLET_DB_QTY][PELLET_DB_STR_LEN];
+    char            pelStrings[PELLET_DB_QTY][LIST_STR_LEN];
     uint16_t        pelWghts[PELLET_DB_QTY];
     uint16_t        pelSgntrs[PELLET_DB_QTY];
     uint16_t        matchedSgnNum;
@@ -134,6 +132,7 @@ typedef struct{
 
 typedef struct{
     eDispMode_type  dispMode;
+    char            modeTxts[SCR_MODES_NO][LIST_STR_LEN];
 }sysPars_type;
 
 /*!****************************************************************************

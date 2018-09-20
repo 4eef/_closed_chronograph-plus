@@ -29,7 +29,7 @@
 #define MENU_STR_LEN_MAX        20
 #define MENU_MSG_LEN_MAX        240
 #define MENU_ITEMS_QTY_MAX      20
-#define TXT_PAR_MIN_VAL         1
+#define TXT_PAR_MIN_VAL         0 //1
 #define MSG_FOR_TIMER           2
 #define MSG_CNT                 30
 #define MSG_CNT_LONG            60
@@ -56,8 +56,8 @@ typedef enum{
     eOff = 0,
     eDisplay,
     eMenu,
+    eChooseFrmLstWnd,
     eParEditWnd,
-    eTxtParSelWnd,
     eTxtEditWnd,
     eInfoWnd
 }eMenuMode_type;
@@ -68,8 +68,17 @@ typedef enum{
     eHundreds = 100
 }eParFract_type;
 
+typedef enum{
+    eItem = 0,
+    eChooseFrmLst,
+    eParEdit,
+    eTxtEdit,
+    eParTxtEdit,
+    eInfoTxt
+}eMenuItem_type;
+
 typedef struct{
-    bool            toDisplay;
+    bool            show;
     char            msgStr[MENU_STR_LEN_MAX];
     uint8_t         msgLen;
     uint8_t         msgCnt;
@@ -130,24 +139,31 @@ typedef struct{
     eMenuMode_type      menuPrevMode;
 }menu_type;
 
-/** Type define for a menu item. Menu items should be initialized via the helper
- *  macro \ref MENU_ITEM(), not created from this type directly in user-code.
- */
-typedef const struct Menu_Item {
-    const struct Menu_Item *Next; /**< Pointer to the next menu item of this menu item */
-    const struct Menu_Item *Previous; /**< Pointer to the previous menu item of this menu item */
-    const struct Menu_Item *Parent; /**< Pointer to the parent menu item of this menu item */
-    const struct Menu_Item *Child; /**< Pointer to the child menu item of this menu item */
-    void (*SelectCallback)(void); /**< Pointer to the optional menu-specific select callback of this menu item */
-    void (*EnterCallback)(void); /**< Pointer to the optional menu-specific enter callback of this menu item */
-    char *Text; /**< Menu item text to pass to the menu display callback function */
-} Menu_Item_t;
+typedef const struct menuPrmtr{
+    void            *pPar1;
+    void            *pPar2;
+    void            *pPar3;
+    uint16_t        constPar1;
+    uint16_t        constPar2;
+    uint16_t        constPar3;
+}menuPrmtr_type;
+
+typedef const struct menuItem{
+    const struct menuItem   *Next;      // Pointer to the next menu item of this menu item
+    const struct menuItem   *Previous;  // Pointer to the previous menu item of this menu item
+    const struct menuItem   *Parent;    // Pointer to the parent menu item of this menu item
+    const struct menuItem   *Child;     // Pointer to the child menu item of this menu item
+    eMenuItem_type          eMenuItem;  // Menu item type
+    const struct menuPrmtr  *prmtrDscr; // Parameter description
+    char                    *Text;      // Menu item text to pass to the menu display callback function
+}menuItem_type;
 
 /*!****************************************************************************
 * Extern viriables
 */
 /** Null menu entry, used in \ref MENU_ITEM() definitions where no menu link is to be made. */
-extern Menu_Item_t const NULL_MENU;
+extern menuItem_type const NULL_MENU;
+extern menuPrmtr_type const NULL_PRM;
 
 /*!****************************************************************************
 * Macro functions
@@ -162,13 +178,17 @@ extern Menu_Item_t const NULL_MENU;
  *  \param[in] SelectFunc  Function callback to execute when the menu item is selected, or \c NULL for no callback.
  *  \param[in] EnterFunc   Function callback to execute when the menu item is entered, or \c NULL for no callback.
  */
-#define MENU_ITEM(Name, Next, Previous, Parent, Child, SelectFunc, EnterFunc, Text) \
-    extern Menu_Item_t const Next;      \
-    extern Menu_Item_t const Previous;  \
-    extern Menu_Item_t const Parent;    \
-    extern Menu_Item_t const Child;     \
-    Menu_Item_t const Name = {&Next, &Previous, &Parent, &Child, SelectFunc, EnterFunc, Text}
-
+#define MENU_ITEM(Name, Next, Previous, Parent, Child, ItemType, PrmtrDscr, Text) \
+    extern menuItem_type const Next;      \
+    extern menuItem_type const Previous;  \
+    extern menuItem_type const Parent;    \
+    extern menuItem_type const Child;     \
+    extern menuPrmtr_type const PrmtrDscr;     \
+    menuItem_type const Name = {&Next, &Previous, &Parent, &Child, ItemType, &PrmtrDscr, Text}
+    
+#define MENU_PAR(Name, pPar1, pPar2, pPar3, ConstPar1, ConstPar2, ConstPar3) \
+    menuPrmtr_type const Name = {pPar1, pPar2, pPar3, ConstPar1, ConstPar2, ConstPar3}
+    
 /** Relative navigational menu entry for \ref Menu_Navigate(), to move to the menu parent. */
 #define MENU_PARENT         Menu_GetCurrentMenu()->Parent
 
@@ -184,12 +204,9 @@ extern Menu_Item_t const NULL_MENU;
 /*!****************************************************************************
 * Prototypes for the functions
 */
-Menu_Item_t* Menu_GetCurrentMenu(void);
-void Menu_Navigate(Menu_Item_t* const NewMenu);
-//void Menu_SetGenericWriteCallback(void (*WriteFunc)(const char* Text));
-void Menu_EnterCurrentItem(void);
-//void Generic_Write(const char* Text);
-void Menu_listParse(Menu_Item_t* const NewMenu);
+menuItem_type* Menu_GetCurrentMenu(void);
+void Menu_Navigate(menuItem_type* const NewMenu);
+void Menu_listParse(menuItem_type* const NewMenu);
 void Menu_putMessage(char *newStr, uint8_t newCnt);
 void Menu_parWndRun(eNavEvent_type navEvent);
 void Menu_putParWnd(char *title, char *parUnits, eParFract_type parFract,
@@ -199,13 +216,13 @@ void Menu_infoWndRun(eNavEvent_type navEvent);
 void Menu_txtEditWndRun(eNavEvent_type navEvent);
 void Menu_putTxtEditWnd(char *title, char *pStrOrig, uint8_t strMaxLen);
 void Menu_txtParSelWndRun(eNavEvent_type navEvent);
-void Menu_putTxtParSelWnd(char *title, char *pFirstPar, uint16_t *pTxtParOrigin,
-                          uint16_t currTxtPar, uint16_t qtyTxtPar, uint16_t txtStrLen);
+void Menu_putTxtParSelWnd(char *pFirstPar, uint16_t *pTxtParOrigin, uint16_t qtyTxtPar, uint16_t txtStrLen);
 void Menu_navMenu(eNavEvent_type navEvent);
 void Menu_navDisp(eNavEvent_type navEvent);
 void Menu_navPwrOff(eNavEvent_type navEvent);
 void Menu_pwrSw(ePwrState_type ePwrState);
 void Menu_run(eNavEvent_type navEvent);
+void Menu_setParEdit(eMenuItem_type parType, menuPrmtr_type *pPrmDscr);
 
 #endif //MicroMenu_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

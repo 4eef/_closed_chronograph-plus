@@ -17,24 +17,10 @@
 menu_type                   menu;
 extern power_type           power;
 
-/** This is used when an invalid menu handle is required in
- *  a \ref MENU_ITEM() definition, i.e. to indicate that a
- *  menu has no linked parent, child, next or previous entry.
- */
-Menu_Item_t const NULL_MENU = {0};
+menuItem_type const NULL_MENU = {0};                                            // Empty menu item
+menuPrmtr_type const NULL_PRM = {0};                                            // Empty parameter description
 
-/** \internal
- *  Pointer to the generic menu text display function
- *  callback, to display the configured text of a menu item
- *  if no menu-specific display function has been set
- *  in the select menu item.
- */
-//static void (*MenuWriteFunc)(const char* Text) = NULL;
-
-/** \internal
- *  Pointer to the currently selected menu item.
- */
-static Menu_Item_t* CurrentMenuItem = &NULL_MENU;
+static menuItem_type* CurrentMenuItem = &NULL_MENU;
 
 /*!****************************************************************************
 * @brief    
@@ -51,11 +37,11 @@ void Menu_run(eNavEvent_type navEvent){
         case eMenu:
             Menu_navMenu(navEvent);
             break;
+        case eChooseFrmLstWnd:
+            Menu_txtParSelWndRun(navEvent);
+            break;
         case eParEditWnd:
             Menu_parWndRun(navEvent);
-            break;
-        case eTxtParSelWnd:
-            Menu_txtParSelWndRun(navEvent);
             break;
         case eTxtEditWnd:
             Menu_txtEditWndRun(navEvent);
@@ -145,6 +131,7 @@ void Menu_navDisp(eNavEvent_type navEvent){
 * @brief    
 */
 void Menu_navMenu(eNavEvent_type navEvent){
+    menuItem_type *currentItem = Menu_GetCurrentMenu();
     switch(navEvent){
         case eWait:
             break;
@@ -165,9 +152,9 @@ void Menu_navMenu(eNavEvent_type navEvent){
             Menu_Navigate(MENU_NEXT);
             break;
         case eOk:
-            if((MENU_CHILD == &NULL_MENU) || (MENU_CHILD == NULL)){
-                Menu_EnterCurrentItem();
-            }else{
+            if(currentItem->prmtrDscr != &NULL_PRM){
+                Menu_setParEdit(currentItem->eMenuItem, currentItem->prmtrDscr);
+            }else if((MENU_CHILD != &NULL_MENU) && (MENU_CHILD != NULL)){
                 Menu_Navigate(MENU_CHILD);
             }
             break;
@@ -183,6 +170,27 @@ void Menu_navMenu(eNavEvent_type navEvent){
 */
 void Menu_putInfoWnd(void){
     
+}
+
+/*!****************************************************************************
+* @brief    
+*/
+void Menu_setParEdit(eMenuItem_type parType, menuPrmtr_type *pPrmDscr){
+    switch(parType){
+        case eChooseFrmLst:
+            Menu_putTxtParSelWnd(pPrmDscr->pPar1, pPrmDscr->pPar2, (pPrmDscr->constPar1 - 1), pPrmDscr->constPar2);
+            break;
+        case eParEdit:
+            break;
+        case eTxtEdit:
+            break;
+        case eParTxtEdit:
+            break;
+        case eInfoTxt:
+            break;
+        default:
+            break;
+    }
 }
 
 /*!****************************************************************************
@@ -212,17 +220,16 @@ void Menu_infoWndRun(eNavEvent_type navEvent){
 /*!****************************************************************************
 * @brief    
 */
-void Menu_putTxtParSelWnd(char *title, char *pFirstPar, uint16_t *pTxtParOrigin,
-                          uint16_t currTxtPar, uint16_t qtyTxtPar, uint16_t txtStrLen){
+void Menu_putTxtParSelWnd(char *pFirstPar, uint16_t *pTxtParOrigin, uint16_t qtyTxtPar, uint16_t txtStrLen){
     //Set up menu mode
     menu.menuPrevMode = menu.menuMode;
-    menu.menuMode = eTxtParSelWnd;
+    menu.menuMode = eChooseFrmLstWnd;
     //Copy parameters
-    strcpy(menu.txtParSelWnd.title, title);
-    strcpy(menu.txtParSelWnd.parText, (pFirstPar + (txtStrLen * (currTxtPar - 1))));
+    strcpy(menu.txtParSelWnd.title, "Choose...");
+    strcpy(menu.txtParSelWnd.parText, pFirstPar);
     menu.txtParSelWnd.pFirstPar = pFirstPar;
     menu.txtParSelWnd.txtStrLen = txtStrLen;
-    menu.txtParSelWnd.currTxtPar = currTxtPar;
+    menu.txtParSelWnd.currTxtPar = 0;
     menu.txtParSelWnd.pTxtParOrigin = pTxtParOrigin;
     menu.txtParSelWnd.qtyTxtPar = qtyTxtPar;
 }
@@ -472,14 +479,14 @@ void Menu_putMessage(char *newStr, uint8_t newCnt){
         strcpy(menu.message.msgStr, newStr);
         menu.message.msgLen = strlen(menu.message.msgStr);
         menu.message.msgCnt = newCnt;
-        menu.message.toDisplay = true;
+        menu.message.show = true;
     }
 }
 
 /*!****************************************************************************
 * @brief    Retrieves the currently selected meny item
 */
-Menu_Item_t* Menu_GetCurrentMenu(void){
+menuItem_type* Menu_GetCurrentMenu(void){
 	return CurrentMenuItem;
 }
 
@@ -489,8 +496,8 @@ Menu_Item_t* Menu_GetCurrentMenu(void){
 *           \ref MENU_CHILD, \ref MENU_NEXT or \ref MENU_PREVIOUS for relative navigation.
 * @retval   
 */
-void Menu_Navigate(Menu_Item_t* const NewMenu){
-    Menu_Item_t *tmpItem, *tmpPrntItem;
+void Menu_Navigate(menuItem_type* const NewMenu){
+    menuItem_type *tmpItem, *tmpPrntItem;
     if((NewMenu == &NULL_MENU) || (NewMenu == NULL)) return;
     //Clear offset if passed to other level
     if((NewMenu == MENU_CHILD) || (NewMenu == MENU_PARENT)) menu.menuItems.wndOffs = 0;
@@ -547,13 +554,13 @@ void Menu_Navigate(Menu_Item_t* const NewMenu){
 * @param    
 * @retval   
 */
-void Menu_EnterCurrentItem(void){
-    if((CurrentMenuItem == &NULL_MENU) || (CurrentMenuItem == NULL)) return;
-    
-    void (*EnterCallback)(void) = CurrentMenuItem->EnterCallback;
-    
-    if(EnterCallback) EnterCallback();
-}
+//void Menu_EnterCurrentItem(void){
+//    if((CurrentMenuItem == &NULL_MENU) || (CurrentMenuItem == NULL)) return;
+//    
+//    void (*EnterCallback)(void) = CurrentMenuItem->EnterCallback;
+//    
+//    if(EnterCallback) EnterCallback();
+//}
 
 /*!****************************************************************************
 * @brief    Generic function to write the text of a menu
