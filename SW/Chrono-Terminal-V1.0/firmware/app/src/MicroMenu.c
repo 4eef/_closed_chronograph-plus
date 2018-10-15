@@ -191,22 +191,21 @@ void Menu_putInfoWnd(void){
 * @brief    
 */
 void Menu_setParEdit(eNavEvent_type navEvent){
-    menuItem_type *currentItem = Menu_GetCurrentMenu();
     switch(navEvent){
         case eOk:
-            switch(currentItem->eItemType){
+            switch(ITEM_TYPE){
                 case eChooseFrmLst:
-                    Menu_putTxtParSelWnd(currentItem->prmtrDscr->pPar1, currentItem->prmtrDscr->pPar2, (currentItem->prmtrDscr->constPar1 - 1));
+                    Menu_putTxtParSelWnd(PAR_DSCR->pPar1, PAR_DSCR->pPar2, (PAR_DSCR->constPar1 - 1));
                     break;
                 case eParEdit:
-                    Menu_putParWnd(currentItem->prmtrDscr->pPar1, currentItem->prmtrDscr->pPar2, currentItem->prmtrDscr->pPar3,
-                                   (eParFract_type)currentItem->prmtrDscr->constPar1, currentItem->prmtrDscr->constPar2, currentItem->prmtrDscr->constPar3);
+                    Menu_putParWnd(PAR_DSCR->pPar1, PAR_DSCR->pPar2, PAR_DSCR->pPar3,
+                                   (eParFract_type)PAR_DSCR->constPar1, PAR_DSCR->constPar2, PAR_DSCR->constPar3);
                     break;
                 case eTxtEdit:
                     break;
                 case eParTxtEdit:
-                    Menu_putParWnd(currentItem->prmtrDscr->pPar1, currentItem->prmtrDscr->pPar2, NULL,
-                                   (eParFract_type)currentItem->prmtrDscr->constPar1, currentItem->prmtrDscr->constPar2, currentItem->prmtrDscr->constPar3);
+                    Menu_putParWnd(PAR_DSCR->pPar1, PAR_DSCR->pPar2, NULL,
+                                   (eParFract_type)PAR_DSCR->constPar1, PAR_DSCR->constPar2, PAR_DSCR->constPar3);
                     break;
                 case eInfoTxt:
                     break;
@@ -217,7 +216,7 @@ void Menu_setParEdit(eNavEvent_type navEvent){
             }
             break;
         case eOkLng:
-            switch(currentItem->eItemType){
+            switch(ITEM_TYPE){
                 case eChooseFrmLst:
                     break;
                 case eParEdit:
@@ -225,7 +224,7 @@ void Menu_setParEdit(eNavEvent_type navEvent){
                 case eTxtEdit:
                     break;
                 case eParTxtEdit:
-                    Menu_putTxtEditWnd(currentItem->prmtrDscr->pPar3);
+                    Menu_putTxtEditWnd(PAR_DSCR->pPar3);
                     break;
                 case eInfoTxt:
                     break;
@@ -544,9 +543,9 @@ void Menu_Navigate(menuItem_type* const NewMenu){
     tmpItem = CurrentMenuItem = NewMenu;
     //Parse menu list parameters
     //Menu title
-    if(tmpItem->Parent != &NULL_MENU){
-        tmpPrntItem = tmpItem->Parent;
-        strcpy(menu.menuItems.parent, tmpPrntItem->Text);
+    if(tmpItem->parent != &NULL_MENU){
+        tmpPrntItem = tmpItem->parent;
+        strcpy(menu.menuItems.parent, tmpPrntItem->text);
     }else{
         strcpy(menu.menuItems.parent, "Menu");
     }
@@ -554,8 +553,8 @@ void Menu_Navigate(menuItem_type* const NewMenu){
     menu.menuItems.currItem = 0;
     while(1){
         menu.menuItems.currItem++;
-        if(tmpItem->Previous == &NULL_MENU) break;
-        tmpItem = tmpItem->Previous;
+        if(tmpItem->previous == &NULL_MENU) break;
+        tmpItem = tmpItem->previous;
     }
     //Window offset calculation
     if((menu.menuItems.currItem - menu.menuItems.wndOffs - MENU_POSITIONS) > 0){
@@ -566,49 +565,11 @@ void Menu_Navigate(menuItem_type* const NewMenu){
     //Copy all strings on current level
     menu.menuItems.totItems = 0;
     while(1){
-        strcpy(menu.menuItems.child[menu.menuItems.totItems], tmpItem->Text);
+        strcpy(menu.menuItems.child[menu.menuItems.totItems], tmpItem->text);
         menu.menuItems.totItems++;
-        if(tmpItem->Next == &NULL_MENU) break;
-        tmpItem = tmpItem->Next;
+        if(tmpItem->next == &NULL_MENU) break;
+        tmpItem = tmpItem->next;
     }
-//    if(MenuWriteFunc) MenuWriteFunc(CurrentMenuItem->Text);
-//    void (*SelectCallback)(void) = CurrentMenuItem->SelectCallback;
-//    if(SelectCallback) SelectCallback();
 }
-
-/*!****************************************************************************
-* @brief    Configures the menu text write callback function, fired for all menu items. Within this callback
-*           function the user should implement code to display the current menu text stored in \ref MENU_ITEM_STORAGE
-*           memory space.
-* @param    Pointer to a callback function to execute for each selected menu item.
-* @retval   
-*/
-//void Menu_SetGenericWriteCallback(void (*WriteFunc)(const char* Text)){
-//    MenuWriteFunc = WriteFunc;
-//    Menu_Navigate(CurrentMenuItem);
-//}
-
-/*!****************************************************************************
-* @brief    Enters the currently selected menu item, running its configured callback function (if any).
-* @param    
-* @retval   
-*/
-//void Menu_EnterCurrentItem(void){
-//    if((CurrentMenuItem == &NULL_MENU) || (CurrentMenuItem == NULL)) return;
-//    
-//    void (*EnterCallback)(void) = CurrentMenuItem->EnterCallback;
-//    
-//    if(EnterCallback) EnterCallback();
-//}
-
-/*!****************************************************************************
-* @brief    Generic function to write the text of a menu
-* @param    Text of the selected menu to write, in \ref MENU_ITEM_STORAGE memory space
-* @retval   
-*/
-//void Generic_Write(const char* Text){
-//    if (Text)
-//        puts(Text);
-//}
 
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

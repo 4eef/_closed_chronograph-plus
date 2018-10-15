@@ -144,16 +144,17 @@ typedef const struct menuPrmtr{
     uint16_t        constPar1;
     uint16_t        constPar2;
     uint16_t        constPar3;
+    void (*pFunc)(void);
 }menuPrmtr_type;
 
 typedef const struct menuItem{
-    const struct menuItem   *Next;      // Pointer to the next menu item of this menu item
-    const struct menuItem   *Previous;  // Pointer to the previous menu item of this menu item
-    const struct menuItem   *Parent;    // Pointer to the parent menu item of this menu item
-    const struct menuItem   *Child;     // Pointer to the child menu item of this menu item
+    const struct menuItem   *next;      // Pointer to the next menu item of this menu item
+    const struct menuItem   *previous;  // Pointer to the previous menu item of this menu item
+    const struct menuItem   *parent;    // Pointer to the parent menu item of this menu item
+    const struct menuItem   *child;     // Pointer to the child menu item of this menu item
     eMenuItem_type          eItemType;  // Menu item type
-    const struct menuPrmtr  *prmtrDscr; // Parameter description
-    char                    *Text;      // Menu item text to pass to the menu display callback function
+    const struct menuPrmtr  *parDscr; // Parameter description
+    char                    *text;      // Menu item text to pass to the menu display callback function
 }menuItem_type;
 
 /*!****************************************************************************
@@ -167,23 +168,23 @@ extern menuPrmtr_type const NULL_PRM;
 * Macro functions
 */
 // Creates a new menu item entry with the specified links and callbacks
-#define MENU_ITEM(Name, Next, Previous, Parent, Child, ItemType, PrmtrDscr, Text) \
-    extern menuItem_type const Next;      \
-    extern menuItem_type const Previous;  \
-    extern menuItem_type const Parent;    \
-    extern menuItem_type const Child;     \
-    extern menuPrmtr_type const PrmtrDscr;     \
-    menuItem_type const Name = {&Next, &Previous, &Parent, &Child, ItemType, &PrmtrDscr, Text}
+#define MENU_ITEM(name, next, previous, parent, child, itemType, parDscr, text) \
+    extern menuItem_type const next;      \
+    extern menuItem_type const previous;  \
+    extern menuItem_type const parent;    \
+    extern menuItem_type const child;     \
+    extern menuPrmtr_type const parDscr;     \
+    menuItem_type const name = {&next, &previous, &parent, &child, itemType, &parDscr, text}
     
-#define MENU_PAR(Name, pPar1, pPar2, pPar3, ConstPar1, ConstPar2, ConstPar3) \
-    menuPrmtr_type const Name = {pPar1, pPar2, pPar3, ConstPar1, ConstPar2, ConstPar3}
+#define MENU_PAR(name, pPar1, pPar2, pPar3, constPar1, constPar2, constPar3, pFunc) \
+    menuPrmtr_type const name = {pPar1, pPar2, pPar3, constPar1, constPar2, constPar3, pFunc}
     
-#define MENU_PARENT         Menu_GetCurrentMenu()->Parent
-#define MENU_CHILD          Menu_GetCurrentMenu()->Child
-#define MENU_NEXT           Menu_GetCurrentMenu()->Next
-#define MENU_PREVIOUS       Menu_GetCurrentMenu()->Previous
+#define MENU_PARENT         Menu_GetCurrentMenu()->parent
+#define MENU_CHILD          Menu_GetCurrentMenu()->child
+#define MENU_NEXT           Menu_GetCurrentMenu()->next
+#define MENU_PREVIOUS       Menu_GetCurrentMenu()->previous
 #define ITEM_TYPE           Menu_GetCurrentMenu()->eItemType
-#define PAR_DSCR            Menu_GetCurrentMenu()->prmtrDscr
+#define PAR_DSCR            Menu_GetCurrentMenu()->parDscr
 
 /*!****************************************************************************
 * Prototypes for the functions
