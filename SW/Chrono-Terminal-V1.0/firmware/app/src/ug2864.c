@@ -101,9 +101,13 @@ void ssd_putParWnd(void){
     ssd_putString6x8(0, 0, menu.parEditWnd.title);
     //Put parameter
     if(menu.parEditWnd.parFract != eNoFract){
-        val1 = menu.parEditWnd.parValue/menu.parEditWnd.parFract;
-        val2 = menu.parEditWnd.parValue%val1;
-        sprintf(tPar, "%u.%u ", val1, val2);
+        val1 = menu.parEditWnd.parValue / menu.parEditWnd.parFract;
+        val2 = menu.parEditWnd.parValue - (menu.parEditWnd.parFract * val1);
+        if((menu.parEditWnd.parFract == eHundreds) && (val2 < 10)){
+            sprintf(tPar, "%u.0%u ", val1, val2);
+        }else{
+            sprintf(tPar, "%u.%u ", val1, val2);
+        }
     }else{
         sprintf(tPar, "%u ", menu.parEditWnd.parValue);
     }

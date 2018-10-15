@@ -16,6 +16,9 @@
 */
 extern menu_type            menu;
 meas_type                   meas;
+chron_type                  chron;
+battery_type                battery;
+stats_type                  stats;
 sysPars_type                sysPars;
 pellets_type                pellets;
 
@@ -23,14 +26,14 @@ pellets_type                pellets;
 * @brief    Fill video buffer with "menu"
 */
 void chrSetsRst(void){
-    if(((sysPars.dispMode == eHybrid) || (sysPars.dispMode == eChronograph)) && (meas.chron.clipCapacity > 1) && (meas.chron.clipCurrent != meas.chron.clipCapacity)){
-        meas.chron.clipCurrent = meas.chron.clipCapacity;
+    if(((sysPars.dispMode == eHybrid) || (sysPars.dispMode == eChronograph)) && (chron.clipCapacity > 1) && (chron.clipCurrent != chron.clipCapacity)){
+        chron.clipCurrent = chron.clipCapacity;
         Menu_putMessage("Clip reloaded", MSG_CNT);
-    }else if((sysPars.dispMode == eChronograph) && (meas.chron.statShots != 0)){
-        meas.chron.statShots = 0;
-        meas.chron.statSpeedsSum = 0;
-        meas.chron.statSdev = 0;
-        meas.chron.statMean = 0;
+    }else if((sysPars.dispMode == eChronograph) && (chron.statShots != 0)){
+        chron.statShots = 0;
+        chron.statSpeedsSum = 0;
+        chron.statSdev = 0;
+        chron.statMean = 0;
         Menu_putMessage("Stats cleared", MSG_CNT);
     }
 }
@@ -102,28 +105,28 @@ void drawHybrScr(void){
     char speed0[8], speed1[4], speed2[4], speed3[4], speed4[4], magStat[6], rollAng[8], pitchAng[8];
     uint16_t val1, val2, ptch1, ptch2, roll1, roll2;
     //Pelet signature
-    ssd_putString6x8(0, 0, &pellets.pelStrings[meas.chron.pellet][0]);
+    ssd_putString6x8(0, 0, pellets.pel[chron.pellet].name);
     //Speed 0
-    val1 = meas.chron.speed0/FRACT_HUNDREDTHS;
-    val2 = meas.chron.speed0-(val1*FRACT_HUNDREDTHS);
-    if(val1 == 0) val2 = meas.chron.speed0;
+    val1 = chron.speed0/FRACT_HUNDREDTHS;
+    val2 = chron.speed0-(val1*FRACT_HUNDREDTHS);
+    if(val1 == 0) val2 = chron.speed0;
     sprintf(speed0, "%u.%.2u%c", val1, val2, 47);
     ssd_putString12x16(0, 24, &speed0[0]);
     //Speed 1
-    sprintf(speed1, "%u", meas.chron.speed1/100);
+    sprintf(speed1, "%u", chron.speed1/100);
     ssd_putString6x8(98, 15, &speed1[0]);
     //Speed 2
-    sprintf(speed2, "%u", meas.chron.speed2/100);
+    sprintf(speed2, "%u", chron.speed2/100);
     ssd_putString6x8(98, 25, &speed2[0]);
     //Speed 3
-    sprintf(speed3, "%u", meas.chron.speed3/100);
+    sprintf(speed3, "%u", chron.speed3/100);
     ssd_putString6x8(98, 35, &speed3[0]);
     //Magazine status/Speed4
-    if(meas.chron.clipCapacity > 1){
-        sprintf(magStat, "%u/%u", meas.chron.clipCurrent, meas.chron.clipCapacity);
+    if(chron.clipCapacity > 1){
+        sprintf(magStat, "%u/%u", chron.clipCurrent, chron.clipCapacity);
         ssd_putString6x8(92, 45, &magStat[0]);
     }else{
-        sprintf(speed4, "%u", meas.chron.speed4/100);
+        sprintf(speed4, "%u", chron.speed4/100);
         ssd_putString6x8(98, 45, &speed4[0]);
     }
     //Roll angle
@@ -150,50 +153,50 @@ void drawChrScr(void){
     char speed0[8], speed1[4], speed2[4], speed3[4], speed4[4], magStat[6], energy[8], statShots[4], mean[8], sdev[8];
     uint16_t val1, val2;
     //Pelet signature
-    ssd_putString6x8(0, 0, &pellets.pelStrings[meas.chron.pellet][0]);
+    ssd_putString6x8(0, 0, pellets.pel[chron.pellet].name);
     //Speed 0
-    val1 = meas.chron.speed0/FRACT_HUNDREDTHS;
-    val2 = meas.chron.speed0-(val1*FRACT_HUNDREDTHS);
-    if(val1 == 0) val2 = meas.chron.speed0;
+    val1 = chron.speed0/FRACT_HUNDREDTHS;
+    val2 = chron.speed0-(val1*FRACT_HUNDREDTHS);
+    if(val1 == 0) val2 = chron.speed0;
     sprintf(speed0, "%u.%.2u%c", val1, val2, 47);
     ssd_putString12x16(0, 24, &speed0[0]);
     //Speed 1
-    sprintf(speed1, "%u", meas.chron.speed1/100);
+    sprintf(speed1, "%u", chron.speed1/100);
     ssd_putString6x8(98, 15, &speed1[0]);
     //Speed 2
-    sprintf(speed2, "%u", meas.chron.speed2/100);
+    sprintf(speed2, "%u", chron.speed2/100);
     ssd_putString6x8(98, 25, &speed2[0]);
     //Speed 3
-    sprintf(speed3, "%u", meas.chron.speed3/100);
+    sprintf(speed3, "%u", chron.speed3/100);
     ssd_putString6x8(98, 35, &speed3[0]);
     //Magazine status/Speed4
-    if(meas.chron.clipCapacity > 1){
-        sprintf(magStat, "%u/%u", meas.chron.clipCurrent, meas.chron.clipCapacity);
+    if(chron.clipCapacity > 1){
+        sprintf(magStat, "%u/%u", chron.clipCurrent, chron.clipCapacity);
         ssd_putString6x8(92, 45, &magStat[0]);
     }else{
-        sprintf(speed4, "%u", meas.chron.speed4/100);
+        sprintf(speed4, "%u", chron.speed4/100);
         ssd_putString6x8(98, 45, &speed4[0]);
     }
     //Number of shots per measurement
-    sprintf(statShots, "%u", meas.chron.statShots);
+    sprintf(statShots, "%u", chron.statShots);
     ssd_putString6x8(98, 55, &statShots[0]);
     //Mean of current measurement
-    val1 = meas.chron.statMean/FRACT_HUNDREDTHS;
-    val2 = meas.chron.statMean-(val1*FRACT_HUNDREDTHS);
-    if(val1 == 0) val2 = meas.chron.statMean;
+    val1 = chron.statMean/FRACT_HUNDREDTHS;
+    val2 = chron.statMean-(val1*FRACT_HUNDREDTHS);
+    if(val1 == 0) val2 = chron.statMean;
     sprintf(mean, "%c%u.%.2u", 230, val1, val2);
     ssd_putString6x8(0, 36, &mean[0]);
     //Standard deviation
-    val1 = meas.chron.statSdev/FRACT_HUNDREDTHS;
-    val2 = meas.chron.statSdev-(val1*FRACT_HUNDREDTHS);
-    if(val1 == 0) val2 = meas.chron.statSdev;
+    val1 = chron.statSdev/FRACT_HUNDREDTHS;
+    val2 = chron.statSdev-(val1*FRACT_HUNDREDTHS);
+    if(val1 == 0) val2 = chron.statSdev;
     sprintf(sdev, "%c%u.%.2u", 229, val1, val2);
     ssd_putString6x8(49, 36, &sdev[0]);
     //Calculated energy
-    val1 = meas.chron.statEnergy/FRACT_HUNDREDTHS;
-    val2 = meas.chron.statEnergy-(val1*FRACT_HUNDREDTHS);
+    val1 = chron.statEnergy/FRACT_HUNDREDTHS;
+    val2 = chron.statEnergy-(val1*FRACT_HUNDREDTHS);
     sprintf(energy, "%u.%.2u%c", val1, val2, 58);
-    if(val1 == 0) val2 = meas.chron.statEnergy;
+    if(val1 == 0) val2 = chron.statEnergy;
     ssd_putString12x16(0, 56, &energy[0]);
 }
 

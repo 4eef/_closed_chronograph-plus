@@ -30,6 +30,7 @@
 /*!****************************************************************************
 * User typedef
 */
+// Get it out from here to menu (menu module incapsulation)
 typedef enum{
     eWait = 0,
     eBack,

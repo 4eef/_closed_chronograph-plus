@@ -22,6 +22,17 @@ menuPrmtr_type const NULL_PRM = {0};                                            
 
 static menuItem_type* CurrentMenuItem = &NULL_MENU;
 
+/*
+TO DO List:
+1. Убрать все лишние функции, не относящиеся к модулю. Функционал меню должен быть
+ограничен внутренними функциями, обрабатывающими данные внутренних структур.
+1.1 Убрать модуль power;
+1.2 Убрать функцию сброса данных chr.
+2. Список enum navEvent сделать внутренним, но доступным извне.
+3. Реализовать функции infoWnd.
+4. Общий рефакторинг.
+*/
+
 /*!****************************************************************************
 * @brief    
 */
@@ -60,9 +71,11 @@ void Menu_run(eNavEvent_type navEvent){
 void Menu_pwrSw(ePwrState_type ePwrState){
     if(ePwrState == ePwrOff){
         menu.menuMode = eOff;
+        // Remove!!!
         powerOff();
     }else{
         menu.menuMode = eDisplay;
+        // Remove!!!
         powerOn();
     }
 }
@@ -120,6 +133,7 @@ void Menu_navDisp(eNavEvent_type navEvent){
             }
             break;
         case eOkLng:
+            // Remove!!!
             chrSetsRst();
             break;
         default:
@@ -131,7 +145,6 @@ void Menu_navDisp(eNavEvent_type navEvent){
 * @brief    
 */
 void Menu_navMenu(eNavEvent_type navEvent){
-    menuItem_type *currentItem = Menu_GetCurrentMenu();
     switch(navEvent){
         case eWait:
             break;
@@ -152,13 +165,16 @@ void Menu_navMenu(eNavEvent_type navEvent){
             Menu_Navigate(MENU_NEXT);
             break;
         case eOk:
-            if(currentItem->prmtrDscr != &NULL_PRM){
-                Menu_setParEdit(currentItem->eMenuItem, currentItem->prmtrDscr);
+            if((ITEM_TYPE != eItem) && (PAR_DSCR != &NULL_PRM) && (PAR_DSCR != NULL)){
+                Menu_setParEdit(navEvent);
             }else if((MENU_CHILD != &NULL_MENU) && (MENU_CHILD != NULL)){
                 Menu_Navigate(MENU_CHILD);
             }
             break;
         case eOkLng:
+            if((ITEM_TYPE != eItem) && (PAR_DSCR != &NULL_PRM) && (PAR_DSCR != NULL)){
+                Menu_setParEdit(navEvent);
+            }
             break;
         default:
             break;
@@ -169,24 +185,55 @@ void Menu_navMenu(eNavEvent_type navEvent){
 * @brief    
 */
 void Menu_putInfoWnd(void){
-    
 }
 
 /*!****************************************************************************
 * @brief    
 */
-void Menu_setParEdit(eMenuItem_type parType, menuPrmtr_type *pPrmDscr){
-    switch(parType){
-        case eChooseFrmLst:
-            Menu_putTxtParSelWnd(pPrmDscr->pPar1, pPrmDscr->pPar2, (pPrmDscr->constPar1 - 1), pPrmDscr->constPar2);
+void Menu_setParEdit(eNavEvent_type navEvent){
+    menuItem_type *currentItem = Menu_GetCurrentMenu();
+    switch(navEvent){
+        case eOk:
+            switch(currentItem->eItemType){
+                case eChooseFrmLst:
+                    Menu_putTxtParSelWnd(currentItem->prmtrDscr->pPar1, currentItem->prmtrDscr->pPar2, (currentItem->prmtrDscr->constPar1 - 1));
+                    break;
+                case eParEdit:
+                    Menu_putParWnd(currentItem->prmtrDscr->pPar1, currentItem->prmtrDscr->pPar2, currentItem->prmtrDscr->pPar3,
+                                   (eParFract_type)currentItem->prmtrDscr->constPar1, currentItem->prmtrDscr->constPar2, currentItem->prmtrDscr->constPar3);
+                    break;
+                case eTxtEdit:
+                    break;
+                case eParTxtEdit:
+                    Menu_putParWnd(currentItem->prmtrDscr->pPar1, currentItem->prmtrDscr->pPar2, NULL,
+                                   (eParFract_type)currentItem->prmtrDscr->constPar1, currentItem->prmtrDscr->constPar2, currentItem->prmtrDscr->constPar3);
+                    break;
+                case eInfoTxt:
+                    break;
+                case eFunc:
+                    break;
+                default:
+                    break;
+            }
             break;
-        case eParEdit:
-            break;
-        case eTxtEdit:
-            break;
-        case eParTxtEdit:
-            break;
-        case eInfoTxt:
+        case eOkLng:
+            switch(currentItem->eItemType){
+                case eChooseFrmLst:
+                    break;
+                case eParEdit:
+                    break;
+                case eTxtEdit:
+                    break;
+                case eParTxtEdit:
+                    Menu_putTxtEditWnd(currentItem->prmtrDscr->pPar3);
+                    break;
+                case eInfoTxt:
+                    break;
+                case eFunc:
+                    break;
+                default:
+                    break;
+            }
             break;
         default:
             break;
@@ -220,17 +267,16 @@ void Menu_infoWndRun(eNavEvent_type navEvent){
 /*!****************************************************************************
 * @brief    
 */
-void Menu_putTxtParSelWnd(char *pFirstPar, uint16_t *pTxtParOrigin, uint16_t qtyTxtPar, uint16_t txtStrLen){
+void Menu_putTxtParSelWnd(char *pFirstPar, uint16_t *pTxtParNumOrigin, uint16_t qtyTxtPar){
     //Set up menu mode
     menu.menuPrevMode = menu.menuMode;
     menu.menuMode = eChooseFrmLstWnd;
     //Copy parameters
     strcpy(menu.txtParSelWnd.title, "Choose...");
-    strcpy(menu.txtParSelWnd.parText, pFirstPar);
+    strcpy(menu.txtParSelWnd.parText, (pFirstPar + (MENU_STR_LEN_MAX * (*pTxtParNumOrigin))));
     menu.txtParSelWnd.pFirstPar = pFirstPar;
-    menu.txtParSelWnd.txtStrLen = txtStrLen;
-    menu.txtParSelWnd.currTxtPar = 0;
-    menu.txtParSelWnd.pTxtParOrigin = pTxtParOrigin;
+    menu.txtParSelWnd.currTxtPar = *pTxtParNumOrigin;
+    menu.txtParSelWnd.pTxtParNumOrigin = pTxtParNumOrigin;
     menu.txtParSelWnd.qtyTxtPar = qtyTxtPar;
 }
 
@@ -238,8 +284,6 @@ void Menu_putTxtParSelWnd(char *pFirstPar, uint16_t *pTxtParOrigin, uint16_t qty
 * @brief    
 */
 void Menu_txtParSelWndRun(eNavEvent_type navEvent){
-    char *pFirstPar;
-    uint8_t txtStrLen, currTxtPar;
     switch(navEvent){
         case eWait:
             break;
@@ -264,8 +308,8 @@ void Menu_txtParSelWndRun(eNavEvent_type navEvent){
             }
             break;
         case eOk:
-            if(menu.txtParSelWnd.pTxtParOrigin != NULL){
-                *menu.txtParSelWnd.pTxtParOrigin = menu.txtParSelWnd.currTxtPar;
+            if(menu.txtParSelWnd.pTxtParNumOrigin != NULL){
+                *menu.txtParSelWnd.pTxtParNumOrigin = menu.txtParSelWnd.currTxtPar;
                 Menu_putMessage("Saved", MSG_CNT);
             }else{
                 Menu_putMessage("Ptr. error", MSG_CNT);
@@ -278,27 +322,23 @@ void Menu_txtParSelWndRun(eNavEvent_type navEvent){
             break;
     }
     if((navEvent == eUp) || (navEvent == eDown)){
-        pFirstPar = menu.txtParSelWnd.pFirstPar;
-        txtStrLen = menu.txtParSelWnd.txtStrLen;
-        currTxtPar = menu.txtParSelWnd.currTxtPar;
-        strcpy(menu.txtParSelWnd.parText, (pFirstPar + (txtStrLen * currTxtPar)));
+        strcpy(menu.txtParSelWnd.parText, (menu.txtParSelWnd.pFirstPar + (MENU_STR_LEN_MAX * menu.txtParSelWnd.currTxtPar)));
     }
 }
 
 /*!****************************************************************************
 * @brief    
 */
-void Menu_putTxtEditWnd(char *title, char *pStrOrig, uint8_t strMaxLen){
+void Menu_putTxtEditWnd(char *pStrOrig){
     //Set up menu mode
     menu.menuPrevMode = menu.menuMode;
     menu.menuMode = eTxtEditWnd;
     //Copy parameters
-    strcpy(menu.txtEditWnd.title, title);
+    strcpy(menu.txtEditWnd.title, "Edit...");
     memset(menu.txtEditWnd.string, SYM_TERMINATOR_NO, MENU_STR_LEN_MAX);
     strcpy(menu.txtEditWnd.string, pStrOrig);
     menu.txtEditWnd.pStrOrig = pStrOrig;
     menu.txtEditWnd.symPos = strlen(menu.txtEditWnd.string) - 1;
-    menu.txtEditWnd.strMaxLen = strMaxLen;
 }
 
 /*!****************************************************************************
@@ -372,7 +412,7 @@ void Menu_txtEditWndRun(eNavEvent_type navEvent){
         case eOk:
             if(!(((menu.txtEditWnd.symPos == 0) && (menu.txtEditWnd.string[menu.txtEditWnd.symPos] == SYM_TERMINATOR_NO)) ||
                  ((menu.txtEditWnd.symPos == 0) && (menu.txtEditWnd.string[menu.txtEditWnd.symPos] == SYM_SPACE_NO)))){
-                if((menu.txtEditWnd.symPos >= (menu.txtEditWnd.strMaxLen - 1)) ||
+                if((menu.txtEditWnd.symPos >= (MENU_STR_LEN_MAX - 1)) ||
                    ((menu.txtEditWnd.string[menu.txtEditWnd.symPos - 1] == SYM_SPACE_NO) &&
                     (menu.txtEditWnd.string[menu.txtEditWnd.symPos] == SYM_SPACE_NO))){
                     menu.txtEditWnd.symPos = 0;
@@ -408,14 +448,13 @@ void Menu_txtEditWndRun(eNavEvent_type navEvent){
 /*!****************************************************************************
 * @brief    Configure menu to display a parameter edit window
 */
-void Menu_putParWnd(char *title, char *parUnits, eParFract_type parFract,
-                    uint16_t *pParOrigin, uint16_t *pParCopy,
-                    int16_t brdMax, int16_t brdMin){
+void Menu_putParWnd(char *parUnits, uint16_t *pParOrigin, uint16_t *pParCopy,
+                    eParFract_type parFract, int16_t brdMax, int16_t brdMin){
     //Set up menu mode
     menu.menuPrevMode = menu.menuMode;
     menu.menuMode = eParEditWnd;
     //Copy parameters
-    strcpy(menu.parEditWnd.title, title);
+    strcpy(menu.parEditWnd.title, "Set...");
     strcpy(menu.parEditWnd.parUnits, parUnits);
     menu.parEditWnd.pParOrigin = pParOrigin;
     menu.parEditWnd.pParCopy = pParCopy;

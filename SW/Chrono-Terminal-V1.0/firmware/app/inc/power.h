@@ -19,7 +19,7 @@
 #include "lis3.h"
 #include "i2c.h"
 #include "buttons.h"
-#include "MicroMenu.h"
+//#include "MicroMenu.h"
 
 /*!****************************************************************************
 * User define

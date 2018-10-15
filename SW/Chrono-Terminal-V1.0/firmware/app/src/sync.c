@@ -17,6 +17,7 @@
 extern power_type           power;
 extern menu_type            menu;
 extern meas_type            meas;
+extern stats_type           stats;
 
 /*!****************************************************************************
 * @brief    Syncronizer deinitialization function
@@ -54,10 +55,10 @@ void sync(void){
     if(TIM1->CR1 & TIM_CR1_CEN){
         while(TIM1->CR1 & TIM_CR1_CEN) __NOP();
     }else{
-        meas.stats.cycBroken++;
+        stats.cycBroken++;
     }
     power.uptimeCurr++;
-    meas.stats.cycTotal++;
+    stats.cycTotal++;
     timeSet = (power.uptimeSet*MIN_TO_US)/CYC_PERIOD_US;
     timeDiff = timeSet - power.uptimeCurr;
     if((timeDiff < FIVE_SEC_WARNING) && (timeDiff > 0)){

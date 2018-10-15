@@ -15,131 +15,133 @@
 * MEMORY
 */
 extern meas_type            meas;
+extern chron_type           chron;
+extern stats_type           stats;
 extern pellets_type         pellets;
 extern sysPars_type         sysPars;
 extern power_type           power;
-IRRXData_type               IRRXData;
+irRxData_type               irRxData;
 
 void hndlIRData(void){
     uint32_t dist, sgn, spd0, spd1, spd2, spd3, spd4, val1, val2, val3, val4;
     uint8_t i;
-    if(IRRXData.rxState == IR_DATA_READY){
-        sgn = (IRRXData.rxByte[IR_MAX_BYTES-1]) | (IRRXData.rxByte[IR_MAX_BYTES-2])<<8 | (IRRXData.rxByte[IR_MAX_BYTES-3])<<16 | (IRRXData.rxByte[IR_MAX_BYTES-4])<<24;
-        if((sysPars.dispMode != eInclinometer) && ((meas.chron.chrSgntr == sgn) || (meas.chron.chrBindCnt != 0))){
+    if(irRxData.rxState == IR_DATA_READY){
+        sgn = (irRxData.rxByte[IR_MAX_BYTES-1]) | (irRxData.rxByte[IR_MAX_BYTES-2])<<8 | (irRxData.rxByte[IR_MAX_BYTES-3])<<16 | (irRxData.rxByte[IR_MAX_BYTES-4])<<24;
+        if((sysPars.dispMode != eInclinometer) && ((chron.chrSgntr == sgn) || (chron.chrBindCnt != 0))){
             power.uptimeCurr = 0;
-            if(meas.chron.chrBindCnt != 0){
-                meas.chron.chrBindCnt = 0;
-                meas.chron.chrSgntr = sgn;
+            if(chron.chrBindCnt != 0){
+                chron.chrBindCnt = 0;
+                chron.chrSgntr = sgn;
                 Menu_putMessage("Binded", MSG_CNT);
             }
-            meas.stats.shotsTotal++;
+            stats.shotsTotal++;
             //Measurements
-            dist = meas.chron.sensDist*CHR_DIST_MPLY;
-            spd0 = dist/(((IRRXData.rxByte[0]<<8 | IRRXData.rxByte[1])*CHR_TCK_NS)/100);
-            meas.chron.pelSgntr = IRRXData.rxByte[2]<<8 | IRRXData.rxByte[3];
-            spd1 = dist/(((IRRXData.rxByte[4]<<8 | IRRXData.rxByte[5])*CHR_TCK_NS)/100);
-            spd2 = dist/(((IRRXData.rxByte[6]<<8 | IRRXData.rxByte[7])*CHR_TCK_NS)/100);
-            spd3 = dist/(((IRRXData.rxByte[8]<<8 | IRRXData.rxByte[9])*CHR_TCK_NS)/100);
-            spd4 = dist/(((IRRXData.rxByte[10]<<8 | IRRXData.rxByte[11])*CHR_TCK_NS)/100);
-            meas.chron.speed0 = spd0;
-            if(spd0 >= CHR_SPD_MAX) meas.chron.speed0 = CHR_SPD_MAX;
-            meas.chron.speed1 = spd1;
-            if(spd1 >= CHR_SPD_MAX) meas.chron.speed1 = CHR_SPD_MAX;
-            meas.chron.speed2 = spd2;
-            if(spd2 >= CHR_SPD_MAX) meas.chron.speed2 = CHR_SPD_MAX;
-            meas.chron.speed3 = spd3;
-            if(spd3 >= CHR_SPD_MAX) meas.chron.speed3 = CHR_SPD_MAX;
-            meas.chron.speed4 = spd4;
-            if(spd4 >= CHR_SPD_MAX) meas.chron.speed4 = CHR_SPD_MAX;
+            dist = chron.sensDist*CHR_DIST_MPLY;
+            spd0 = dist/(((irRxData.rxByte[0]<<8 | irRxData.rxByte[1])*CHR_TCK_NS)/100);
+            chron.pelSgntr = irRxData.rxByte[2]<<8 | irRxData.rxByte[3];
+            spd1 = dist/(((irRxData.rxByte[4]<<8 | irRxData.rxByte[5])*CHR_TCK_NS)/100);
+            spd2 = dist/(((irRxData.rxByte[6]<<8 | irRxData.rxByte[7])*CHR_TCK_NS)/100);
+            spd3 = dist/(((irRxData.rxByte[8]<<8 | irRxData.rxByte[9])*CHR_TCK_NS)/100);
+            spd4 = dist/(((irRxData.rxByte[10]<<8 | irRxData.rxByte[11])*CHR_TCK_NS)/100);
+            chron.speed0 = spd0;
+            if(spd0 >= CHR_SPD_MAX) chron.speed0 = CHR_SPD_MAX;
+            chron.speed1 = spd1;
+            if(spd1 >= CHR_SPD_MAX) chron.speed1 = CHR_SPD_MAX;
+            chron.speed2 = spd2;
+            if(spd2 >= CHR_SPD_MAX) chron.speed2 = CHR_SPD_MAX;
+            chron.speed3 = spd3;
+            if(spd3 >= CHR_SPD_MAX) chron.speed3 = CHR_SPD_MAX;
+            chron.speed4 = spd4;
+            if(spd4 >= CHR_SPD_MAX) chron.speed4 = CHR_SPD_MAX;
             //Ñalculate clip status
-            if(meas.chron.clipCapacity > 1){
-                if(meas.chron.clipCurrent == 0){
-                    meas.chron.clipCurrent = meas.chron.clipCapacity;
+            if(chron.clipCapacity > 1){
+                if(chron.clipCurrent == 0){
+                    chron.clipCurrent = chron.clipCapacity;
                     Menu_putMessage("Clip reloaded", MSG_CNT);
-                }else if(meas.chron.clipCurrent == 1){
+                }else if(chron.clipCurrent == 1){
                     Menu_putMessage("Replace clip", MSG_CNT);
                 }
-                meas.chron.clipCurrent--;
+                chron.clipCurrent--;
             }
             //Pellet recognition by signature
-            if(pellets.pelStat == PELLET_OK){
-                val1 = meas.chron.pelSgntr-meas.chron.pelSgntr/PELLET_SGN_TOLERANCE;
-                val2 = meas.chron.pelSgntr+meas.chron.pelSgntr/PELLET_SGN_TOLERANCE;
+            if(pellets.irRxPelSgn.pelStat == PELLET_OK){
+                val1 = chron.pelSgntr-chron.pelSgntr/PELLET_SGN_TOLERANCE;
+                val2 = chron.pelSgntr+chron.pelSgntr/PELLET_SGN_TOLERANCE;
                 //Compare current signature with existing in database
-                if((pellets.pelSgntrs[meas.chron.pellet] >= val1) && (pellets.pelSgntrs[meas.chron.pellet] <= val2) && (pellets.matchedSgnNum != 0)){
-                    pellets.newSgnSum = 0;
-                    pellets.newSgnCnt = 0;
-                    pellets.newSgnErrCnt = 0;
+                if((pellets.pel[chron.pellet].sgn >= val1) && (pellets.pel[chron.pellet].sgn <= val2) && (pellets.matchedSgnNum != 0)){
+                    pellets.irRxPelSgn.newSgnSum = 0;
+                    pellets.irRxPelSgn.newSgnCnt = 0;
+                    pellets.irRxPelSgn.newSgnErrCnt = 0;
                 }else if(pellets.matchedSgnNum != 0){
-                    pellets.newSgnSum += meas.chron.pelSgntr;
-                    pellets.newSgnCnt++;
-                    pellets.newSgnErrCnt++;
-                    if(pellets.newSgnCnt >= PELLET_CHANGE_THR){
-                        pellets.newSgn = pellets.newSgnSum/pellets.newSgnCnt;
+                    pellets.irRxPelSgn.newSgnSum += chron.pelSgntr;
+                    pellets.irRxPelSgn.newSgnCnt++;
+                    pellets.irRxPelSgn.newSgnErrCnt++;
+                    if(pellets.irRxPelSgn.newSgnCnt >= PELLET_CHANGE_THR){
+                        pellets.irRxPelSgn.newSgn = pellets.irRxPelSgn.newSgnSum/pellets.irRxPelSgn.newSgnCnt;
                         pellets.matchedSgnNum = 0;
-                        val3 = pellets.newSgn-pellets.newSgn/PELLET_SGN_TOLERANCE;
-                        val4 = pellets.newSgn+pellets.newSgn/PELLET_SGN_TOLERANCE;
+                        val3 = pellets.irRxPelSgn.newSgn-pellets.irRxPelSgn.newSgn/PELLET_SGN_TOLERANCE;
+                        val4 = pellets.irRxPelSgn.newSgn+pellets.irRxPelSgn.newSgn/PELLET_SGN_TOLERANCE;
                         for(i = 1; i < PELLET_DB_QTY; i++){
-                            if(pellets.pelSgntrs[i] >= val3 && pellets.pelSgntrs[i] <= val4){
+                            if(pellets.pel[i].sgn >= val3 && pellets.pel[i].sgn <= val4){
                                 pellets.matchedSgnNum = i;
-                                pellets.pelStat = PELLET_CONFIRM;
+                                pellets.irRxPelSgn.pelStat = PELLET_CONFIRM;
                                 break;
                             }
                         }
                     }
                 }else{                                                          //No existing pellet found
-                    pellets.newSgnErrCnt++;
-                    if((pellets.newSgn >= val1) && (pellets.newSgn <= val2)){
-                        pellets.newSgnCnt++;
-                        pellets.newSgnSum += meas.chron.pelSgntr;
+                    pellets.irRxPelSgn.newSgnErrCnt++;
+                    if((pellets.irRxPelSgn.newSgn >= val1) && (pellets.irRxPelSgn.newSgn <= val2)){
+                        pellets.irRxPelSgn.newSgnCnt++;
+                        pellets.irRxPelSgn.newSgnSum += chron.pelSgntr;
                     }else{
-                        pellets.newSgn = meas.chron.pelSgntr;
-                        pellets.newSgnCnt = 1;
-                        pellets.newSgnSum = meas.chron.pelSgntr;
+                        pellets.irRxPelSgn.newSgn = chron.pelSgntr;
+                        pellets.irRxPelSgn.newSgnCnt = 1;
+                        pellets.irRxPelSgn.newSgnSum = chron.pelSgntr;
                     }
-                    if(pellets.newSgnCnt >= PELLET_NEW_SGN_THR){
-                        pellets.newSgn = pellets.newSgnSum/pellets.newSgnCnt;
-                        pellets.pelStat = PELLET_NEW;
-                        pellets.matchedSgnNum = 1;
-                        pellets.newSgnErrCnt = 0;
-                        pellets.newSgnCnt = 0;
-                        pellets.newSgnSum = 0;
-                    }else if(pellets.newSgnErrCnt >= PELLET_NEW_SGN_BOUND){
+                    if(pellets.irRxPelSgn.newSgnCnt >= PELLET_NEW_SGN_THR){
+                        pellets.irRxPelSgn.newSgn = pellets.irRxPelSgn.newSgnSum/pellets.irRxPelSgn.newSgnCnt;
+                        pellets.irRxPelSgn.pelStat = PELLET_NEW;
+                        pellets.matchedSgnNum = 0;
+                        pellets.irRxPelSgn.newSgnErrCnt = 0;
+                        pellets.irRxPelSgn.newSgnCnt = 0;
+                        pellets.irRxPelSgn.newSgnSum = 0;
+                    }else if(pellets.irRxPelSgn.newSgnErrCnt >= PELLET_NEW_SGN_BOUND){
                         Menu_putMessage("Error pellet ID", MSG_CNT);
-                        pellets.pelStat = PELLET_OK;
-                        pellets.newSgnErrCnt = 0;
-                        pellets.newSgnCnt = 0;
-                        pellets.newSgnSum = 0;
+                        pellets.irRxPelSgn.pelStat = PELLET_OK;
+                        pellets.irRxPelSgn.newSgnErrCnt = 0;
+                        pellets.irRxPelSgn.newSgnCnt = 0;
+                        pellets.irRxPelSgn.newSgnSum = 0;
                     }
                 }
             }
             //Statistics calculation
             if(sysPars.dispMode == eChronograph){
-                if(meas.chron.statShots >= STAT_SHOTS_MAX){
+                if(chron.statShots >= STAT_SHOTS_MAX){
                     Menu_putMessage("Buffer is full", MSG_CNT);
                 }else{
-                    meas.chron.statSpeeds[meas.chron.statShots] = meas.chron.speed0;
-                    meas.chron.statSpeedsSum += meas.chron.statSpeeds[meas.chron.statShots];
-                    meas.chron.statShots++;
-                    if(meas.chron.statShots >= 2){
-                        meas.chron.statMean = meas.chron.statSpeedsSum/meas.chron.statShots;
-                        meas.chron.statDevsSum = 0;
-                        for(i = 0; i < meas.chron.statShots; i++){
-                            if(meas.chron.statMean >= meas.chron.statSpeeds[i]){
-                                meas.chron.statDevsSum += meas.chron.statMean - meas.chron.statSpeeds[i];
+                    chron.statSpeeds[chron.statShots] = chron.speed0;
+                    chron.statSpeedsSum += chron.statSpeeds[chron.statShots];
+                    chron.statShots++;
+                    if(chron.statShots >= 2){
+                        chron.statMean = chron.statSpeedsSum/chron.statShots;
+                        chron.statDevsSum = 0;
+                        for(i = 0; i < chron.statShots; i++){
+                            if(chron.statMean >= chron.statSpeeds[i]){
+                                chron.statDevsSum += chron.statMean - chron.statSpeeds[i];
                             }else{
-                                meas.chron.statDevsSum += meas.chron.statSpeeds[i] - meas.chron.statMean;
+                                chron.statDevsSum += chron.statSpeeds[i] - chron.statMean;
                             }
                         }
-                        meas.chron.statSdev = meas.chron.statDevsSum/meas.chron.statShots;
+                        chron.statSdev = chron.statDevsSum/chron.statShots;
                     }
-                    if((meas.chron.pellet != 0) && (pellets.pelWghts[meas.chron.pellet] != 0)){
-                        meas.chron.statEnergy = (((meas.chron.speed0*meas.chron.speed0)/STAT_ENERGY_DIV_COEFF)*pellets.pelWghts[meas.chron.pellet])/STAT_ENERGY_DIV_COEFF/2;
+                    if(pellets.pel[chron.pellet].wght != 0){
+                        chron.statEnergy = (((chron.speed0*chron.speed0)/STAT_ENERGY_DIV_COEFF)*pellets.pel[chron.pellet].wght)/STAT_ENERGY_DIV_COEFF/2;
                     }
                 }
             }
         }
-        IRRXData.rxState = IR_READY;                                            //Release receiver
+        irRxData.rxState = IR_READY;                                            //Release receiver
     }
 }
 
@@ -165,9 +167,9 @@ void initIRConfig(void){
     TIM2->SR        &= ~TIM_SR_CC1OF;                           //Clear flags
     TIM2->SR        &= ~TIM_SR_CC1IF;
     TIM2->SR        &= ~TIM_SR_UIF;
-    IRRXData.rxBitCnt = 0;
-    IRRXData.rxBytesCnt = 0;
-    IRRXData.rxState = IR_READY;
+    irRxData.rxBitCnt = 0;
+    irRxData.rxBytesCnt = 0;
+    irRxData.rxState = IR_READY;
     NVIC_EnableIRQ(TIM2_IRQn);
     NVIC_SetPriority(TIM2_IRQn, 15);
     TIM2->EGR       |= TIM_EGR_UG;                              //Debug
@@ -185,7 +187,7 @@ void deInitIR(void){
     TIM2->CCER      &= ~TIM_CCER_CC1E;                          //Disable capturing
     TIM2->DIER      &= ~TIM_DIER_CC1IE;                         //Disable interrupts
     TIM2->DIER      &= ~TIM_DIER_UIE;
-    IRRXData.rxState = IR_BUSY;                                 //Set receiver busy
+    irRxData.rxState = IR_BUSY;                                 //Set receiver busy
     NVIC_DisableIRQ(TIM2_IRQn);
 }
 
@@ -199,65 +201,65 @@ __irq void TIM2_IRQHandler(void){
         TIM2->SR &= ~TIM_SR_CC1OF;                              //RX failed, set receiver
         TIM2->SR &= ~TIM_SR_CC1IF;
         TIM2->CR1 &= ~TIM_CR1_CEN;
-        if(IRRXData.rxState == IR_DATA_READY){                  //Avoid data overrun
+        if(irRxData.rxState == IR_DATA_READY){                  //Avoid data overrun
             return;
         }else{
-            IRRXData.rxBitCnt = 0;
-            IRRXData.rxBytesCnt = 0;
-            IRRXData.rxState = IR_READY;
+            irRxData.rxBitCnt = 0;
+            irRxData.rxBytesCnt = 0;
+            irRxData.rxState = IR_READY;
         }
     }else if((TIM2->SR & TIM_SR_CC1IF) != 0){
         TIM2->SR &= ~TIM_SR_CC1IF;
-        if(IRRXData.rxState == IR_DATA_READY){
+        if(irRxData.rxState == IR_DATA_READY){
             TIM2->CR1 &= ~TIM_CR1_CEN;
             return;
         }else if((GPIOA->IDR & GPIO_IDR_5) != 0){               //Rising edge
             if((TIM2->CCR1 <= (IR_STOPBIT_TIME+IR_STOPBIT_TIME/10)) && (TIM2->CCR1 >= (IR_STOPBIT_TIME-IR_STOPBIT_TIME/10))){
                 TIM2->CR1 &= ~TIM_CR1_CEN;
-                IRRXData.rxBitCnt = 0;
+                irRxData.rxBitCnt = 0;
                 //Security checks
-                if((IRRXData.rxBytesCnt == IR_MAX_BYTES) && (IRRXData.rxState != IR_DATA_OVERRUN)){
-                    IRRXData.rxState = IR_DATA_READY;
+                if((irRxData.rxBytesCnt == IR_MAX_BYTES) && (irRxData.rxState != IR_DATA_OVERRUN)){
+                    irRxData.rxState = IR_DATA_READY;
                 }else{
-                    IRRXData.rxBytesCnt = 0;
-                    IRRXData.rxState = IR_READY;
+                    irRxData.rxBytesCnt = 0;
+                    irRxData.rxState = IR_READY;
                 }
             }
             TIM2->CCR1 = 0;
         }else{                                                  //Falling edge
             if((TIM2->CR1 & TIM_CR1_CEN) != 0){
                 TIM2->CR1 &= ~TIM_CR1_CEN;
-                if((TIM2->CCR1 <= (IR_PREAMBLE_TIME+IR_PREAMBLE_TIME/CHR_TOLERANCE)) && (TIM2->CCR1 >= (IR_PREAMBLE_TIME-IR_PREAMBLE_TIME/CHR_TOLERANCE)) && (IRRXData.rxState == IR_READY)){
-                    IRRXData.rxBitCnt = 0;
-                    IRRXData.rxBytesCnt = 0;
-                    IRRXData.rxState = IR_BUSY;
-                }else if((TIM2->CCR1 <= (IR_LOG_ZERO_TIME+IR_LOG_ZERO_TIME/CHR_TOLERANCE)) && (TIM2->CCR1 >= (IR_LOG_ZERO_TIME-IR_LOG_ZERO_TIME/CHR_TOLERANCE)) && (IRRXData.rxState == IR_BUSY)){
-                    IRRXData.rxByte[IRRXData.rxBytesCnt] &= ~(1 << IRRXData.rxBitCnt);
-                    IRRXData.rxBitCnt++;
-                    if(IRRXData.rxBitCnt > IR_MAX_BITS){
-                        IRRXData.rxBitCnt = 0;
-                        IRRXData.rxBytesCnt++;
-                        if(IRRXData.rxBytesCnt > IR_MAX_BYTES){ //Ring the buffer with overrun flag
-                            IRRXData.rxState = IR_DATA_OVERRUN;
-                            IRRXData.rxBytesCnt = 0;
+                if((TIM2->CCR1 <= (IR_PREAMBLE_TIME+IR_PREAMBLE_TIME/CHR_TOLERANCE)) && (TIM2->CCR1 >= (IR_PREAMBLE_TIME-IR_PREAMBLE_TIME/CHR_TOLERANCE)) && (irRxData.rxState == IR_READY)){
+                    irRxData.rxBitCnt = 0;
+                    irRxData.rxBytesCnt = 0;
+                    irRxData.rxState = IR_BUSY;
+                }else if((TIM2->CCR1 <= (IR_LOG_ZERO_TIME+IR_LOG_ZERO_TIME/CHR_TOLERANCE)) && (TIM2->CCR1 >= (IR_LOG_ZERO_TIME-IR_LOG_ZERO_TIME/CHR_TOLERANCE)) && (irRxData.rxState == IR_BUSY)){
+                    irRxData.rxByte[irRxData.rxBytesCnt] &= ~(1 << irRxData.rxBitCnt);
+                    irRxData.rxBitCnt++;
+                    if(irRxData.rxBitCnt > IR_MAX_BITS){
+                        irRxData.rxBitCnt = 0;
+                        irRxData.rxBytesCnt++;
+                        if(irRxData.rxBytesCnt > IR_MAX_BYTES){ //Ring the buffer with overrun flag
+                            irRxData.rxState = IR_DATA_OVERRUN;
+                            irRxData.rxBytesCnt = 0;
                         }
                     }
-                }else if((TIM2->CCR1 <= (IR_LOG_ONE_TIME+IR_LOG_ONE_TIME/CHR_TOLERANCE)) && (TIM2->CCR1 >= (IR_LOG_ONE_TIME-IR_LOG_ONE_TIME/CHR_TOLERANCE)) && (IRRXData.rxState == IR_BUSY)){
-                    IRRXData.rxByte[IRRXData.rxBytesCnt] |= (1 << IRRXData.rxBitCnt);
-                    IRRXData.rxBitCnt++;
-                    if(IRRXData.rxBitCnt > IR_MAX_BITS){
-                        IRRXData.rxBitCnt = 0;
-                        IRRXData.rxBytesCnt++;
-                        if(IRRXData.rxBytesCnt > IR_MAX_BYTES){
-                            IRRXData.rxState = IR_DATA_OVERRUN;
-                            IRRXData.rxBytesCnt = 0;
+                }else if((TIM2->CCR1 <= (IR_LOG_ONE_TIME+IR_LOG_ONE_TIME/CHR_TOLERANCE)) && (TIM2->CCR1 >= (IR_LOG_ONE_TIME-IR_LOG_ONE_TIME/CHR_TOLERANCE)) && (irRxData.rxState == IR_BUSY)){
+                    irRxData.rxByte[irRxData.rxBytesCnt] |= (1 << irRxData.rxBitCnt);
+                    irRxData.rxBitCnt++;
+                    if(irRxData.rxBitCnt > IR_MAX_BITS){
+                        irRxData.rxBitCnt = 0;
+                        irRxData.rxBytesCnt++;
+                        if(irRxData.rxBytesCnt > IR_MAX_BYTES){
+                            irRxData.rxState = IR_DATA_OVERRUN;
+                            irRxData.rxBytesCnt = 0;
                         }
                     }
                 }else{                                          //Error
                     TIM2->CR1 &= ~TIM_CR1_CEN;
-                    IRRXData.rxBitCnt = 0;
-                    IRRXData.rxBytesCnt = 0;
-                    IRRXData.rxState = IR_READY;
+                    irRxData.rxBitCnt = 0;
+                    irRxData.rxBytesCnt = 0;
+                    irRxData.rxState = IR_READY;
                     return;
                 }
             }
@@ -267,12 +269,12 @@ __irq void TIM2_IRQHandler(void){
     }else if((TIM2->SR & TIM_SR_UIF) != 0){
         TIM2->SR &= ~TIM_SR_UIF;
         TIM2->CR1 &= ~TIM_CR1_CEN;
-        if(IRRXData.rxState == IR_DATA_READY){
+        if(irRxData.rxState == IR_DATA_READY){
             return;
         }else{
-            IRRXData.rxBitCnt = 0;
-            IRRXData.rxBytesCnt = 0;
-            IRRXData.rxState = IR_READY;
+            irRxData.rxBitCnt = 0;
+            irRxData.rxBytesCnt = 0;
+            irRxData.rxState = IR_READY;
         }
     }
 }

@@ -53,7 +53,7 @@ typedef struct{
     uint8_t     rxBytesCnt;
     uint8_t     rxState;
     uint8_t     rxByte[IR_MAX_BYTES];
-}IRRXData_type;
+}irRxData_type;
 
 /*!****************************************************************************
 * Extern viriables

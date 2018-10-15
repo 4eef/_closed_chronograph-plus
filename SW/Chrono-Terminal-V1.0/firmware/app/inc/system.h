@@ -18,8 +18,7 @@
 /*!****************************************************************************
 * User define
 */
-#define LIST_STR_LEN            19
-#define PELLET_DB_QTY           16
+#define PELLET_DB_QTY           15
 #define PELLET_KNOWN_LIST       PELLET_DB_QTY - 1
 #define PELLET_SGN_TOLERANCE    10
 #define PELLET_CHANGE_THR       5
@@ -31,6 +30,8 @@
 #define PELLET_ERR_NEW          3
 #define PELLET_MAX              99
 #define PELLET_MIN              1
+#define PELLET_WGH_MG10_MIN     10
+#define PELLET_WGH_MG10_MAX     150
 #define STAT_SHOTS_MAX          255
 #define STAT_ENERGY_DIV_COEFF   10000
 #define BATT_CHG_ARR_PTS        11
@@ -49,6 +50,9 @@
 #define FRACT_NOFRACT           0
 #define FRACT_TENTHS            10
 #define FRACT_HUNDREDTHS        100
+#define MENU_STR_LEN_MAX        20
+#define INC_BORDER_MAX          90
+#define INC_BORDER_MIN          1
 
 /*!****************************************************************************
 * User enum
@@ -64,21 +68,23 @@ typedef enum{
 }eDispMode_type;
 
 typedef struct{
-    char            pelString[18];
-    uint16_t        pelWght;
-    uint16_t        pelSgntr;
+    char            name[MENU_STR_LEN_MAX];
+    uint16_t        wght;
+    uint16_t        sgn;
 }pellet_type;
 
 typedef struct{
-    char            pelStrings[PELLET_DB_QTY][LIST_STR_LEN];
-    uint16_t        pelWghts[PELLET_DB_QTY];
-    uint16_t        pelSgntrs[PELLET_DB_QTY];
-    uint16_t        matchedSgnNum;
     uint16_t        newSgn;
     uint32_t        newSgnSum;
     uint8_t         newSgnCnt;
     uint8_t         newSgnErrCnt;
     uint8_t         pelStat;
+}irRxPelSgn_type;
+
+typedef struct{
+    pellet_type     pel[PELLET_DB_QTY];
+    irRxPelSgn_type irRxPelSgn;
+    uint16_t        matchedSgnNum;
 }pellets_type;
 
 typedef struct{
@@ -121,9 +127,6 @@ typedef struct{
 }battery_type;
 
 typedef struct{
-    battery_type    battery;
-    chron_type      chron;
-    stats_type      stats;
     int16_t         accRoll;
     int16_t         accPitch;
     uint16_t        accRollBorder;
@@ -131,8 +134,8 @@ typedef struct{
 }meas_type;
 
 typedef struct{
+    char            modeTxts[SCR_MODES_NO][MENU_STR_LEN_MAX];
     eDispMode_type  dispMode;
-    char            modeTxts[SCR_MODES_NO][LIST_STR_LEN];
 }sysPars_type;
 
 /*!****************************************************************************
