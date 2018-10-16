@@ -73,7 +73,7 @@ void main(void){
     kalman.R = 15;
     power.uptimeSet = POWER_RUN_DEFAULT;
     //Navigate to an absolute menu item entry
-    Menu_Navigate(&mode);
+    Menu_Navigate(&stts);
     //Initialize hardware
     initPeriphs();
     Menu_pwrSw(ePwrOff);//ePwrOff/ePwrOn
