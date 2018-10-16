@@ -50,7 +50,7 @@
 #define FRACT_NOFRACT           0
 #define FRACT_TENTHS            10
 #define FRACT_HUNDREDTHS        100
-#define MENU_STR_LEN_MAX        20
+#define MENU_STR_LEN_MAX        19
 #define INC_BORDER_MAX          90
 #define INC_BORDER_MIN          1
 
@@ -135,6 +135,7 @@ typedef struct{
 
 typedef struct{
     char            modeTxts[SCR_MODES_NO][MENU_STR_LEN_MAX];
+    uint8_t         tmp;//Alignment
     eDispMode_type  dispMode;
 }sysPars_type;
 
