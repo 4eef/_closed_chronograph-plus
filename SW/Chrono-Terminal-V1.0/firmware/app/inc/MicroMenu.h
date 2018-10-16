@@ -25,7 +25,7 @@
 #define MENU_POSITIONS          5
 #define MENU_INTERVAL           10
 #define MENU_START              12
-#define MENU_STR_LEN_MAX        20
+#define MENU_STR_LEN_MAX        19
 #define MENU_MSG_LEN_MAX        240
 #define MENU_ITEMS_QTY_MAX      20
 #define TXT_PAR_MIN_VAL         0
