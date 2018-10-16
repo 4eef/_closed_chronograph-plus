@@ -411,7 +411,7 @@ void Menu_txtEditWndRun(eNavEvent_type navEvent){
         case eOk:
             if(!(((menu.txtEditWnd.symPos == 0) && (menu.txtEditWnd.string[menu.txtEditWnd.symPos] == SYM_TERMINATOR_NO)) ||
                  ((menu.txtEditWnd.symPos == 0) && (menu.txtEditWnd.string[menu.txtEditWnd.symPos] == SYM_SPACE_NO)))){
-                if((menu.txtEditWnd.symPos >= (MENU_STR_LEN_MAX - 1)) ||
+                if((menu.txtEditWnd.symPos >= (MENU_STR_LEN_MAX - 2)) ||
                    ((menu.txtEditWnd.string[menu.txtEditWnd.symPos - 1] == SYM_SPACE_NO) &&
                     (menu.txtEditWnd.string[menu.txtEditWnd.symPos] == SYM_SPACE_NO))){
                     menu.txtEditWnd.symPos = 0;
@@ -419,6 +419,7 @@ void Menu_txtEditWndRun(eNavEvent_type navEvent){
                     menu.txtEditWnd.symPos++;
                     if(menu.txtEditWnd.string[menu.txtEditWnd.symPos] == SYM_TERMINATOR_NO){
                         menu.txtEditWnd.string[menu.txtEditWnd.symPos] = SYM_SPACE_NO;
+                        menu.txtEditWnd.string[menu.txtEditWnd.symPos + 1] = SYM_TERMINATOR_NO;
                     }
                 }
             }
