@@ -419,7 +419,6 @@ void Menu_txtEditWndRun(eNavEvent_type navEvent){
                     menu.txtEditWnd.symPos++;
                     if(menu.txtEditWnd.string[menu.txtEditWnd.symPos] == SYM_TERMINATOR_NO){
                         menu.txtEditWnd.string[menu.txtEditWnd.symPos] = SYM_SPACE_NO;
-                        menu.txtEditWnd.string[menu.txtEditWnd.symPos + 1] = SYM_TERMINATOR_NO;
                     }
                 }
             }
