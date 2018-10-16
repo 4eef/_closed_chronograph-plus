@@ -45,13 +45,13 @@ MENU_PAR(pdb15edit,     "g",                    &pellets.pel[14].wght,  &pellets
 MENU_ITEM(stts,         setts,          NULL_MENU,      NULL_MENU,      NULL_MENU,      eInfoTxt,       NULL_PRM,       "Statistics");
 MENU_ITEM(setts,        about,          stts,           NULL_MENU,      smode,          eItem,          NULL_PRM,       "Settings");
 MENU_ITEM(about,        service,        setts,          NULL_MENU,      NULL_MENU,      eInfoTxt,       NULL_PRM,       "About");
-MENU_ITEM(service,      swrst,          about,          NULL_MENU,      NULL_MENU,      eInfoTxt,       NULL_PRM,       "Service info");
-MENU_ITEM(swrst,        NULL_MENU,      service,        NULL_MENU,      NULL_MENU,      eFunc,          NULL_PRM,       "Software reset");
+MENU_ITEM(service,      NULL_MENU,      about,          NULL_MENU,      NULL_MENU,      eInfoTxt,       NULL_PRM,       "Service info");
 //Menu/Settings
 MENU_ITEM(smode,        schrono,        NULL_MENU,      setts,          NULL_MENU,      eChooseFrmLst,  scrmode,        "Main screen");
 MENU_ITEM(schrono,      sincline,       smode,          setts,          scclipc,        eItem,          NULL_PRM,       "Chronograph");
 MENU_ITEM(sincline,     spofft,         schrono,        setts,          sibrdr,         eItem,          NULL_PRM,       "Inclinometer");
-MENU_ITEM(spofft,       NULL_MENU,      sincline,       setts,          NULL_MENU,      eParEdit,       potedit,        "Power off timer");
+MENU_ITEM(spofft,       swrst,          sincline,       setts,          NULL_MENU,      eParEdit,       potedit,        "Power off timer");
+MENU_ITEM(swrst,        NULL_MENU,      spofft,         setts,          NULL_MENU,      eFunc,          NULL_PRM,       "Software reset");
 //Menu/Settings/Chronograph
 MENU_ITEM(scclipc,      scpeldb,        NULL_MENU,      schrono,        NULL_MENU,      eParEdit,       sccedit,        "Clip capacity");
 MENU_ITEM(scpeldb,      scdist,         scclipc,        schrono,        spdbp1,         eItem,          NULL_PRM,       "Pellets database");
