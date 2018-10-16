@@ -42,26 +42,22 @@ MENU_PAR(pdb15edit,     "g",                    &pellets.pel[14].wght,  &pellets
 // Menu items                           
 //        Name          Next            Previous        Parent          Child           ItemType        ParDscr         Text
 //Menu
-MENU_ITEM(mode,         stts,           NULL_MENU,      NULL_MENU,      NULL_MENU,      eChooseFrmLst,  scrmode,        "Main screen");
-MENU_ITEM(stts,         setts,          mode,           NULL_MENU,      NULL_MENU,      eInfoTxt,       NULL_PRM,       "Statistics");
-MENU_ITEM(setts,        about,          stts,           NULL_MENU,      sclipc,         eItem,          NULL_PRM,       "Settings");
+MENU_ITEM(stts,         setts,          NULL_MENU,      NULL_MENU,      NULL_MENU,      eInfoTxt,       NULL_PRM,       "Statistics");
+MENU_ITEM(setts,        about,          stts,           NULL_MENU,      smode,          eItem,          NULL_PRM,       "Settings");
 MENU_ITEM(about,        service,        setts,          NULL_MENU,      NULL_MENU,      eInfoTxt,       NULL_PRM,       "About");
-MENU_ITEM(service,      NULL_MENU,      about,          NULL_MENU,      NULL_MENU,      eInfoTxt,       NULL_PRM,       "Service info");
+MENU_ITEM(service,      swrst,          about,          NULL_MENU,      NULL_MENU,      eInfoTxt,       NULL_PRM,       "Service info");
+MENU_ITEM(swrst,        NULL_MENU,      service,        NULL_MENU,      NULL_MENU,      eFunc,          NULL_PRM,       "Software reset");
 //Menu/Settings
-MENU_ITEM(sclipc,       schrono,        NULL_MENU,      setts,          NULL_MENU,      eParEdit,       sccedit,        "Clip capacity");
-MENU_ITEM(schrono,      sincline,       sclipc,         setts,          scdist,         eItem,          NULL_PRM,       "Chronograph");
-MENU_ITEM(sincline,     speldb,         schrono,        setts,          sibrdr,         eItem,          NULL_PRM,       "Inclinometer");
-MENU_ITEM(speldb,       spofft,         sincline,       setts,          spdbp1,         eItem,          NULL_PRM,       "Pellets database");
-MENU_ITEM(spofft,       sswrst,         speldb,         setts,          NULL_MENU,      eParEdit,       potedit,        "Power off timer");
-MENU_ITEM(sswrst,       NULL_MENU,      spofft,         setts,          NULL_MENU,      eFunc,          NULL_PRM,       "Software reset");
+MENU_ITEM(smode,        schrono,        NULL_MENU,      setts,          NULL_MENU,      eChooseFrmLst,  scrmode,        "Main screen");
+MENU_ITEM(schrono,      sincline,       smode,          setts,          scclipc,        eItem,          NULL_PRM,       "Chronograph");
+MENU_ITEM(sincline,     spofft,         schrono,        setts,          sibrdr,         eItem,          NULL_PRM,       "Inclinometer");
+MENU_ITEM(spofft,       NULL_MENU,      sincline,       setts,          NULL_MENU,      eParEdit,       potedit,        "Power off timer");
 //Menu/Settings/Chronograph
-MENU_ITEM(scdist,       scbind,         NULL_MENU,      schrono,        NULL_MENU,      eParEdit,       sdedit,         "Sensor distance");
-MENU_ITEM(scbind,       NULL_MENU,      scdist,         schrono,        NULL_MENU,      eFunc,          NULL_PRM,       "Bind");
-//Menu/Settings/Inclinometer
-MENU_ITEM(sibrdr,       siofcal,        NULL_MENU,      sincline,       NULL_MENU,      eParEdit,       rgbedit,        "Roll graph border");
-MENU_ITEM(siofcal,      sigacal,        sibrdr,         sincline,       NULL_MENU,      eFunc,          NULL_PRM,       "Offset calibration");
-MENU_ITEM(sigacal,      NULL_MENU,      siofcal,        sincline,       NULL_MENU,      eFunc,          NULL_PRM,       "Gain calibration");
-//Menu/Settings/Pellets database
+MENU_ITEM(scclipc,      scpeldb,        NULL_MENU,      schrono,        NULL_MENU,      eParEdit,       sccedit,        "Clip capacity");
+MENU_ITEM(scpeldb,      scdist,         scclipc,        schrono,        spdbp1,         eItem,          NULL_PRM,       "Pellets database");
+MENU_ITEM(scdist,       scbind,         scpeldb,        schrono,        NULL_MENU,      eParEdit,       sdedit,         "Sensor distance");
+MENU_ITEM(scbind,       NULL_MENU,      scdist,         schrono,        NULL_MENU,      eFunc,          NULL_PRM,       "Bind chronograph");
+//Menu/Settings/Chronograph/Pellets database
 MENU_ITEM(spdbp1,       spdbp2,         NULL_MENU,      speldb,         NULL_MENU,      eParTxtEdit,    pdb1edit,       pellets.pel[0].name);
 MENU_ITEM(spdbp2,       spdbp3,         spdbp1,         speldb,         NULL_MENU,      eParTxtEdit,    pdb2edit,       pellets.pel[1].name);
 MENU_ITEM(spdbp3,       spdbp4,         spdbp2,         speldb,         NULL_MENU,      eParTxtEdit,    pdb3edit,       pellets.pel[2].name);
@@ -77,6 +73,10 @@ MENU_ITEM(spdbp12,      spdbp13,        spdbp11,        speldb,         NULL_MEN
 MENU_ITEM(spdbp13,      spdbp14,        spdbp12,        speldb,         NULL_MENU,      eParTxtEdit,    pdb13edit,      pellets.pel[12].name);
 MENU_ITEM(spdbp14,      spdbp15,        spdbp13,        speldb,         NULL_MENU,      eParTxtEdit,    pdb14edit,      pellets.pel[13].name);
 MENU_ITEM(spdbp15,      NULL_MENU,      spdbp14,        speldb,         NULL_MENU,      eParTxtEdit,    pdb15edit,      pellets.pel[14].name);
+//Menu/Settings/Inclinometer
+MENU_ITEM(sibrdr,       siofcal,        NULL_MENU,      sincline,       NULL_MENU,      eParEdit,       rgbedit,        "Roll graph border");
+MENU_ITEM(siofcal,      sigacal,        sibrdr,         sincline,       NULL_MENU,      eFunc,          NULL_PRM,       "Offset calibration");
+MENU_ITEM(sigacal,      NULL_MENU,      siofcal,        sincline,       NULL_MENU,      eFunc,          NULL_PRM,       "Gain calibration");
 
 #endif //menuItems_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/
