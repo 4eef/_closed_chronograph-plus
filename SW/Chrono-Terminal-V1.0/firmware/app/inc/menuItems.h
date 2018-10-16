@@ -58,21 +58,21 @@ MENU_ITEM(scpeldb,      scdist,         scclipc,        schrono,        spdbp1, 
 MENU_ITEM(scdist,       scbind,         scpeldb,        schrono,        NULL_MENU,      eParEdit,       sdedit,         "Sensor distance");
 MENU_ITEM(scbind,       NULL_MENU,      scdist,         schrono,        NULL_MENU,      eFunc,          NULL_PRM,       "Bind chronograph");
 //Menu/Settings/Chronograph/Pellets database
-MENU_ITEM(spdbp1,       spdbp2,         NULL_MENU,      speldb,         NULL_MENU,      eParTxtEdit,    pdb1edit,       pellets.pel[0].name);
-MENU_ITEM(spdbp2,       spdbp3,         spdbp1,         speldb,         NULL_MENU,      eParTxtEdit,    pdb2edit,       pellets.pel[1].name);
-MENU_ITEM(spdbp3,       spdbp4,         spdbp2,         speldb,         NULL_MENU,      eParTxtEdit,    pdb3edit,       pellets.pel[2].name);
-MENU_ITEM(spdbp4,       spdbp5,         spdbp3,         speldb,         NULL_MENU,      eParTxtEdit,    pdb4edit,       pellets.pel[3].name);
-MENU_ITEM(spdbp5,       spdbp6,         spdbp4,         speldb,         NULL_MENU,      eParTxtEdit,    pdb5edit,       pellets.pel[4].name);
-MENU_ITEM(spdbp6,       spdbp7,         spdbp5,         speldb,         NULL_MENU,      eParTxtEdit,    pdb6edit,       pellets.pel[5].name);
-MENU_ITEM(spdbp7,       spdbp8,         spdbp6,         speldb,         NULL_MENU,      eParTxtEdit,    pdb7edit,       pellets.pel[6].name);
-MENU_ITEM(spdbp8,       spdbp9,         spdbp7,         speldb,         NULL_MENU,      eParTxtEdit,    pdb8edit,       pellets.pel[7].name);
-MENU_ITEM(spdbp9,       spdbp10,        spdbp8,         speldb,         NULL_MENU,      eParTxtEdit,    pdb9edit,       pellets.pel[8].name);
-MENU_ITEM(spdbp10,      spdbp11,        spdbp9,         speldb,         NULL_MENU,      eParTxtEdit,    pdb10edit,      pellets.pel[9].name);
-MENU_ITEM(spdbp11,      spdbp12,        spdbp10,        speldb,         NULL_MENU,      eParTxtEdit,    pdb11edit,      pellets.pel[10].name);
-MENU_ITEM(spdbp12,      spdbp13,        spdbp11,        speldb,         NULL_MENU,      eParTxtEdit,    pdb12edit,      pellets.pel[11].name);
-MENU_ITEM(spdbp13,      spdbp14,        spdbp12,        speldb,         NULL_MENU,      eParTxtEdit,    pdb13edit,      pellets.pel[12].name);
-MENU_ITEM(spdbp14,      spdbp15,        spdbp13,        speldb,         NULL_MENU,      eParTxtEdit,    pdb14edit,      pellets.pel[13].name);
-MENU_ITEM(spdbp15,      NULL_MENU,      spdbp14,        speldb,         NULL_MENU,      eParTxtEdit,    pdb15edit,      pellets.pel[14].name);
+MENU_ITEM(spdbp1,       spdbp2,         NULL_MENU,      scpeldb,        NULL_MENU,      eParTxtEdit,    pdb1edit,       pellets.pel[0].name);
+MENU_ITEM(spdbp2,       spdbp3,         spdbp1,         scpeldb,        NULL_MENU,      eParTxtEdit,    pdb2edit,       pellets.pel[1].name);
+MENU_ITEM(spdbp3,       spdbp4,         spdbp2,         scpeldb,        NULL_MENU,      eParTxtEdit,    pdb3edit,       pellets.pel[2].name);
+MENU_ITEM(spdbp4,       spdbp5,         spdbp3,         scpeldb,        NULL_MENU,      eParTxtEdit,    pdb4edit,       pellets.pel[3].name);
+MENU_ITEM(spdbp5,       spdbp6,         spdbp4,         scpeldb,        NULL_MENU,      eParTxtEdit,    pdb5edit,       pellets.pel[4].name);
+MENU_ITEM(spdbp6,       spdbp7,         spdbp5,         scpeldb,        NULL_MENU,      eParTxtEdit,    pdb6edit,       pellets.pel[5].name);
+MENU_ITEM(spdbp7,       spdbp8,         spdbp6,         scpeldb,        NULL_MENU,      eParTxtEdit,    pdb7edit,       pellets.pel[6].name);
+MENU_ITEM(spdbp8,       spdbp9,         spdbp7,         scpeldb,        NULL_MENU,      eParTxtEdit,    pdb8edit,       pellets.pel[7].name);
+MENU_ITEM(spdbp9,       spdbp10,        spdbp8,         scpeldb,        NULL_MENU,      eParTxtEdit,    pdb9edit,       pellets.pel[8].name);
+MENU_ITEM(spdbp10,      spdbp11,        spdbp9,         scpeldb,        NULL_MENU,      eParTxtEdit,    pdb10edit,      pellets.pel[9].name);
+MENU_ITEM(spdbp11,      spdbp12,        spdbp10,        scpeldb,        NULL_MENU,      eParTxtEdit,    pdb11edit,      pellets.pel[10].name);
+MENU_ITEM(spdbp12,      spdbp13,        spdbp11,        scpeldb,        NULL_MENU,      eParTxtEdit,    pdb12edit,      pellets.pel[11].name);
+MENU_ITEM(spdbp13,      spdbp14,        spdbp12,        scpeldb,        NULL_MENU,      eParTxtEdit,    pdb13edit,      pellets.pel[12].name);
+MENU_ITEM(spdbp14,      spdbp15,        spdbp13,        scpeldb,        NULL_MENU,      eParTxtEdit,    pdb14edit,      pellets.pel[13].name);
+MENU_ITEM(spdbp15,      NULL_MENU,      spdbp14,        scpeldb,        NULL_MENU,      eParTxtEdit,    pdb15edit,      pellets.pel[14].name);
 //Menu/Settings/Inclinometer
 MENU_ITEM(sibrdr,       siofcal,        NULL_MENU,      sincline,       NULL_MENU,      eParEdit,       rgbedit,        "Roll graph border");
 MENU_ITEM(siofcal,      sigacal,        sibrdr,         sincline,       NULL_MENU,      eFunc,          NULL_PRM,       "Offset calibration");
