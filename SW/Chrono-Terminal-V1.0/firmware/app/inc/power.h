@@ -19,7 +19,6 @@
 #include "lis3.h"
 #include "i2c.h"
 #include "buttons.h"
-#include "MicroMenu.h"
 
 /*!****************************************************************************
 * User define
@@ -56,7 +55,8 @@ typedef struct{
 /*!****************************************************************************
 * Prototypes for the functions
 */
-void powerSw(void);
+void powerOn(void);
+void powerOff(void);
 void powerTimRst(void);
 void initPeriphs(void);
 void stopModeConfig(void);

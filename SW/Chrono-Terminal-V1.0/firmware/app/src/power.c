@@ -20,8 +20,6 @@ power_type                      power;
 
 /*!****************************************************************************
 * @brief    Cancel button pressed during Stop mode
-* @param    
-* @retval   
 */
 __irq void EXTI4_15_IRQHandler(void){
     if(EXTI->PR & EXTI_PR_PR7){
@@ -33,8 +31,6 @@ __irq void EXTI4_15_IRQHandler(void){
 
 /*!****************************************************************************
 * @brief    Stop mode setting routine
-* @param    
-* @retval   
 */
 void stopModeConfig(void){
     //Stop mode enable & config
@@ -53,35 +49,34 @@ void stopModeConfig(void){
 }
 
 /*!****************************************************************************
-* @brief    Power switch procedure
-* @param    
-* @retval   
+* @brief    Power on procedure
 */
-void powerSw(void){
-    if(menu.menuMode == eOff){
-        power.pwrMode = ePwrStop;
-        power.uptimeCurr = 0;
-        buttons.okLck = BUTTON_ENABLE;
-        buttons.clLck = BUTTON_ENABLE;
-        ug2864off();
-        deInitIR();
-        adcDeinit();
-        //deinitI2C1();
-        stopModeConfig();
-        __WFI();
-        adcInit();
-    }else{
-        power.pwrMode = ePwrRun;
-        //initI2C1();
-        ug2864on();
-        initIRConfig();
-    }
+void powerOn(void){
+    power.pwrMode = ePwrRun;
+    //initI2C1();
+    ug2864on();
+    initIRConfig();
+}
+
+/*!****************************************************************************
+* @brief    Power off procedure
+*/
+void powerOff(void){
+    power.pwrMode = ePwrStop;
+    power.uptimeCurr = 0;
+    buttons.okLck = BUTTON_ENABLE;
+    buttons.clLck = BUTTON_ENABLE;
+    ug2864off();
+    deInitIR();
+    adcDeinit();
+    //deinitI2C1();
+    stopModeConfig();
+    __WFI();
+    adcInit();
 }
 
 /*!****************************************************************************
 * @brief    Power timer reset
-* @param    
-* @retval   
 */
 void powerTimRst(void){
     power.uptimeCurr = 0;
@@ -89,8 +84,6 @@ void powerTimRst(void){
 
 /*!****************************************************************************
 * @brief    Peripherals initialization sequence
-* @param    
-* @retval   
 */
 void initPeriphs(void){
     initClocks();

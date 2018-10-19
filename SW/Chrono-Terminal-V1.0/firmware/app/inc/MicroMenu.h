@@ -134,9 +134,13 @@ typedef struct{
     menuItems_type      menuItems;
     eMenuMode_type      menuMode;
     eMenuMode_type      menuPrevMode;
-    void (*pOkLngFunc)(void);
-    void (*pPwrSwFunc)(void);
-    void (*pPwrTimRstFunc)(void);
+    void (*pBackBtnFunc)(void);
+    void (*pUpBtnFunc)(void);
+    void (*pDownBtnFunc)(void);
+    void (*pOkBtnFunc)(void);
+    void (*pAnyBtnFunc)(void);
+    void (*pPwrOnFunc)(void);
+    void (*pPwrOffFunc)(void);
 }menu_type;
 
 typedef const struct menuPrmtr{

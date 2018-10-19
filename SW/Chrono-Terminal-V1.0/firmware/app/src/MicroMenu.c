@@ -32,7 +32,7 @@ TO DO List:
 * @brief    
 */
 void Menu_run(eNavEvent_type navEvent){
-    if((navEvent != eWait) && (menu.pPwrTimRstFunc != NULL)) menu.pPwrTimRstFunc();
+    if((navEvent != eWait) && (menu.pAnyBtnFunc != NULL)) menu.pAnyBtnFunc();
     switch(menu.menuMode){
         case eOff:
             Menu_navPwrOff(navEvent);
@@ -66,10 +66,10 @@ void Menu_run(eNavEvent_type navEvent){
 void Menu_pwrSw(ePwrState_type ePwrState){
     if(ePwrState == ePwrOff){
         menu.menuMode = eOff;
-        if(menu.pPwrSwFunc != NULL) menu.pPwrSwFunc();
+        if(menu.pPwrOffFunc != NULL) menu.pPwrOffFunc();
     }else{
         menu.menuMode = eDisplay;
-        if(menu.pPwrSwFunc != NULL) menu.pPwrSwFunc();
+        if(menu.pPwrOnFunc != NULL) menu.pPwrOnFunc();
     }
 }
 
@@ -106,15 +106,21 @@ void Menu_navDisp(eNavEvent_type navEvent){
         case eWait:
             break;
         case eBack:
+            if(menu.pBackBtnFunc != NULL) menu.pBackBtnFunc();
             break;
         case eBackLng:
             Menu_pwrSw(ePwrOff);
             break;
         case eUp:
+            if(menu.pUpBtnFunc != NULL) menu.pUpBtnFunc();
             break;
         case eDown:
+            if(menu.pDownBtnFunc != NULL) menu.pDownBtnFunc();
             break;
         case eOk:
+            if(menu.pOkBtnFunc != NULL) menu.pOkBtnFunc();
+            break;
+        case eOkLng:
             menu.menuMode = eMenu;
             //Go to the root
             while(MENU_PARENT != &NULL_MENU){
@@ -124,9 +130,6 @@ void Menu_navDisp(eNavEvent_type navEvent){
             while(MENU_PREVIOUS != &NULL_MENU){
                 Menu_Navigate(MENU_PREVIOUS);
             }
-            break;
-        case eOkLng:
-            if(menu.pOkLngFunc != NULL) menu.pOkLngFunc();
             break;
         default:
             break;
