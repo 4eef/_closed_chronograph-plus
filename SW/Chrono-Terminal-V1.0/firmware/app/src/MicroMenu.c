@@ -19,7 +19,7 @@ menu_type                   menu;
 menuItem_type const NULL_MENU = {0};                                            // Empty menu item
 menuPrmtr_type const NULL_PRM = {0};                                            // Empty parameter description
 
-static menuItem_type* CurrentMenuItem = &NULL_MENU;
+static menuItem_type* currMenuItem = &NULL_MENU;
 
 /*
 TO DO List:
@@ -61,37 +61,12 @@ void Menu_run(eNavEvent_type navEvent){
 }
 
 /*!****************************************************************************
-* @brief    Separate menu power switch and power module!!!
-*/
-void Menu_pwrSw(ePwrState_type ePwrState){
-    if(ePwrState == ePwrOff){
-        menu.menuMode = eOff;
-        if(menu.pPwrOffFunc != NULL) menu.pPwrOffFunc();
-    }else{
-        menu.menuMode = eDisplay;
-        if(menu.pPwrOnFunc != NULL) menu.pPwrOnFunc();
-    }
-}
-
-/*!****************************************************************************
 * @brief    
 */
 void Menu_navPwrOff(eNavEvent_type navEvent){
     switch(navEvent){
-        case eWait:
-            break;
-        case eBack:
-            break;
         case eBackLng:
             Menu_pwrSw(ePwrOn);
-            break;
-        case eUp:
-            break;
-        case eDown:
-            break;
-        case eOk:
-            break;
-        case eOkLng:
             break;
         default:
             break;
@@ -179,7 +154,14 @@ void Menu_navMenu(eNavEvent_type navEvent){
 /*!****************************************************************************
 * @brief    
 */
-void Menu_putInfoWnd(void){
+void Menu_pwrSw(ePwrState_type ePwrState){
+    if(ePwrState == ePwrOff){
+        menu.menuMode = eOff;
+        if(menu.pPwrOffFunc != NULL) menu.pPwrOffFunc();
+    }else{
+        menu.menuMode = eDisplay;
+        if(menu.pPwrOnFunc != NULL) menu.pPwrOnFunc();
+    }
 }
 
 /*!****************************************************************************
@@ -196,15 +178,12 @@ void Menu_setParEdit(eNavEvent_type navEvent){
                     Menu_putParWnd(PAR_DSCR->pPar1, PAR_DSCR->pPar2, PAR_DSCR->pPar3,
                                    (eParFract_type)PAR_DSCR->constPar1, PAR_DSCR->constPar2, PAR_DSCR->constPar3);
                     break;
-                case eTxtEdit:
-                    break;
                 case eParTxtEdit:
                     Menu_putParWnd(PAR_DSCR->pPar1, PAR_DSCR->pPar2, NULL,
                                    (eParFract_type)PAR_DSCR->constPar1, PAR_DSCR->constPar2, PAR_DSCR->constPar3);
                     break;
                 case eInfoTxt:
-                    break;
-                case eFunc:
+                    Menu_putInfoWnd();
                     break;
                 default:
                     break;
@@ -212,18 +191,18 @@ void Menu_setParEdit(eNavEvent_type navEvent){
             break;
         case eOkLng:
             switch(ITEM_TYPE){
-                case eChooseFrmLst:
-                    break;
-                case eParEdit:
-                    break;
                 case eTxtEdit:
+                    Menu_putTxtEditWnd(PAR_DSCR->pPar3);
                     break;
                 case eParTxtEdit:
                     Menu_putTxtEditWnd(PAR_DSCR->pPar3);
                     break;
-                case eInfoTxt:
-                    break;
                 case eFunc:
+                    if(PAR_DSCR->pFunc != NULL){
+                        PAR_DSCR->pFunc();
+                    }else{
+                        Menu_putMessage("No such function", MSG_CNT);
+                    }
                     break;
                 default:
                     break;
@@ -231,6 +210,28 @@ void Menu_setParEdit(eNavEvent_type navEvent){
             break;
         default:
             break;
+    }
+}
+
+/*!****************************************************************************
+* @brief    
+*/
+//Принимаем указатель на начало строки
+//Разделитель строк - спецсимвол \n
+//Длина строки ограничивается константой MENU_STR_LEN_MAX, строки делятся по пробелу
+void Menu_putInfoWnd(void){
+    //Set up menu mode
+    menu.menuPrevMode = menu.menuMode;
+    menu.menuMode = eInfoWnd;
+    //Prepare data
+    memset(menu.infoWindow.text, 0, MENU_STR_LEN_MAX * MENU_ITEMS_QTY_MAX);
+    if(PAR_DSCR->pFunc != NULL) PAR_DSCR->pFunc();
+    //Copy parameters
+    if(strlen(menu.infoWindow.text) != 0){
+        //Parse the string
+    }else{
+        Menu_putMessage("Strint is empty", MSG_CNT);
+        menu.menuMode = menu.menuPrevMode;
     }
 }
 
@@ -520,7 +521,7 @@ void Menu_putMessage(char *newStr, uint8_t newCnt){
 * @brief    Retrieves the currently selected meny item
 */
 menuItem_type* Menu_GetCurrentMenu(void){
-	return CurrentMenuItem;
+	return currMenuItem;
 }
 
 /*!****************************************************************************
@@ -535,7 +536,7 @@ void Menu_Navigate(menuItem_type* const NewMenu){
     //Clear offset if passed to other level
     if((NewMenu == MENU_CHILD) || (NewMenu == MENU_PARENT)) menu.menuItems.wndOffs = 0;
     //Save new menu item
-    tmpItem = CurrentMenuItem = NewMenu;
+    tmpItem = currMenuItem = NewMenu;
     //Parse menu list parameters
     //Menu title
     if(tmpItem->parent != &NULL_MENU){

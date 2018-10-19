@@ -25,7 +25,6 @@
 #define MENU_INTERVAL           10
 #define MENU_START              12
 #define MENU_STR_LEN_MAX        19
-#define MENU_MSG_LEN_MAX        240
 #define MENU_ITEMS_QTY_MAX      20
 #define TXT_PAR_MIN_VAL         0
 #define MSG_FOR_TIMER           2
@@ -112,9 +111,10 @@ typedef struct{
 
 typedef struct{
     char            title[MENU_STR_LEN_MAX];
-    char            string[MENU_MSG_LEN_MAX];
+    char            string[MENU_STR_LEN_MAX][MENU_ITEMS_QTY_MAX];
+    char            text[MENU_STR_LEN_MAX * MENU_ITEMS_QTY_MAX];
+    uint8_t         currStr;
     uint8_t         totStrs;
-    uint8_t         wndOffs;
 }infoWnd_type;
 
 typedef struct{
@@ -173,7 +173,6 @@ extern menuPrmtr_type const NULL_PRM;
 /*!****************************************************************************
 * Macro functions
 */
-// Creates a new menu item entry with the specified links and callbacks
 #define MENU_ITEM(name, next, previous, parent, child, itemType, parDscr, text) \
     extern menuItem_type const next;      \
     extern menuItem_type const previous;  \
@@ -181,7 +180,7 @@ extern menuPrmtr_type const NULL_PRM;
     extern menuItem_type const child;     \
     extern menuPrmtr_type const parDscr;     \
     menuItem_type const name = {&next, &previous, &parent, &child, itemType, &parDscr, text}
-    
+
 #define MENU_PAR(name, pPar1, pPar2, pPar3, constPar1, constPar2, constPar3, pFunc) \
     menuPrmtr_type const name = {pPar1, pPar2, pPar3, constPar1, constPar2, constPar3, pFunc}
     
@@ -203,6 +202,7 @@ void Menu_parWndRun(eNavEvent_type navEvent);
 void Menu_putParWnd(char *parUnits, uint16_t *pParOrigin, uint16_t *pParCopy,
                     eParFract_type parFract, int16_t brdMax, int16_t brdMin);
 void Menu_infoWndRun(eNavEvent_type navEvent);
+void Menu_putInfoWnd(void);
 void Menu_txtEditWndRun(eNavEvent_type navEvent);
 void Menu_putTxtEditWnd(char *pStrOrig);
 void Menu_txtParSelWndRun(eNavEvent_type navEvent);

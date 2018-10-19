@@ -18,11 +18,15 @@ extern power_type           power;
 
 // Menu parameter items
 //       Name           Par1                    Par2                    Par3                    ConstPar1               ConstPar2               ConstPar3               Function
-MENU_PAR(scrmode,       sysPars.modeTxts[0],    &sysPars.dispMode,      NULL,                   SCR_MODES_NO,           NULL,                   NULL,                   NULL);
-MENU_PAR(sccedit,       "pcs",                  &chron.clipCapacity,    &chron.clipCurrent,     eNoFract,               PELLET_MAX,             PELLET_MIN,             NULL);
-MENU_PAR(potedit,       "min",                  &power.uptimeSet,       NULL,                   eNoFract,               POWER_RUN_MAX,          POWER_RUN_MIN,          NULL);
-MENU_PAR(sdedit,        "mm",                   &chron.sensDist,        NULL,                   eTenths,                CHR_DIST_MAX,           CHR_DIST_MIN,           NULL);
-MENU_PAR(rgbedit,       "deg",                  &meas.accRollBorder,    NULL,                   eNoFract,               INC_BORDER_MAX,         INC_BORDER_MIN,         NULL);
+MENU_PAR(pstats,        NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL);
+MENU_PAR(pabout,        NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL);
+MENU_PAR(psinfo,        NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL);
+MENU_PAR(pmode,         sysPars.modeTxts[0],    &sysPars.dispMode,      NULL,                   SCR_MODES_NO,           NULL,                   NULL,                   NULL);
+MENU_PAR(ppot,          "min",                  &power.uptimeSet,       NULL,                   eNoFract,               POWER_RUN_MAX,          POWER_RUN_MIN,          NULL);
+MENU_PAR(pswres,        NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL);
+MENU_PAR(pcc,           "pcs",                  &chron.clipCapacity,    &chron.clipCurrent,     eNoFract,               PELLET_MAX,             PELLET_MIN,             NULL);
+MENU_PAR(psd,           "mm",                   &chron.sensDist,        NULL,                   eTenths,                CHR_DIST_MAX,           CHR_DIST_MIN,           NULL);
+MENU_PAR(pchrbnd,       NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL);
 MENU_PAR(pdb1edit,      "g",                    &pellets.pel[0].wght,   &pellets.pel[0].name,   eHundreds,              PELLET_WGH_MG10_MAX,    PELLET_WGH_MG10_MIN,    NULL);
 MENU_PAR(pdb2edit,      "g",                    &pellets.pel[1].wght,   &pellets.pel[1].name,   eHundreds,              PELLET_WGH_MG10_MAX,    PELLET_WGH_MG10_MIN,    NULL);
 MENU_PAR(pdb3edit,      "g",                    &pellets.pel[2].wght,   &pellets.pel[2].name,   eHundreds,              PELLET_WGH_MG10_MAX,    PELLET_WGH_MG10_MIN,    NULL);
@@ -38,25 +42,28 @@ MENU_PAR(pdb12edit,     "g",                    &pellets.pel[11].wght,  &pellets
 MENU_PAR(pdb13edit,     "g",                    &pellets.pel[12].wght,  &pellets.pel[12].name,  eHundreds,              PELLET_WGH_MG10_MAX,    PELLET_WGH_MG10_MIN,    NULL);
 MENU_PAR(pdb14edit,     "g",                    &pellets.pel[13].wght,  &pellets.pel[13].name,  eHundreds,              PELLET_WGH_MG10_MAX,    PELLET_WGH_MG10_MIN,    NULL);
 MENU_PAR(pdb15edit,     "g",                    &pellets.pel[14].wght,  &pellets.pel[14].name,  eHundreds,              PELLET_WGH_MG10_MAX,    PELLET_WGH_MG10_MIN,    NULL);
+MENU_PAR(prgb,          "deg",                  &meas.accRollBorder,    NULL,                   eNoFract,               INC_BORDER_MAX,         INC_BORDER_MIN,         NULL);
+MENU_PAR(pioc,          NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL);
+MENU_PAR(pigc,          NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL);
 
 // Menu items                           
 //        Name          Next            Previous        Parent          Child           ItemType        ParDscr         Text
 //Menu
-MENU_ITEM(stts,         setts,          NULL_MENU,      NULL_MENU,      NULL_MENU,      eInfoTxt,       NULL_PRM,       "Statistics");
-MENU_ITEM(setts,        about,          stts,           NULL_MENU,      smode,          eItem,          NULL_PRM,       "Settings");
-MENU_ITEM(about,        service,        setts,          NULL_MENU,      NULL_MENU,      eInfoTxt,       NULL_PRM,       "About");
-MENU_ITEM(service,      NULL_MENU,      about,          NULL_MENU,      NULL_MENU,      eInfoTxt,       NULL_PRM,       "Service info");
+MENU_ITEM(rstats,       rsetts,         NULL_MENU,      NULL_MENU,      NULL_MENU,      eInfoTxt,       pstats,         "Statistics");
+MENU_ITEM(rsetts,       rabout,         rstats,         NULL_MENU,      smode,          eItem,          NULL_PRM,       "Settings");
+MENU_ITEM(rabout,       rservice,       rsetts,         NULL_MENU,      NULL_MENU,      eInfoTxt,       pabout,         "About");
+MENU_ITEM(rservice,     NULL_MENU,      rabout,         NULL_MENU,      NULL_MENU,      eInfoTxt,       psinfo,         "Service info");
 //Menu/Settings
-MENU_ITEM(smode,        schrono,        NULL_MENU,      setts,          NULL_MENU,      eChooseFrmLst,  scrmode,        "Main screen");
-MENU_ITEM(schrono,      sincline,       smode,          setts,          scclipc,        eItem,          NULL_PRM,       "Chronograph");
-MENU_ITEM(sincline,     spofft,         schrono,        setts,          sibrdr,         eItem,          NULL_PRM,       "Inclinometer");
-MENU_ITEM(spofft,       swrst,          sincline,       setts,          NULL_MENU,      eParEdit,       potedit,        "Power off timer");
-MENU_ITEM(swrst,        NULL_MENU,      spofft,         setts,          NULL_MENU,      eFunc,          NULL_PRM,       "Software reset");
+MENU_ITEM(smode,        schrono,        NULL_MENU,      rsetts,         NULL_MENU,      eChooseFrmLst,  pmode,          "Main screen");
+MENU_ITEM(schrono,      sincline,       smode,          rsetts,         scclipc,        eItem,          NULL_PRM,       "Chronograph");
+MENU_ITEM(sincline,     spofft,         schrono,        rsetts,         sibrdr,         eItem,          NULL_PRM,       "Inclinometer");
+MENU_ITEM(spofft,       swrst,          sincline,       rsetts,         NULL_MENU,      eParEdit,       ppot,           "Power off timer");
+MENU_ITEM(swrst,        NULL_MENU,      spofft,         rsetts,         NULL_MENU,      eFunc,          pswres,         "Software reset");
 //Menu/Settings/Chronograph
-MENU_ITEM(scclipc,      scpeldb,        NULL_MENU,      schrono,        NULL_MENU,      eParEdit,       sccedit,        "Clip capacity");
+MENU_ITEM(scclipc,      scpeldb,        NULL_MENU,      schrono,        NULL_MENU,      eParEdit,       pcc,            "Clip capacity");
 MENU_ITEM(scpeldb,      scdist,         scclipc,        schrono,        spdbp1,         eItem,          NULL_PRM,       "Pellets database");
-MENU_ITEM(scdist,       scbind,         scpeldb,        schrono,        NULL_MENU,      eParEdit,       sdedit,         "Sensor distance");
-MENU_ITEM(scbind,       NULL_MENU,      scdist,         schrono,        NULL_MENU,      eFunc,          NULL_PRM,       "Bind chronograph");
+MENU_ITEM(scdist,       scbind,         scpeldb,        schrono,        NULL_MENU,      eParEdit,       psd,            "Sensor distance");
+MENU_ITEM(scbind,       NULL_MENU,      scdist,         schrono,        NULL_MENU,      eFunc,          pchrbnd,        "Bind chronograph");
 //Menu/Settings/Chronograph/Pellets database
 MENU_ITEM(spdbp1,       spdbp2,         NULL_MENU,      scpeldb,        NULL_MENU,      eParTxtEdit,    pdb1edit,       pellets.pel[0].name);
 MENU_ITEM(spdbp2,       spdbp3,         spdbp1,         scpeldb,        NULL_MENU,      eParTxtEdit,    pdb2edit,       pellets.pel[1].name);
@@ -74,9 +81,9 @@ MENU_ITEM(spdbp13,      spdbp14,        spdbp12,        scpeldb,        NULL_MEN
 MENU_ITEM(spdbp14,      spdbp15,        spdbp13,        scpeldb,        NULL_MENU,      eParTxtEdit,    pdb14edit,      pellets.pel[13].name);
 MENU_ITEM(spdbp15,      NULL_MENU,      spdbp14,        scpeldb,        NULL_MENU,      eParTxtEdit,    pdb15edit,      pellets.pel[14].name);
 //Menu/Settings/Inclinometer
-MENU_ITEM(sibrdr,       siofcal,        NULL_MENU,      sincline,       NULL_MENU,      eParEdit,       rgbedit,        "Roll graph border");
-MENU_ITEM(siofcal,      sigacal,        sibrdr,         sincline,       NULL_MENU,      eFunc,          NULL_PRM,       "Offset calibration");
-MENU_ITEM(sigacal,      NULL_MENU,      siofcal,        sincline,       NULL_MENU,      eFunc,          NULL_PRM,       "Gain calibration");
+MENU_ITEM(sibrdr,       siofcal,        NULL_MENU,      sincline,       NULL_MENU,      eParEdit,       prgb,           "Roll graph border");
+MENU_ITEM(siofcal,      sigacal,        sibrdr,         sincline,       NULL_MENU,      eFunc,          pioc,           "Offset calibration");
+MENU_ITEM(sigacal,      NULL_MENU,      siofcal,        sincline,       NULL_MENU,      eFunc,          pigc,           "Gain calibration");
 
 #endif //menuItems_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

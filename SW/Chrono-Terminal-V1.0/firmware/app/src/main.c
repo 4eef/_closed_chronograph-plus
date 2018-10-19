@@ -81,7 +81,7 @@ void main(void){
     menu.pPwrOnFunc = &powerOn;
     menu.pPwrOffFunc = &powerOff;
     //Navigate to an absolute menu item entry
-    Menu_Navigate(&stts);
+    Menu_Navigate(&rstats);
     //Initialize hardware
     initPeriphs();
     Menu_pwrSw(ePwrOff);//ePwrOff/ePwrOn
