@@ -15,7 +15,6 @@
 * MEMORY
 */
 menu_type                   menu;
-extern power_type           power;
 
 menuItem_type const NULL_MENU = {0};                                            // Empty menu item
 menuPrmtr_type const NULL_PRM = {0};                                            // Empty parameter description
@@ -24,20 +23,16 @@ static menuItem_type* CurrentMenuItem = &NULL_MENU;
 
 /*
 TO DO List:
-1. Убрать все лишние функции, не относящиеся к модулю. Функционал меню должен быть
-ограничен внутренними функциями, обрабатывающими данные внутренних структур.
-1.1 Убрать модуль power;
-1.2 Убрать функцию сброса данных chr.
-2. Список enum navEvent сделать внутренним, но доступным извне.
-3. Реализовать функции infoWnd.
-4. Общий рефакторинг.
+1. Список enum navEvent сделать внутренним, но доступным извне.
+2. Реализовать функции infoWnd.
+* Общий рефакторинг.
 */
 
 /*!****************************************************************************
 * @brief    
 */
 void Menu_run(eNavEvent_type navEvent){
-    if(navEvent != eWait) power.uptimeCurr = 0;                                 //Reset uptime counter
+    if((navEvent != eWait) && (menu.pPwrTimRstFunc != NULL)) menu.pPwrTimRstFunc();
     switch(menu.menuMode){
         case eOff:
             Menu_navPwrOff(navEvent);
@@ -71,12 +66,10 @@ void Menu_run(eNavEvent_type navEvent){
 void Menu_pwrSw(ePwrState_type ePwrState){
     if(ePwrState == ePwrOff){
         menu.menuMode = eOff;
-        // Remove!!!
-        powerOff();
+        if(menu.pPwrSwFunc != NULL) menu.pPwrSwFunc();
     }else{
         menu.menuMode = eDisplay;
-        // Remove!!!
-        powerOn();
+        if(menu.pPwrSwFunc != NULL) menu.pPwrSwFunc();
     }
 }
 
@@ -133,8 +126,7 @@ void Menu_navDisp(eNavEvent_type navEvent){
             }
             break;
         case eOkLng:
-            // Remove!!!
-            chrSetsRst();
+            if(menu.pOkLngFunc != NULL) menu.pOkLngFunc();
             break;
         default:
             break;

@@ -72,6 +72,10 @@ void main(void){
     kalman.Q = 2;
     kalman.R = 15;
     power.uptimeSet = POWER_RUN_DEFAULT;
+    //Menu function pointers
+    menu.pOkLngFunc = &chrSetsRst;
+    menu.pPwrSwFunc = &powerSw;
+    menu.pPwrTimRstFunc = &powerTimRst;
     //Navigate to an absolute menu item entry
     Menu_Navigate(&stts);
     //Initialize hardware

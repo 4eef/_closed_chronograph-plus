@@ -53,34 +53,38 @@ void stopModeConfig(void){
 }
 
 /*!****************************************************************************
-* @brief    Power off sequence
+* @brief    Power switch procedure
 * @param    
 * @retval   
 */
-void powerOff(void){
-    power.pwrMode = ePwrStop;
-    power.uptimeCurr = 0;
-    buttons.okLck = BUTTON_ENABLE;
-    buttons.clLck = BUTTON_ENABLE;
-    ug2864off();
-    deInitIR();
-    adcDeinit();
-    //deinitI2C1();
-    stopModeConfig();
-    __WFI();
-    adcInit();
+void powerSw(void){
+    if(menu.menuMode == eOff){
+        power.pwrMode = ePwrStop;
+        power.uptimeCurr = 0;
+        buttons.okLck = BUTTON_ENABLE;
+        buttons.clLck = BUTTON_ENABLE;
+        ug2864off();
+        deInitIR();
+        adcDeinit();
+        //deinitI2C1();
+        stopModeConfig();
+        __WFI();
+        adcInit();
+    }else{
+        power.pwrMode = ePwrRun;
+        //initI2C1();
+        ug2864on();
+        initIRConfig();
+    }
 }
 
 /*!****************************************************************************
-* @brief    Power on sequence
+* @brief    Power timer reset
 * @param    
 * @retval   
 */
-void powerOn(void){
-    power.pwrMode = ePwrRun;
-    //initI2C1();
-    ug2864on();
-    initIRConfig();
+void powerTimRst(void){
+    power.uptimeCurr = 0;
 }
 
 /*!****************************************************************************

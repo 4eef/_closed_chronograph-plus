@@ -16,7 +16,6 @@
 #include "string.h"
 #include "stdio.h"
 #include "stdbool.h"
-#include "power.h"
 #include "buttons.h"
 
 /*!****************************************************************************
@@ -135,6 +134,9 @@ typedef struct{
     menuItems_type      menuItems;
     eMenuMode_type      menuMode;
     eMenuMode_type      menuPrevMode;
+    void (*pOkLngFunc)(void);
+    void (*pPwrSwFunc)(void);
+    void (*pPwrTimRstFunc)(void);
 }menu_type;
 
 typedef const struct menuPrmtr{
@@ -153,7 +155,7 @@ typedef const struct menuItem{
     const struct menuItem   *parent;    // Pointer to the parent menu item of this menu item
     const struct menuItem   *child;     // Pointer to the child menu item of this menu item
     eMenuItem_type          eItemType;  // Menu item type
-    const struct menuPrmtr  *parDscr; // Parameter description
+    const struct menuPrmtr  *parDscr;   // Parameter description
     char                    *text;      // Menu item text to pass to the menu display callback function
 }menuItem_type;
 
