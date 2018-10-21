@@ -26,6 +26,7 @@
 #define MENU_START              12
 #define MENU_STR_LEN_MAX        19
 #define MENU_ITEMS_QTY_MAX      20
+#define MENU_MSG_LEN_MAX        MENU_STR_LEN_MAX * MENU_ITEMS_QTY_MAX
 #define TXT_PAR_MIN_VAL         0
 #define MSG_FOR_TIMER           2
 #define MSG_CNT                 30
@@ -112,7 +113,7 @@ typedef struct{
 typedef struct{
     char            title[MENU_STR_LEN_MAX];
     char            string[MENU_STR_LEN_MAX][MENU_ITEMS_QTY_MAX];
-    char            text[MENU_STR_LEN_MAX * MENU_ITEMS_QTY_MAX];
+    char            text[MENU_MSG_LEN_MAX];
     uint8_t         currStr;
     uint8_t         totStrs;
 }infoWnd_type;

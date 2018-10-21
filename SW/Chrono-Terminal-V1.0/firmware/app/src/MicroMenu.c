@@ -25,6 +25,7 @@ static menuItem_type* currMenuItem = &NULL_MENU;
 TO DO List:
 1. Список enum navEvent сделать внутренним, но доступным извне.
 2. Реализовать функции infoWnd.
+3. Добавить запрос на подтверждение действия (при выполнении колбэка по событию нажатия кнопки).
 * Общий рефакторинг.
 */
 
@@ -224,13 +225,13 @@ void Menu_putInfoWnd(void){
     menu.menuPrevMode = menu.menuMode;
     menu.menuMode = eInfoWnd;
     //Prepare data
-    memset(menu.infoWindow.text, 0, MENU_STR_LEN_MAX * MENU_ITEMS_QTY_MAX);
+    memset(menu.infoWindow.text, 0, MENU_MSG_LEN_MAX);
     if(PAR_DSCR->pFunc != NULL) PAR_DSCR->pFunc();
     //Copy parameters
     if(strlen(menu.infoWindow.text) != 0){
         //Parse the string
     }else{
-        Menu_putMessage("Strint is empty", MSG_CNT);
+        Menu_putMessage("String is empty", MSG_CNT);
         menu.menuMode = menu.menuPrevMode;
     }
 }
