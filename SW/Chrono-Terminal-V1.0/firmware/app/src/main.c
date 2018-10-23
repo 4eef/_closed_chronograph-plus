@@ -76,10 +76,10 @@ void main(void){
     menu.pBackBtnFunc = NULL;
     menu.pUpBtnFunc = NULL;
     menu.pDownBtnFunc = NULL;
-    menu.pOkBtnFunc = &chrSetsRst;
-    menu.pAnyBtnFunc = &powerTimRst;
-    menu.pPwrOnFunc = &powerOn;
-    menu.pPwrOffFunc = &powerOff;
+    menu.pOkBtnFunc = chrSetsRst;
+    menu.pAnyBtnFunc = powerTimRst;
+    menu.pPwrOnFunc = powerOn;
+    menu.pPwrOffFunc = powerOff;
     //Navigate to an absolute menu item entry
     Menu_Navigate(&rstats);
     //Initialize hardware

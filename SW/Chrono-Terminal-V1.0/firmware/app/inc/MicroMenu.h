@@ -111,8 +111,9 @@ typedef struct{
 }txtEditWnd_type;
 
 typedef struct{
+    char            *pString;
+    bool            withPars;
     char            title[MENU_STR_LEN_MAX];
-    char            string[MENU_STR_LEN_MAX][MENU_ITEMS_QTY_MAX];
     char            text[MENU_MSG_LEN_MAX];
     uint8_t         currStr;
     uint8_t         totStrs;
@@ -203,7 +204,7 @@ void Menu_parWndRun(eNavEvent_type navEvent);
 void Menu_putParWnd(char *parUnits, uint16_t *pParOrigin, uint16_t *pParCopy,
                     eParFract_type parFract, int16_t brdMax, int16_t brdMin);
 void Menu_infoWndRun(eNavEvent_type navEvent);
-void Menu_putInfoWnd(void);
+void Menu_putInfoWnd(char *pString, bool withPars);
 void Menu_txtEditWndRun(eNavEvent_type navEvent);
 void Menu_putTxtEditWnd(char *pStrOrig);
 void Menu_txtParSelWndRun(eNavEvent_type navEvent);

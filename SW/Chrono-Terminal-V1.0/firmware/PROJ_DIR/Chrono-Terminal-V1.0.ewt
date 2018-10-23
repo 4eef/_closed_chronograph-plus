@@ -2341,6 +2341,9 @@
       <name>$PROJ_DIR$\..\app\src\main.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\app\src\menuFunctions.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\app\src\MicroMenu.c</name>
     </file>
     <file>

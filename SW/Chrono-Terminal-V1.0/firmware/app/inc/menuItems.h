@@ -9,6 +9,7 @@
 #define menuItems_H
 
 #include "MicroMenu.h"
+#include "menuFunctions.h"
 
 extern sysPars_type         sysPars;
 extern pellets_type         pellets;
@@ -18,15 +19,15 @@ extern power_type           power;
 
 // Menu parameter items
 //       Name           Par1                    Par2                    Par3                    ConstPar1               ConstPar2               ConstPar3               Function
-MENU_PAR(pstats,        NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL);
-MENU_PAR(pabout,        NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL);
-MENU_PAR(psinfo,        NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL);
+MENU_PAR(pstats,        NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   statsParser);
+MENU_PAR(pabout,        NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   aboutParser);
+MENU_PAR(psinfo,        NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   aboutParser);
 MENU_PAR(pmode,         sysPars.modeTxts[0],    &sysPars.dispMode,      NULL,                   SCR_MODES_NO,           NULL,                   NULL,                   NULL);
 MENU_PAR(ppot,          "min",                  &power.uptimeSet,       NULL,                   eNoFract,               POWER_RUN_MAX,          POWER_RUN_MIN,          NULL);
-MENU_PAR(pswres,        NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL);
+MENU_PAR(pswres,        NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   swResFunc);
 MENU_PAR(pcc,           "pcs",                  &chron.clipCapacity,    &chron.clipCurrent,     eNoFract,               PELLET_MAX,             PELLET_MIN,             NULL);
 MENU_PAR(psd,           "mm",                   &chron.sensDist,        NULL,                   eTenths,                CHR_DIST_MAX,           CHR_DIST_MIN,           NULL);
-MENU_PAR(pchrbnd,       NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL);
+MENU_PAR(pchrbnd,       NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   chrBindFunc);
 MENU_PAR(pdb1edit,      "g",                    &pellets.pel[0].wght,   &pellets.pel[0].name,   eHundreds,              PELLET_WGH_MG10_MAX,    PELLET_WGH_MG10_MIN,    NULL);
 MENU_PAR(pdb2edit,      "g",                    &pellets.pel[1].wght,   &pellets.pel[1].name,   eHundreds,              PELLET_WGH_MG10_MAX,    PELLET_WGH_MG10_MIN,    NULL);
 MENU_PAR(pdb3edit,      "g",                    &pellets.pel[2].wght,   &pellets.pel[2].name,   eHundreds,              PELLET_WGH_MG10_MAX,    PELLET_WGH_MG10_MIN,    NULL);
@@ -43,8 +44,8 @@ MENU_PAR(pdb13edit,     "g",                    &pellets.pel[12].wght,  &pellets
 MENU_PAR(pdb14edit,     "g",                    &pellets.pel[13].wght,  &pellets.pel[13].name,  eHundreds,              PELLET_WGH_MG10_MAX,    PELLET_WGH_MG10_MIN,    NULL);
 MENU_PAR(pdb15edit,     "g",                    &pellets.pel[14].wght,  &pellets.pel[14].name,  eHundreds,              PELLET_WGH_MG10_MAX,    PELLET_WGH_MG10_MIN,    NULL);
 MENU_PAR(prgb,          "deg",                  &meas.accRollBorder,    NULL,                   eNoFract,               INC_BORDER_MAX,         INC_BORDER_MIN,         NULL);
-MENU_PAR(pioc,          NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL);
-MENU_PAR(pigc,          NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL);
+MENU_PAR(pioc,          NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   offsCalFunc);
+MENU_PAR(pigc,          NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   gainCalFunc);
 
 // Menu items                           
 //        Name          Next            Previous        Parent          Child           ItemType        ParDscr         Text

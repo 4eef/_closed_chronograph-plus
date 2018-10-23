@@ -184,7 +184,7 @@ void Menu_setParEdit(eNavEvent_type navEvent){
                                    (eParFract_type)PAR_DSCR->constPar1, PAR_DSCR->constPar2, PAR_DSCR->constPar3);
                     break;
                 case eInfoTxt:
-                    Menu_putInfoWnd();
+                    Menu_putInfoWnd(PAR_DSCR->pPar1, PAR_DSCR->constPar1);
                     break;
                 default:
                     break;
@@ -220,20 +220,29 @@ void Menu_setParEdit(eNavEvent_type navEvent){
 //Принимаем указатель на начало строки
 //Разделитель строк - спецсимвол \n
 //Длина строки ограничивается константой MENU_STR_LEN_MAX, строки делятся по пробелу
-void Menu_putInfoWnd(void){
+void Menu_putInfoWnd(char *pString, bool withPars){
+    //Check string
+    if(pString == NULL){
+        Menu_putMessage("String ptr error", MSG_CNT);
+        return;
+    }else if(strlen(pString) >= MENU_MSG_LEN_MAX){
+        Menu_putMessage("Msg is too long", MSG_CNT);
+        return;
+    }else if(strlen(pString) == 0){
+        Menu_putMessage("String is empty", MSG_CNT);
+        return;
+    }
     //Set up menu mode
     menu.menuPrevMode = menu.menuMode;
     menu.menuMode = eInfoWnd;
+    //Copy the string
+    if(withPars == true){
+        
+    }else{
+        
+    }
     //Prepare data
     memset(menu.infoWindow.text, 0, MENU_MSG_LEN_MAX);
-    if(PAR_DSCR->pFunc != NULL) PAR_DSCR->pFunc();
-    //Copy parameters
-    if(strlen(menu.infoWindow.text) != 0){
-        //Parse the string
-    }else{
-        Menu_putMessage("String is empty", MSG_CNT);
-        menu.menuMode = menu.menuPrevMode;
-    }
 }
 
 /*!****************************************************************************
