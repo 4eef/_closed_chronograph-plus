@@ -136,14 +136,14 @@ void Menu_navMenu(eNavEvent_type navEvent){
             Menu_Navigate(MENU_NEXT);
             break;
         case eOk:
-            if((ITEM_TYPE != eItem) && (PAR_DSCR != &NULL_PRM) && (PAR_DSCR != NULL)){
+            if((MENU_ITEM_TYPE != eItem) && (MENU_PAR_DSCR != &NULL_PRM) && (MENU_PAR_DSCR != NULL)){
                 Menu_setParEdit(navEvent);
             }else if((MENU_CHILD != &NULL_MENU) && (MENU_CHILD != NULL)){
                 Menu_Navigate(MENU_CHILD);
             }
             break;
         case eOkLng:
-            if((ITEM_TYPE != eItem) && (PAR_DSCR != &NULL_PRM) && (PAR_DSCR != NULL)){
+            if((MENU_ITEM_TYPE != eItem) && (MENU_PAR_DSCR != &NULL_PRM) && (MENU_PAR_DSCR != NULL)){
                 Menu_setParEdit(navEvent);
             }
             break;
@@ -171,36 +171,36 @@ void Menu_pwrSw(ePwrState_type ePwrState){
 void Menu_setParEdit(eNavEvent_type navEvent){
     switch(navEvent){
         case eOk:
-            switch(ITEM_TYPE){
+            switch(MENU_ITEM_TYPE){
                 case eChooseFrmLst:
-                    Menu_putTxtParSelWnd(PAR_DSCR->pPar1, PAR_DSCR->pPar2, (PAR_DSCR->constPar1 - 1));
+                    Menu_putTxtParSelWnd(MENU_PAR_DSCR->pPar1, MENU_PAR_DSCR->pPar2, (MENU_PAR_DSCR->constPar1 - 1));
                     break;
                 case eParEdit:
-                    Menu_putParWnd(PAR_DSCR->pPar1, PAR_DSCR->pPar2, PAR_DSCR->pPar3,
-                                   (eParFract_type)PAR_DSCR->constPar1, PAR_DSCR->constPar2, PAR_DSCR->constPar3);
+                    Menu_putParWnd(MENU_PAR_DSCR->pPar1, MENU_PAR_DSCR->pPar2, MENU_PAR_DSCR->pPar3,
+                                   (eParFract_type)MENU_PAR_DSCR->constPar1, MENU_PAR_DSCR->constPar2, MENU_PAR_DSCR->constPar3);
                     break;
                 case eParTxtEdit:
-                    Menu_putParWnd(PAR_DSCR->pPar1, PAR_DSCR->pPar2, NULL,
-                                   (eParFract_type)PAR_DSCR->constPar1, PAR_DSCR->constPar2, PAR_DSCR->constPar3);
+                    Menu_putParWnd(MENU_PAR_DSCR->pPar1, MENU_PAR_DSCR->pPar2, NULL,
+                                   (eParFract_type)MENU_PAR_DSCR->constPar1, MENU_PAR_DSCR->constPar2, MENU_PAR_DSCR->constPar3);
                     break;
                 case eInfoTxt:
-                    Menu_putInfoWnd(PAR_DSCR->pPar1, PAR_DSCR->constPar1);
+                    Menu_putInfoWnd(MENU_PAR_DSCR->pPar1, MENU_PAR_DSCR->constPar1);
                     break;
                 default:
                     break;
             }
             break;
         case eOkLng:
-            switch(ITEM_TYPE){
+            switch(MENU_ITEM_TYPE){
                 case eTxtEdit:
-                    Menu_putTxtEditWnd(PAR_DSCR->pPar3);
+                    Menu_putTxtEditWnd(MENU_PAR_DSCR->pPar3);
                     break;
                 case eParTxtEdit:
-                    Menu_putTxtEditWnd(PAR_DSCR->pPar3);
+                    Menu_putTxtEditWnd(MENU_PAR_DSCR->pPar3);
                     break;
                 case eFunc:
-                    if(PAR_DSCR->pFunc != NULL){
-                        PAR_DSCR->pFunc();
+                    if(MENU_PAR_DSCR->pFunc != NULL){
+                        MENU_PAR_DSCR->pFunc();
                     }else{
                         Menu_putMessage("No such function", MSG_CNT);
                     }
@@ -217,11 +217,44 @@ void Menu_setParEdit(eNavEvent_type navEvent){
 /*!****************************************************************************
 * @brief    
 */
-//Принимаем указатель на начало строки
 //Разделитель строк - спецсимвол \n
-//Длина строки ограничивается константой MENU_STR_LEN_MAX, строки делятся по пробелу
+//Длина строки ограничивается константой MENU_STR_LEN_MAX, слова делятся по пробелу
+//
+//Реализация:
+//Идём по строке.
+//Если настоящий символ - терминатор - копируем всё в строчку, сохраняем итоговое
+//количество заполненных строк, прекращаем парсинг.
+//Если настоящий символ - пробел - сохраняем его порядковый номер.
+//Упираемся в константу MENU_STR_LEN_MAX - 1.
+//Если настоящий символ - пробел, либо \n - записываем все предыдущие считанные
+//данные в строчку, переходим на новую, считаем символы заново. Иначе откатываемся
+//назад, до пробела, и переходим на новую строчку с него.
+void Menu_infoWndTxtSplit(void){
+    uint8_t i, j, newLine = 0;
+    //Copy string
+    memset(menu.infoWindow.text, SYM_TERMINATOR_NO, MENU_MSG_LEN_MAX);
+    strcpy(menu.infoWindow.text, menu.infoWindow.pString);
+    //Get parameters
+    if(menu.infoWindow.withPars == true){
+        MENU_PAR_DSCR->pFunc();
+    }
+    //Split text to strings
+    for(j = 0; j <= MENU_ITEMS_QTY_MAX; j++){
+        for(i = 0; i <= MENU_STR_LEN_MAX - 1; i++){
+            if(menu.infoWindow.text[newLine + i] == SYM_TERMINATOR_NO){
+                
+            }
+            if((menu.infoWindow.text[newLine + i] == SYM_SPACE_NO) || (menu.infoWindow.text[newLine + i] == SYM_LINE_FEED)) newLine += i + 1;
+            
+        }
+    }
+}
+
+/*!****************************************************************************
+* @brief    
+*/
 void Menu_putInfoWnd(char *pString, bool withPars){
-    //Check string
+    //Check input parameters
     if(pString == NULL){
         Menu_putMessage("String ptr error", MSG_CNT);
         return;
@@ -231,36 +264,52 @@ void Menu_putInfoWnd(char *pString, bool withPars){
     }else if(strlen(pString) == 0){
         Menu_putMessage("String is empty", MSG_CNT);
         return;
+    }else if((MENU_PAR_DSCR->pFunc == NULL) && (withPars == true)){
+        Menu_putMessage("Func ptr error", MSG_CNT);
+        return;
     }
-    //Set up menu mode
+    //Set parameters
     menu.menuPrevMode = menu.menuMode;
     menu.menuMode = eInfoWnd;
-    //Copy the string
-    if(withPars == true){
-        
-    }else{
-        
-    }
-    //Prepare data
-    memset(menu.infoWindow.text, 0, MENU_MSG_LEN_MAX);
+    strcpy(menu.infoWindow.title, MENU_ITEM_TEXT);
+    menu.infoWindow.pString = pString;
+    menu.infoWindow.withPars = withPars;
+    menu.infoWindow.wndShft = 0;
+    //Fill text strings
+    Menu_infoWndTxtSplit();
 }
 
 /*!****************************************************************************
 * @brief    
 */
 void Menu_infoWndRun(eNavEvent_type navEvent){
+    //Refresh strings contents
+    if(menu.infoWindow.withPars == true) Menu_infoWndTxtSplit();
+    //Navigate
     switch(navEvent){
         case eWait:
             break;
         case eBack:
+            menu.menuMode = menu.menuPrevMode;
             break;
         case eBackLng:
             break;
         case eUp:
+            if(menu.infoWindow.totStrs > MENU_POSITIONS){
+                if(menu.infoWindow.wndShft > 0){
+                    menu.infoWindow.wndShft--;
+                }
+            }
             break;
         case eDown:
+            if(menu.infoWindow.totStrs > MENU_POSITIONS){
+                if(menu.infoWindow.wndShft < (menu.infoWindow.totStrs - MENU_POSITIONS)){
+                    menu.infoWindow.wndShft++;
+                }
+            }
             break;
         case eOk:
+            menu.menuMode = menu.menuPrevMode;
             break;
         case eOkLng:
             break;
@@ -277,7 +326,7 @@ void Menu_putTxtParSelWnd(char *pFirstPar, uint16_t *pTxtParNumOrigin, uint16_t 
     menu.menuPrevMode = menu.menuMode;
     menu.menuMode = eChooseFrmLstWnd;
     //Copy parameters
-    strcpy(menu.txtParSelWnd.title, "Choose...");
+    strcpy(menu.txtParSelWnd.title, MENU_ITEM_TEXT);
     strcpy(menu.txtParSelWnd.parText, (pFirstPar + (MENU_STR_LEN_MAX * (*pTxtParNumOrigin))));
     menu.txtParSelWnd.pFirstPar = pFirstPar;
     menu.txtParSelWnd.currTxtPar = *pTxtParNumOrigin;
@@ -339,7 +388,7 @@ void Menu_putTxtEditWnd(char *pStrOrig){
     menu.menuPrevMode = menu.menuMode;
     menu.menuMode = eTxtEditWnd;
     //Copy parameters
-    strcpy(menu.txtEditWnd.title, "Edit...");
+    strcpy(menu.txtEditWnd.title, MENU_ITEM_TEXT);
     memset(menu.txtEditWnd.string, SYM_TERMINATOR_NO, MENU_STR_LEN_MAX);
     strcpy(menu.txtEditWnd.string, pStrOrig);
     menu.txtEditWnd.pStrOrig = pStrOrig;
@@ -459,7 +508,7 @@ void Menu_putParWnd(char *parUnits, uint16_t *pParOrigin, uint16_t *pParCopy,
     menu.menuPrevMode = menu.menuMode;
     menu.menuMode = eParEditWnd;
     //Copy parameters
-    strcpy(menu.parEditWnd.title, "Set...");
+    strcpy(menu.parEditWnd.title, MENU_ITEM_TEXT);
     strcpy(menu.parEditWnd.parUnits, parUnits);
     menu.parEditWnd.pParOrigin = pParOrigin;
     menu.parEditWnd.pParCopy = pParCopy;

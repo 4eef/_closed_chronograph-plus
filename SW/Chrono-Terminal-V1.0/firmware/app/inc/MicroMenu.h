@@ -33,6 +33,7 @@
 #define MSG_CNT_LONG            60
 #define MSG_CNT_BIND            100
 #define SYM_TERMINATOR_NO       0
+#define SYM_LINE_FEED           10
 #define SYM_SPACE_NO            32
 #define SYM_POINT_NO            46
 #define SYM_ZERO_NO             48
@@ -77,65 +78,66 @@ typedef enum{
 }eMenuItem_type;
 
 typedef struct{
-    bool            show;
-    char            msgStr[MENU_STR_LEN_MAX];
-    uint8_t         msgLen;
-    uint8_t         msgCnt;
+    bool                    show;
+    char                    msgStr[MENU_STR_LEN_MAX];
+    uint8_t                 msgLen;
+    uint8_t                 msgCnt;
 }message_type;
 
 typedef struct{
-    char            title[MENU_STR_LEN_MAX];
-    char            parUnits[MENU_STR_LEN_MAX];
-    uint16_t        parValue;
-    uint16_t        parBorderMax;
-    uint16_t        parBorderMin;
-    uint16_t        *pParOrigin;
-    uint16_t        *pParCopy;
-    eParFract_type  parFract;
+    char                    title[MENU_STR_LEN_MAX];
+    char                    parUnits[MENU_STR_LEN_MAX];
+    uint16_t                parValue;
+    uint16_t                parBorderMax;
+    uint16_t                parBorderMin;
+    uint16_t                *pParOrigin;
+    uint16_t                *pParCopy;
+    eParFract_type          parFract;
 }parEditWnd_type;
 
 typedef struct{
-    char            title[MENU_STR_LEN_MAX];
-    char            *pFirstPar;
-    char            parText[MENU_STR_LEN_MAX];
-    uint16_t        currTxtPar;
-    uint16_t        *pTxtParNumOrigin;
-    uint16_t        qtyTxtPar;
+    char                    title[MENU_STR_LEN_MAX];
+    char                    *pFirstPar;
+    char                    parText[MENU_STR_LEN_MAX];
+    uint16_t                currTxtPar;
+    uint16_t                *pTxtParNumOrigin;
+    uint16_t                qtyTxtPar;
 }txtParSelWnd_type;
 
 typedef struct{
-    char            title[MENU_STR_LEN_MAX];
-    char            string[MENU_STR_LEN_MAX];
-    char            *pStrOrig;
-    uint8_t         symPos;
+    char                    title[MENU_STR_LEN_MAX];
+    char                    string[MENU_STR_LEN_MAX];
+    char                    *pStrOrig;
+    uint8_t                 symPos;
 }txtEditWnd_type;
 
 typedef struct{
-    char            *pString;
-    bool            withPars;
-    char            title[MENU_STR_LEN_MAX];
-    char            text[MENU_MSG_LEN_MAX];
-    uint8_t         currStr;
-    uint8_t         totStrs;
+    bool                    withPars;
+    char                    *pString;
+    char                    text[MENU_MSG_LEN_MAX];
+    char                    title[MENU_STR_LEN_MAX];
+    char                    strings[MENU_STR_LEN_MAX][MENU_ITEMS_QTY_MAX];
+    uint8_t                 wndShft;
+    uint8_t                 totStrs;
 }infoWnd_type;
 
 typedef struct{
-    char            parent[MENU_STR_LEN_MAX];
-    char            child[MENU_STR_LEN_MAX][MENU_ITEMS_QTY_MAX];
-    uint8_t         currItem;
-    uint8_t         totItems;
-    uint8_t         wndOffs;
+    char                    parent[MENU_STR_LEN_MAX];
+    char                    child[MENU_STR_LEN_MAX][MENU_ITEMS_QTY_MAX];
+    uint8_t                 currItem;
+    uint8_t                 totItems;
+    uint8_t                 wndOffs;
 }menuItems_type;
 
 typedef struct{
-    message_type        message;
-    parEditWnd_type     parEditWnd;
-    txtParSelWnd_type   txtParSelWnd;
-    txtEditWnd_type     txtEditWnd;
-    infoWnd_type        infoWindow;
-    menuItems_type      menuItems;
-    eMenuMode_type      menuMode;
-    eMenuMode_type      menuPrevMode;
+    message_type            message;
+    parEditWnd_type         parEditWnd;
+    txtParSelWnd_type       txtParSelWnd;
+    txtEditWnd_type         txtEditWnd;
+    infoWnd_type            infoWindow;
+    menuItems_type          menuItems;
+    eMenuMode_type          menuMode;
+    eMenuMode_type          menuPrevMode;
     void (*pBackBtnFunc)(void);
     void (*pUpBtnFunc)(void);
     void (*pDownBtnFunc)(void);
@@ -146,12 +148,12 @@ typedef struct{
 }menu_type;
 
 typedef const struct menuPrmtr{
-    void            *pPar1;
-    void            *pPar2;
-    void            *pPar3;
-    uint16_t        constPar1;
-    uint16_t        constPar2;
-    uint16_t        constPar3;
+    void                    *pPar1;
+    void                    *pPar2;
+    void                    *pPar3;
+    uint16_t                constPar1;
+    uint16_t                constPar2;
+    uint16_t                constPar3;
     void (*pFunc)(void);
 }menuPrmtr_type;
 
@@ -190,8 +192,9 @@ extern menuPrmtr_type const NULL_PRM;
 #define MENU_CHILD          Menu_GetCurrentMenu()->child
 #define MENU_NEXT           Menu_GetCurrentMenu()->next
 #define MENU_PREVIOUS       Menu_GetCurrentMenu()->previous
-#define ITEM_TYPE           Menu_GetCurrentMenu()->eItemType
-#define PAR_DSCR            Menu_GetCurrentMenu()->parDscr
+#define MENU_ITEM_TYPE      Menu_GetCurrentMenu()->eItemType
+#define MENU_PAR_DSCR       Menu_GetCurrentMenu()->parDscr
+#define MENU_ITEM_TEXT      Menu_GetCurrentMenu()->text
 
 /*!****************************************************************************
 * Prototypes for the functions
@@ -204,6 +207,7 @@ void Menu_parWndRun(eNavEvent_type navEvent);
 void Menu_putParWnd(char *parUnits, uint16_t *pParOrigin, uint16_t *pParCopy,
                     eParFract_type parFract, int16_t brdMax, int16_t brdMin);
 void Menu_infoWndRun(eNavEvent_type navEvent);
+void Menu_infoWndTxtSplit(void);
 void Menu_putInfoWnd(char *pString, bool withPars);
 void Menu_txtEditWndRun(eNavEvent_type navEvent);
 void Menu_putTxtEditWnd(char *pStrOrig);

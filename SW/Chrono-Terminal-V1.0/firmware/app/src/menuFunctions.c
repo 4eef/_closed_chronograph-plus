@@ -15,7 +15,7 @@
 extern menu_type            menu;
 
 void statsParser(void){
-    strcpy(menu.infoWindow.text, "xuy");
+    strcpy(menu.infoWindow.text, "xuy Tam /7JIaBaJI, a He ToJIbko JIuIIIb xoguJI :)");
 }
 
 void aboutParser(void){
