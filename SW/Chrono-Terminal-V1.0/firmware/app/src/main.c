@@ -136,6 +136,7 @@ void drawDisplay(void){
             ssd_putTxtEditWnd();
             break;
         case eInfoWnd:
+            ssd_putInfoTxtWnd();
             break;
         default:
             break;

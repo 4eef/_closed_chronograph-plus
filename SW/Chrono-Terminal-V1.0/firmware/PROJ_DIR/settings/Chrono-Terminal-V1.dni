@@ -120,7 +120,7 @@ TraceBufferSize=0x00000000
 TraceShowTime=0
 TraceShowTimeFreq=1000000
 [DebugChecksum]
-Checksum=15872558
+Checksum=690798959
 [CodeCoverage]
 Enabled=_ 0
 [Exceptions]
@@ -154,10 +154,6 @@ Stop=1
 [Simulator]
 Freq=10000000
 MultiCoreRunAll=1
-[struct_types]
-Fmt0=accel_type-offsetX	3	0
-Fmt1=accel_type-offsetY	3	0
-Fmt2=accel_type-offsetZ	3	0
 [Trace1]
 Enabled=0
 ShowSource=1
@@ -181,9 +177,7 @@ ShowTiming=1
 [Disassemble mode]
 mode=0
 [Breakpoints2]
-Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\app\src\MicroMenu.c}.37.5" 0 0 1 "" 0 "" 0
-Bp1=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\app\src\ug2864.c}.103.5" 0 0 1 "" 0 "" 0
-Count=2
+Count=0
 [Aliases]
 Count=0
 SuppressDialog=0

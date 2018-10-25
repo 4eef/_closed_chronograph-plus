@@ -17,38 +17,57 @@
 extern menu_type    menu;
 ssdVideoBff_type    ssdVideoBff;
 
-///*!****************************************************************************
-//* @brief    Put string and clear its previous contents
-//*/
-//void ssd_putStrClr(uint8_t x, uint8_t y, char *text, uint8_t maxLen, uint8_t fontSize){
-//    char string[STR_MAX_LEN];
-//    uint8_t i, currLen, empty;
-//    currLen = strlen(text);
-//    if((currLen > maxLen) || (maxLen > STR_MAX_LEN)) return;
-//    //Set corresponding sign number
-//    if(fontSize == FONT_6X8){
-//        empty = 7;
-//    }else{
-//        empty = 62;
-//    }
-//    //Fill string with text and empty signs
-//    for(i = 0; i < maxLen; i++){
-//        if(*text != 0){
-//            string[i] = *text;
-//            string[i+1] = 0;
-//            text++;
-//        }else{
-//            string[i] = empty;
-//            string[i+1] = 0;
+/*!****************************************************************************
+* @brief    Put text parameter select window at the center of display
+*/
+void ssd_putInfoTxtWnd(void){
+    uint8_t i, j, x, y, pos, offs, numStrs;
+    //Draw the folder
+    x = 0;
+    y = 0;
+    for(i=0; i<sizeof(menuFolder); i++){
+        for (j=0; j<8; j++){
+            if(menuFolder[i] & (1 << j)){
+                ssd_setpix(x+i, y+j, WHITE);
+            }else{
+                ssd_setpix(x+i, y+j, BLACK);
+            }
+        }
+    }
+//    if(menu.infoWindow.totStrs > MENU_POSITIONS){
+//        //Put the line
+//        x = SCROLL_LINE_X_OFF;
+//        y = SCROLL_Y_OFF;
+//        for(i = 0; i < SCROLL_LINE_LENGTH; i++){
+//            for(j = 0; j < SCROLL_LINE_WIDTH; j++){
+//                ssd_setpix((x + j), (y + i), WHITE);
+//            }
+//        }
+//        //Put scroll onto line
+//        x = SCROLL_X_OFF;
+//        offs = (menu.menuItems.currItem-1)*(SCROLL_LINE_LENGTH-8)/(menu.menuItems.totItems-1);
+//        y = SCROLL_Y_OFF + offs;
+//        for(i=0; i<sizeof(menuScroll); i++){
+//            for (j=0; j<8; j++){
+//                if(menuScroll[i] & (1 << j)){
+//                    ssd_setpix(x+i, y+j, WHITE);
+//                }else{
+//                    ssd_setpix(x+i, y+j, BLACK);
+//                }
+//            }
 //        }
 //    }
-//    //Put string
-//    if(fontSize == FONT_6X8){
-//        ssd_putString6x8(x, y, &string[0]);
-//    }else{
-//        ssd_putString12x16(x, y, &string[0]);
-//    }
-//}
+    //Put strings
+    ssd_putString6x8(14, 1, &menu.infoWindow.title[0]);
+    if(menu.infoWindow.totStrs <= MENU_POSITIONS){
+        numStrs = menu.infoWindow.totStrs;
+    }else{
+        numStrs = MENU_POSITIONS;
+    }
+    for(i = 0; i < numStrs; i++){
+        ssd_putString6x8(8, MENU_START+MENU_INTERVAL*i, &menu.infoWindow.strings[menu.infoWindow.wndOffs+i][0]);
+    }
+}
 
 /*!****************************************************************************
 * @brief    Put text parameter select window at the center of display

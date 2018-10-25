@@ -24,8 +24,8 @@ static menuItem_type* currMenuItem = &NULL_MENU;
 /*
 TO DO List:
 1. Список enum navEvent сделать внутренним, но доступным извне.
-2. Реализовать функции infoWnd.
-3. Добавить запрос на подтверждение действия (при выполнении колбэка по событию нажатия кнопки).
+2. Добавить запрос на подтверждение действия (при выполнении колбэка по событию нажатия кнопки).
+3. Решить проблему с выползающим указателем (в низу экрана видно символы следующей строки).
 * Общий рефакторинг.
 */
 
@@ -217,18 +217,6 @@ void Menu_setParEdit(eNavEvent_type navEvent){
 /*!****************************************************************************
 * @brief    
 */
-//Разделитель строк - спецсимвол \n
-//Длина строки ограничивается константой MENU_STR_LEN_MAX - 1, слова делятся по
-//пробелу.
-//
-//Реализация:
-//Идём по строке.
-//Если настоящий символ - пробел - сохраняем его порядковый номер.
-//Либо если настоящий символ - LF - прерываем парсинг, копируем распарсенное в
-//строку до предыдущего символа.
-//Либо если настоящий символ - терминатор - прерываем парсинг, копируем распарсенное
-//в строку до предыдущего символа, прекращаем парсинг.
-//Если упираемся в константу MENU_STR_LEN_MAX - 1 - 
 void Menu_infoWndTxtSplit(void){
     bool textEnded = false;
     uint8_t i, newLine = 0, split = 0;
@@ -240,38 +228,35 @@ void Menu_infoWndTxtSplit(void){
         MENU_PAR_DSCR->pFunc();
     }
     //Split text to strings by setting LF at end of strings
-    split = 0;
-    newLine = 0;
     while(1){
         //Replace spaces with LFs on the end of the line
         for(i = 0; i <= MENU_STR_LEN_MAX - 1; i++){
             if(menu.infoWindow.text[newLine + i] == SYM_SPACE_NO){
-                split += i;
+                split = i;
             }else if(menu.infoWindow.text[newLine + i] == SYM_LF_NO){
-                split += i;
+                split = i;
                 break;
             }else if(menu.infoWindow.text[newLine + i] == SYM_TERMINATOR_NO){
+                strcpy(menu.infoWindow.strings[menu.infoWindow.totStrs], &menu.infoWindow.text[newLine]);
                 textEnded = true;
                 break;
             }
         }
         //End of text
-        if(textEnded == true){
-            //Copy the string
-            strcpy(menu.infoWindow.strings[menu.infoWindow.totStrs], &menu.infoWindow.text[newLine]);
-            break;
-        }
+        if(textEnded == true) break;
         //Replace the space with terminator
-        menu.infoWindow.text[split] = SYM_TERMINATOR_NO;
+        menu.infoWindow.text[newLine + split] = SYM_TERMINATOR_NO;
         //Copy the string
         strcpy(menu.infoWindow.strings[menu.infoWindow.totStrs], &menu.infoWindow.text[newLine]);
-        if(menu.infoWindow.totStrs > MENU_ITEMS_QTY_MAX){
-            break;
-        }else{
-            menu.infoWindow.totStrs++;
-        }
-        //Modify position var
+        //Modify position vars
         newLine += split + 1;
+        if(menu.infoWindow.totStrs <= MENU_ITEMS_QTY_MAX){
+            menu.infoWindow.totStrs++;
+        }else{
+            Menu_putMessage("Too much strings", MSG_CNT);
+            menu.menuMode = menu.menuPrevMode;
+            break;
+        }
     }
 }
 
@@ -299,7 +284,8 @@ void Menu_putInfoWnd(char *pString, bool withPars){
     strcpy(menu.infoWindow.title, MENU_ITEM_TEXT);
     menu.infoWindow.pString = pString;
     menu.infoWindow.withPars = withPars;
-    menu.infoWindow.wndShft = 0;
+    menu.infoWindow.wndOffs = 0;
+    menu.infoWindow.totStrs = 0;
     //Fill text strings
     Menu_infoWndTxtSplit();
 }
@@ -321,15 +307,15 @@ void Menu_infoWndRun(eNavEvent_type navEvent){
             break;
         case eUp:
             if(menu.infoWindow.totStrs > MENU_POSITIONS){
-                if(menu.infoWindow.wndShft > 0){
-                    menu.infoWindow.wndShft--;
+                if(menu.infoWindow.wndOffs > 0){
+                    menu.infoWindow.wndOffs--;
                 }
             }
             break;
         case eDown:
             if(menu.infoWindow.totStrs > MENU_POSITIONS){
-                if(menu.infoWindow.wndShft < (menu.infoWindow.totStrs - MENU_POSITIONS)){
-                    menu.infoWindow.wndShft++;
+                if(menu.infoWindow.wndOffs < (menu.infoWindow.totStrs - MENU_POSITIONS)){
+                    menu.infoWindow.wndOffs++;
                 }
             }
             break;

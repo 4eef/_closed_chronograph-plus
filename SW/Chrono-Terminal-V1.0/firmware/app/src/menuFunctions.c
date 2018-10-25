@@ -14,8 +14,10 @@
 
 extern menu_type            menu;
 
+const char statsTxt[] = "London is the capital and most populous city of England and the United Kingdom. Standing on the River Thames in the southeast of the island of Great Britain, London has been a major settlement for two millennia.";
+
 void statsParser(void){
-    strcpy(menu.infoWindow.text, "xuy Tam /7JIaBaJI, a He ToJIbko JIuIIIb xoguJI :)");
+    strcpy(menu.infoWindow.text, "KyKyPy3HocTb - eTo o6IIIa9I 4epTa MeH9I\nu Moeu JI/-O6uMou AJIuHKu :)");
 }
 
 void aboutParser(void){

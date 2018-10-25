@@ -99,8 +99,7 @@ void ssd_putMessage(void);
 void ssd_putParWnd(void);
 void ssd_putTxtEditWnd(void);
 void ssd_putTxtParSelWnd(void);
-void ssd_putParBox(char *text, uint8_t enArrows);
-void ssd_putStrClr(uint8_t x, uint8_t y, char *text, uint8_t maxLen, uint8_t fontSize);
+void ssd_putInfoTxtWnd(void);
 void ssd_clearVidBff(void);
 void ssd_clrAreaBff(uint8_t x, uint8_t y, uint8_t height, uint8_t width);
 

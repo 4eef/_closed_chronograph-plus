@@ -19,7 +19,7 @@ extern power_type           power;
 
 // Menu parameter items
 //       Name           Par1                    Par2                    Par3                    ConstPar1               ConstPar2               ConstPar3               Function
-MENU_PAR(pstats,        NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   statsParser);
+MENU_PAR(pstats,        (void *)&statsTxt,      NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   statsParser);
 MENU_PAR(pabout,        NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   aboutParser);
 MENU_PAR(psinfo,        NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   aboutParser);
 MENU_PAR(pmode,         sysPars.modeTxts[0],    &sysPars.dispMode,      NULL,                   SCR_MODES_NO,           NULL,                   NULL,                   NULL);

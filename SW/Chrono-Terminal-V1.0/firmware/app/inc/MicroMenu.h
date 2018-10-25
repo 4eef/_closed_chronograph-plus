@@ -116,14 +116,14 @@ typedef struct{
     char                    *pString;
     char                    text[MENU_MSG_LEN_MAX];
     char                    title[MENU_STR_LEN_MAX];
-    char                    strings[MENU_STR_LEN_MAX][MENU_ITEMS_QTY_MAX];
-    uint8_t                 wndShft;
+    char                    strings[MENU_ITEMS_QTY_MAX][MENU_STR_LEN_MAX];
+    uint8_t                 wndOffs;
     uint8_t                 totStrs;
 }infoWnd_type;
 
 typedef struct{
     char                    parent[MENU_STR_LEN_MAX];
-    char                    child[MENU_STR_LEN_MAX][MENU_ITEMS_QTY_MAX];
+    char                    child[MENU_ITEMS_QTY_MAX][MENU_STR_LEN_MAX];
     uint8_t                 currItem;
     uint8_t                 totItems;
     uint8_t                 wndOffs;
