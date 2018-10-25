@@ -218,19 +218,20 @@ void Menu_setParEdit(eNavEvent_type navEvent){
 * @brief    
 */
 //Разделитель строк - спецсимвол \n
-//Длина строки ограничивается константой MENU_STR_LEN_MAX, слова делятся по пробелу
+//Длина строки ограничивается константой MENU_STR_LEN_MAX - 1, слова делятся по
+//пробелу.
 //
 //Реализация:
 //Идём по строке.
-//Если настоящий символ - терминатор - копируем всё в строчку, сохраняем итоговое
-//количество заполненных строк, прекращаем парсинг.
 //Если настоящий символ - пробел - сохраняем его порядковый номер.
-//Упираемся в константу MENU_STR_LEN_MAX - 1.
-//Если настоящий символ - пробел, либо \n - записываем все предыдущие считанные
-//данные в строчку, переходим на новую, считаем символы заново. Иначе откатываемся
-//назад, до пробела, и переходим на новую строчку с него.
+//Либо если настоящий символ - LF - прерываем парсинг, копируем распарсенное в
+//строку до предыдущего символа.
+//Либо если настоящий символ - терминатор - прерываем парсинг, копируем распарсенное
+//в строку до предыдущего символа, прекращаем парсинг.
+//Если упираемся в константу MENU_STR_LEN_MAX - 1 - 
 void Menu_infoWndTxtSplit(void){
-    uint8_t i, j, newLine = 0;
+    bool textEnded = false;
+    uint8_t i, newLine = 0, split = 0;
     //Copy string
     memset(menu.infoWindow.text, SYM_TERMINATOR_NO, MENU_MSG_LEN_MAX);
     strcpy(menu.infoWindow.text, menu.infoWindow.pString);
@@ -238,15 +239,39 @@ void Menu_infoWndTxtSplit(void){
     if(menu.infoWindow.withPars == true){
         MENU_PAR_DSCR->pFunc();
     }
-    //Split text to strings
-    for(j = 0; j <= MENU_ITEMS_QTY_MAX; j++){
+    //Split text to strings by setting LF at end of strings
+    split = 0;
+    newLine = 0;
+    while(1){
+        //Replace spaces with LFs on the end of the line
         for(i = 0; i <= MENU_STR_LEN_MAX - 1; i++){
-            if(menu.infoWindow.text[newLine + i] == SYM_TERMINATOR_NO){
-                
+            if(menu.infoWindow.text[newLine + i] == SYM_SPACE_NO){
+                split += i;
+            }else if(menu.infoWindow.text[newLine + i] == SYM_LF_NO){
+                split += i;
+                break;
+            }else if(menu.infoWindow.text[newLine + i] == SYM_TERMINATOR_NO){
+                textEnded = true;
+                break;
             }
-            if((menu.infoWindow.text[newLine + i] == SYM_SPACE_NO) || (menu.infoWindow.text[newLine + i] == SYM_LINE_FEED)) newLine += i + 1;
-            
         }
+        //End of text
+        if(textEnded == true){
+            //Copy the string
+            strcpy(menu.infoWindow.strings[menu.infoWindow.totStrs], &menu.infoWindow.text[newLine]);
+            break;
+        }
+        //Replace the space with terminator
+        menu.infoWindow.text[split] = SYM_TERMINATOR_NO;
+        //Copy the string
+        strcpy(menu.infoWindow.strings[menu.infoWindow.totStrs], &menu.infoWindow.text[newLine]);
+        if(menu.infoWindow.totStrs > MENU_ITEMS_QTY_MAX){
+            break;
+        }else{
+            menu.infoWindow.totStrs++;
+        }
+        //Modify position var
+        newLine += split + 1;
     }
 }
 

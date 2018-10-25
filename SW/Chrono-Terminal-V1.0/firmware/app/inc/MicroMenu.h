@@ -33,7 +33,7 @@
 #define MSG_CNT_LONG            60
 #define MSG_CNT_BIND            100
 #define SYM_TERMINATOR_NO       0
-#define SYM_LINE_FEED           10
+#define SYM_LF_NO               10
 #define SYM_SPACE_NO            32
 #define SYM_POINT_NO            46
 #define SYM_ZERO_NO             48
