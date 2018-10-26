@@ -25,7 +25,7 @@ static menuItem_type* currMenuItem = &NULL_MENU;
 TO DO List:
 1. Список enum navEvent сделать внутренним, но доступным извне.
 2. Добавить запрос на подтверждение действия (при выполнении колбэка по событию нажатия кнопки).
-3. Решить проблему с выползающим указателем (в низу экрана видно символы следующей строки).
+3. Сделать ревизию на начало отсчета (0 или 1).
 * Общий рефакторинг.
 */
 
@@ -306,17 +306,13 @@ void Menu_infoWndRun(eNavEvent_type navEvent){
         case eBackLng:
             break;
         case eUp:
-            if(menu.infoWindow.totStrs > MENU_POSITIONS){
-                if(menu.infoWindow.wndOffs > 0){
-                    menu.infoWindow.wndOffs--;
-                }
+            if((menu.infoWindow.totStrs >= (MENU_POSITIONS - 1)) && (menu.infoWindow.wndOffs > 0)){
+                menu.infoWindow.wndOffs--;
             }
             break;
         case eDown:
-            if(menu.infoWindow.totStrs > MENU_POSITIONS){
-                if(menu.infoWindow.wndOffs < (menu.infoWindow.totStrs - MENU_POSITIONS)){
-                    menu.infoWindow.wndOffs++;
-                }
+            if((menu.infoWindow.totStrs >= (MENU_POSITIONS - 1)) && (menu.infoWindow.wndOffs < (menu.infoWindow.totStrs - (MENU_POSITIONS - 1)))){
+                menu.infoWindow.wndOffs++;
             }
             break;
         case eOk:
