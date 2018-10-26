@@ -34,33 +34,33 @@ void ssd_putInfoTxtWnd(void){
             }
         }
     }
-//    if(menu.infoWindow.totStrs > MENU_POSITIONS){
-//        //Put the line
-//        x = SCROLL_LINE_X_OFF;
-//        y = SCROLL_Y_OFF;
-//        for(i = 0; i < SCROLL_LINE_LENGTH; i++){
-//            for(j = 0; j < SCROLL_LINE_WIDTH; j++){
-//                ssd_setpix((x + j), (y + i), WHITE);
-//            }
-//        }
-//        //Put scroll onto line
-//        x = SCROLL_X_OFF;
-//        offs = (menu.menuItems.currItem-1)*(SCROLL_LINE_LENGTH-8)/(menu.menuItems.totItems-1);
-//        y = SCROLL_Y_OFF + offs;
-//        for(i=0; i<sizeof(menuScroll); i++){
-//            for (j=0; j<8; j++){
-//                if(menuScroll[i] & (1 << j)){
-//                    ssd_setpix(x+i, y+j, WHITE);
-//                }else{
-//                    ssd_setpix(x+i, y+j, BLACK);
-//                }
-//            }
-//        }
-//    }
+    if((menu.infoWindow.totStrs + 1) > MENU_POSITIONS){
+        //Put the line
+        x = SCROLL_LINE_X_OFF;
+        y = SCROLL_Y_OFF;
+        for(i = 0; i < SCROLL_LINE_LENGTH; i++){
+            for(j = 0; j < SCROLL_LINE_WIDTH; j++){
+                ssd_setpix((x + j), (y + i), WHITE);
+            }
+        }
+        //Put scroll onto line
+        x = SCROLL_X_OFF;
+        offs = (menu.infoWindow.wndOffs)*(SCROLL_LINE_LENGTH-8)/((menu.infoWindow.totStrs + 1) - MENU_POSITIONS);
+        y = SCROLL_Y_OFF + offs;
+        for(i=0; i<sizeof(menuScroll); i++){
+            for (j=0; j<8; j++){
+                if(menuScroll[i] & (1 << j)){
+                    ssd_setpix(x+i, y+j, WHITE);
+                }else{
+                    ssd_setpix(x+i, y+j, BLACK);
+                }
+            }
+        }
+    }
     //Put strings
     ssd_putString6x8(14, 1, &menu.infoWindow.title[0]);
-    if(menu.infoWindow.totStrs <= MENU_POSITIONS){
-        numStrs = menu.infoWindow.totStrs;
+    if((menu.infoWindow.totStrs + 1) <= MENU_POSITIONS){
+        numStrs = menu.infoWindow.totStrs + 1;
     }else{
         numStrs = MENU_POSITIONS;
     }
