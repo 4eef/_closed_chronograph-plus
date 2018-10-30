@@ -12,6 +12,7 @@
 * Include
 */
 #include "gpio.h"
+#include "MicroMenu.h"
 
 /*!****************************************************************************
 * User define
@@ -30,17 +31,6 @@
 /*!****************************************************************************
 * User typedef
 */
-// Get it out from here to menu (menu module incapsulation)
-typedef enum{
-    eWait = 0,
-    eBack,
-    eBackLng,
-    eUp,
-    eDown,
-    eOk,
-    eOkLng
-}eNavEvent_type;
-
 typedef struct{
     uint8_t         cntUp;
     uint8_t         cntDn;

@@ -43,9 +43,9 @@ void battCalc(void){
         //Put message
         if(battery.battMsgPer == 0){
             if(volt <= BATT_VOLT_LOW){
-                Menu_putMessage("Battery depleted", MSG_CNT_LONG);
+                Menu_putMsg("Battery depleted", MSG_CNT_LONG);
             }else{
-                Menu_putMessage("Low charge", MSG_CNT_LONG);
+                Menu_putMsg("Low charge", MSG_CNT_LONG);
             }
             battery.battMsgPer = BATT_MSG_PERIOD;
         }

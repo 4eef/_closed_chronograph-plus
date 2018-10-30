@@ -2,8 +2,7 @@
 * @file    MicroMenu.c
 * @author  4eef
 * @version V1.0
-* @date    09.12.2016, 4eef; Dean Camera, 2012
-* @brief   --
+* @date    09.12.2016
 */
 
 /*!****************************************************************************
@@ -14,18 +13,14 @@
 /*!****************************************************************************
 * MEMORY
 */
+menuItem_type               const NULL_MENU = {0};                              // Empty menu item
+menuPrmtr_type              const NULL_PRM = {0};                               // Empty parameter description
+menuItem_type               *currMenuItem = &NULL_MENU;
 menu_type                   menu;
-
-menuItem_type const NULL_MENU = {0};                                            // Empty menu item
-menuPrmtr_type const NULL_PRM = {0};                                            // Empty parameter description
-
-static menuItem_type* currMenuItem = &NULL_MENU;
 
 /*
 TO DO List:
-1. Список enum navEvent сделать внутренним, но доступным извне.
-2. Добавить запрос на подтверждение действия (при выполнении колбэка по событию нажатия кнопки).
-3. Сделать ревизию на начало отсчета (0 или 1).
+* Сделать ревизию на начало отсчета (0 или 1).
 * Общий рефакторинг.
 */
 
@@ -59,6 +54,7 @@ void Menu_run(eNavEvent_type navEvent){
         default:
             break;
     }
+    Menu_msgRun();
 }
 
 /*!****************************************************************************
@@ -77,24 +73,41 @@ void Menu_navPwrOff(eNavEvent_type navEvent){
 /*!****************************************************************************
 * @brief    
 */
+void Menu_pwrSw(ePwrState_type ePwrState){
+    if(ePwrState == ePwrOff){
+        menu.menuMode = eOff;
+        if(menu.pPwrOffFunc != NULL) menu.pPwrOffFunc();
+    }else{
+        menu.menuMode = eDisplay;
+        if(menu.pPwrOnFunc != NULL) menu.pPwrOnFunc();
+    }
+}
+
+/*!****************************************************************************
+* @brief    
+*/
 void Menu_navDisp(eNavEvent_type navEvent){
+    if(menu.confirm.show == true){
+        Menu_exeConfirm(navEvent);
+        return;
+    }
     switch(navEvent){
         case eWait:
             break;
         case eBack:
-            if(menu.pBackBtnFunc != NULL) menu.pBackBtnFunc();
+            if(menu.pBackBtnFunc != NULL) Menu_putConfirm(menu.pBackBtnFunc);
             break;
         case eBackLng:
             Menu_pwrSw(ePwrOff);
             break;
         case eUp:
-            if(menu.pUpBtnFunc != NULL) menu.pUpBtnFunc();
+            if(menu.pUpBtnFunc != NULL) Menu_putConfirm(menu.pUpBtnFunc);
             break;
         case eDown:
-            if(menu.pDownBtnFunc != NULL) menu.pDownBtnFunc();
+            if(menu.pDownBtnFunc != NULL) Menu_putConfirm(menu.pDownBtnFunc);
             break;
         case eOk:
-            if(menu.pOkBtnFunc != NULL) menu.pOkBtnFunc();
+            if(menu.pOkBtnFunc != NULL) Menu_putConfirm(menu.pOkBtnFunc);
             break;
         case eOkLng:
             menu.menuMode = eMenu;
@@ -153,15 +166,32 @@ void Menu_navMenu(eNavEvent_type navEvent){
 }
 
 /*!****************************************************************************
-* @brief    
+* @brief    Put confirmation message on screen
 */
-void Menu_pwrSw(ePwrState_type ePwrState){
-    if(ePwrState == ePwrOff){
-        menu.menuMode = eOff;
-        if(menu.pPwrOffFunc != NULL) menu.pPwrOffFunc();
-    }else{
-        menu.menuMode = eDisplay;
-        if(menu.pPwrOnFunc != NULL) menu.pPwrOnFunc();
+void Menu_putConfirm(void (*pFunc)(void)){
+    menu.confirm.show = true;
+    menu.confirm.pFunc = pFunc;
+    Menu_putMsg("Confirm action?", MSG_LOCK);
+}
+
+/*!****************************************************************************
+* @brief    Execute confirmation
+*/
+void Menu_exeConfirm(eNavEvent_type navEvent){
+    switch(navEvent){
+        case eWait:
+            break;
+        case eBack:
+            menu.confirm.show = false;
+            Menu_msgClr();
+            break;
+        case eOk:
+            menu.confirm.show = false;
+            Menu_msgClr();
+            menu.confirm.pFunc();
+            break;
+        default:
+            break;
     }
 }
 
@@ -202,7 +232,7 @@ void Menu_setParEdit(eNavEvent_type navEvent){
                     if(MENU_PAR_DSCR->pFunc != NULL){
                         MENU_PAR_DSCR->pFunc();
                     }else{
-                        Menu_putMessage("No such function", MSG_CNT);
+                        Menu_putMsg("No such function", MSG_CNT);
                     }
                     break;
                 default:
@@ -227,9 +257,9 @@ void Menu_infoWndTxtSplit(void){
     if(menu.infoWindow.withPars == true){
         MENU_PAR_DSCR->pFunc();
     }
-    //Split text to strings by setting LF at end of strings
+    //Split text to strings by setting terminator at end of strings
     while(1){
-        //Replace spaces with LFs on the end of the line
+        //Find end of the string
         for(i = 0; i <= MENU_STR_LEN_MAX - 1; i++){
             if(menu.infoWindow.text[newLine + i] == SYM_SPACE_NO){
                 split = i;
@@ -253,7 +283,7 @@ void Menu_infoWndTxtSplit(void){
         if(menu.infoWindow.totStrs <= MENU_ITEMS_QTY_MAX){
             menu.infoWindow.totStrs++;
         }else{
-            Menu_putMessage("Too much strings", MSG_CNT);
+            Menu_putMsg("Too much strings", MSG_CNT);
             menu.menuMode = menu.menuPrevMode;
             break;
         }
@@ -266,16 +296,16 @@ void Menu_infoWndTxtSplit(void){
 void Menu_putInfoWnd(char *pString, bool withPars){
     //Check input parameters
     if(pString == NULL){
-        Menu_putMessage("String ptr error", MSG_CNT);
+        Menu_putMsg("String ptr error", MSG_CNT);
         return;
     }else if(strlen(pString) >= MENU_MSG_LEN_MAX){
-        Menu_putMessage("Msg is too long", MSG_CNT);
+        Menu_putMsg("Msg is too long", MSG_CNT);
         return;
     }else if(strlen(pString) == 0){
-        Menu_putMessage("String is empty", MSG_CNT);
+        Menu_putMsg("String is empty", MSG_CNT);
         return;
     }else if((MENU_PAR_DSCR->pFunc == NULL) && (withPars == true)){
-        Menu_putMessage("Func ptr error", MSG_CNT);
+        Menu_putMsg("Func ptr error", MSG_CNT);
         return;
     }
     //Set parameters
@@ -286,7 +316,7 @@ void Menu_putInfoWnd(char *pString, bool withPars){
     menu.infoWindow.withPars = withPars;
     menu.infoWindow.wndOffs = 0;
     menu.infoWindow.totStrs = 0;
-    //Fill text strings
+    //Split text to strings
     Menu_infoWndTxtSplit();
 }
 
@@ -350,7 +380,7 @@ void Menu_txtParSelWndRun(eNavEvent_type navEvent){
             break;
         case eBack:
             menu.menuMode = menu.menuPrevMode;
-            Menu_putMessage("Cancelled", MSG_CNT);
+            Menu_putMsg("Cancelled", MSG_CNT);
             break;
         case eBackLng:
             break;
@@ -371,9 +401,9 @@ void Menu_txtParSelWndRun(eNavEvent_type navEvent){
         case eOk:
             if(menu.txtParSelWnd.pTxtParNumOrigin != NULL){
                 *menu.txtParSelWnd.pTxtParNumOrigin = menu.txtParSelWnd.currTxtPar;
-                Menu_putMessage("Saved", MSG_CNT);
+                Menu_putMsg("Saved", MSG_CNT);
             }else{
-                Menu_putMessage("Ptr. error", MSG_CNT);
+                Menu_putMsg("Ptr. error", MSG_CNT);
             }
             menu.menuMode = menu.menuPrevMode;
             break;
@@ -424,7 +454,7 @@ void Menu_txtEditWndRun(eNavEvent_type navEvent){
                     menu.txtEditWnd.string[menu.txtEditWnd.symPos] = SYM_TERMINATOR_NO;
                 }
             }else{
-                Menu_putMessage("String is empty", MSG_CNT);
+                Menu_putMsg("String is empty", MSG_CNT);
             }
             if(menu.txtEditWnd.symPos != 0){
                 menu.txtEditWnd.symPos--;
@@ -432,7 +462,7 @@ void Menu_txtEditWndRun(eNavEvent_type navEvent){
             break;
         case eBackLng:
             menu.menuMode = menu.menuPrevMode;
-            Menu_putMessage("Cancelled", MSG_CNT);
+            Menu_putMsg("Cancelled", MSG_CNT);
             break;
         case eUp:
             prevSym++;
@@ -492,13 +522,13 @@ void Menu_txtEditWndRun(eNavEvent_type navEvent){
                 i--;
             }
             if(strlen(menu.txtEditWnd.string) == 0){
-                Menu_putMessage("String is empty", MSG_CNT);
+                Menu_putMsg("String is empty", MSG_CNT);
             }else if(menu.txtEditWnd.pStrOrig != NULL){
                 menu.menuMode = menu.menuPrevMode;
                 strcpy(menu.txtEditWnd.pStrOrig, menu.txtEditWnd.string);
-                Menu_putMessage("Saved", MSG_CNT);
+                Menu_putMsg("Saved", MSG_CNT);
             }else{
-                Menu_putMessage("Ptr. error", MSG_CNT);
+                Menu_putMsg("Ptr. error", MSG_CNT);
             }
             break;
         default:
@@ -534,7 +564,7 @@ void Menu_parWndRun(eNavEvent_type navEvent){
             break;
         case eBack:
             menu.menuMode = menu.menuPrevMode;
-            Menu_putMessage("Cancelled", MSG_CNT);
+            Menu_putMsg("Cancelled", MSG_CNT);
             break;
         case eBackLng:
             break;
@@ -555,9 +585,9 @@ void Menu_parWndRun(eNavEvent_type navEvent){
         case eOk:
             if(menu.parEditWnd.pParOrigin != NULL){
                 *menu.parEditWnd.pParOrigin = menu.parEditWnd.parValue;
-                Menu_putMessage("Saved", MSG_CNT);
+                Menu_putMsg("Saved", MSG_CNT);
             }else{
-                Menu_putMessage("Ptr. error", MSG_CNT);
+                Menu_putMsg("Ptr. error", MSG_CNT);
             }
             if(menu.parEditWnd.pParCopy != NULL){
                 *menu.parEditWnd.pParCopy = menu.parEditWnd.parValue;
@@ -572,15 +602,40 @@ void Menu_parWndRun(eNavEvent_type navEvent){
 }
 
 /*!****************************************************************************
+* @brief    Run message routine
+*/
+void Menu_msgRun(void){
+    if((menu.message.show == true) && (menu.message.lock != true)){
+        if(menu.message.msgCnt != 0){
+            menu.message.msgCnt--;
+        }else{
+            menu.message.show = false;
+        }
+    }
+}
+
+/*!****************************************************************************
+* @brief    Remove message from screen
+*/
+void Menu_msgClr(void){
+    menu.message.lock = false;
+    menu.message.show = false;
+}
+
+/*!****************************************************************************
 * @brief    Put message on screen
 */
-void Menu_putMessage(char *newStr, uint8_t newCnt){
-    if((newStr != NULL) && (newCnt != 0)){
-        strcpy(menu.message.msgStr, newStr);
-        menu.message.msgLen = strlen(menu.message.msgStr);
-        menu.message.msgCnt = newCnt;
-        menu.message.show = true;
+void Menu_putMsg(char *str, uint8_t msgCnt){
+    if(str == NULL) return;
+    strcpy(menu.message.msgStr, str);
+    menu.message.msgLen = strlen(menu.message.msgStr);
+    menu.message.msgCnt = msgCnt;
+    if(msgCnt == 0){
+        menu.message.lock = true;
+    }else{
+        menu.message.lock = false;
     }
+    menu.message.show = true;
 }
 
 /*!****************************************************************************

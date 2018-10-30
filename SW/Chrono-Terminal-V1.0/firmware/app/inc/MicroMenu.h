@@ -2,8 +2,7 @@
 * @file    MicroMenu.h
 * @author  4eef
 * @version V1.0
-* @date    09.12.2016, 4eef; Dean Camera, 2012
-* @brief   --
+* @date    09.12.2016
 */
 #ifndef MicroMenu_H
 #define MicroMenu_H
@@ -16,22 +15,19 @@
 #include "string.h"
 #include "stdio.h"
 #include "stdbool.h"
-#include "buttons.h"
 
 /*!****************************************************************************
 * User define
 */
 #define MENU_POSITIONS          5
-#define MENU_INTERVAL           10
-#define MENU_START              12
 #define MENU_STR_LEN_MAX        19
 #define MENU_ITEMS_QTY_MAX      20
 #define MENU_MSG_LEN_MAX        MENU_STR_LEN_MAX * MENU_ITEMS_QTY_MAX
 #define TXT_PAR_MIN_VAL         0
-#define MSG_FOR_TIMER           2
+#define MSG_LOCK                0
+#define MSG_CNT_FOR_TOUT        2
 #define MSG_CNT                 30
 #define MSG_CNT_LONG            60
-#define MSG_CNT_BIND            100
 #define SYM_TERMINATOR_NO       0
 #define SYM_LF_NO               10
 #define SYM_SPACE_NO            32
@@ -42,6 +38,10 @@
 #define SYM_ZBIG_NO             90
 #define SYM_ASMALL_NO           97
 #define SYM_ZSMALL_NO           122
+//Delete from this file
+#define MENU_INTERVAL           10
+#define MENU_START              12
+#define MSG_CNT_BIND            100
 
 /*!****************************************************************************
 * User typedef
@@ -77,12 +77,28 @@ typedef enum{
     eFunc
 }eMenuItem_type;
 
+typedef enum{
+    eWait = 0,
+    eBack,
+    eBackLng,
+    eUp,
+    eDown,
+    eOk,
+    eOkLng
+}eNavEvent_type;
+
 typedef struct{
     bool                    show;
+    bool                    lock;
     char                    msgStr[MENU_STR_LEN_MAX];
     uint8_t                 msgLen;
     uint8_t                 msgCnt;
 }message_type;
+
+typedef struct{
+    bool                    show;
+    void (*pFunc)(void);
+}confirm_type;
 
 typedef struct{
     char                    title[MENU_STR_LEN_MAX];
@@ -131,6 +147,7 @@ typedef struct{
 
 typedef struct{
     message_type            message;
+    confirm_type            confirm;
     parEditWnd_type         parEditWnd;
     txtParSelWnd_type       txtParSelWnd;
     txtEditWnd_type         txtEditWnd;
@@ -170,9 +187,9 @@ typedef const struct menuItem{
 /*!****************************************************************************
 * Extern viriables
 */
-/** Null menu entry, used in \ref MENU_ITEM() definitions where no menu link is to be made. */
 extern menuItem_type const NULL_MENU;
 extern menuPrmtr_type const NULL_PRM;
+extern menuItem_type* currMenuItem;
 
 /*!****************************************************************************
 * Macro functions
@@ -202,7 +219,9 @@ extern menuPrmtr_type const NULL_PRM;
 menuItem_type* Menu_GetCurrentMenu(void);
 void Menu_Navigate(menuItem_type* const NewMenu);
 void Menu_listParse(menuItem_type* const NewMenu);
-void Menu_putMessage(char *newStr, uint8_t newCnt);
+void Menu_putMsg(char *str, uint8_t msgCnt);
+void Menu_msgClr(void);
+void Menu_msgRun(void);
 void Menu_parWndRun(eNavEvent_type navEvent);
 void Menu_putParWnd(char *parUnits, uint16_t *pParOrigin, uint16_t *pParCopy,
                     eParFract_type parFract, int16_t brdMax, int16_t brdMin);
@@ -219,6 +238,8 @@ void Menu_navPwrOff(eNavEvent_type navEvent);
 void Menu_pwrSw(ePwrState_type ePwrState);
 void Menu_run(eNavEvent_type navEvent);
 void Menu_setParEdit(eNavEvent_type navEvent);
+void Menu_putConfirm(void (*pFunc)(void));
+void Menu_exeConfirm(eNavEvent_type navEvent);
 
 #endif //MicroMenu_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

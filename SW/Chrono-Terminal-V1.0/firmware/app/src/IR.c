@@ -32,7 +32,7 @@ void hndlIRData(void){
             if(chron.chrBindCnt != 0){
                 chron.chrBindCnt = 0;
                 chron.chrSgntr = sgn;
-                Menu_putMessage("Binded", MSG_CNT);
+                Menu_putMsg("Binded", MSG_CNT);
             }
             stats.shotsTotal++;
             //Measurements
@@ -57,9 +57,9 @@ void hndlIRData(void){
             if(chron.clipCapacity > 1){
                 if(chron.clipCurrent == 0){
                     chron.clipCurrent = chron.clipCapacity;
-                    Menu_putMessage("Clip reloaded", MSG_CNT);
+                    Menu_putMsg("Clip reloaded", MSG_CNT);
                 }else if(chron.clipCurrent == 1){
-                    Menu_putMessage("Replace clip", MSG_CNT);
+                    Menu_putMsg("Replace clip", MSG_CNT);
                 }
                 chron.clipCurrent--;
             }
@@ -107,7 +107,7 @@ void hndlIRData(void){
                         pellets.irRxPelSgn.newSgnCnt = 0;
                         pellets.irRxPelSgn.newSgnSum = 0;
                     }else if(pellets.irRxPelSgn.newSgnErrCnt >= PELLET_NEW_SGN_BOUND){
-                        Menu_putMessage("Error pellet ID", MSG_CNT);
+                        Menu_putMsg("Error pellet ID", MSG_CNT);
                         pellets.irRxPelSgn.pelStat = PELLET_OK;
                         pellets.irRxPelSgn.newSgnErrCnt = 0;
                         pellets.irRxPelSgn.newSgnCnt = 0;
@@ -118,7 +118,7 @@ void hndlIRData(void){
             //Statistics calculation
             if(sysPars.dispMode == eChronograph){
                 if(chron.statShots >= STAT_SHOTS_MAX){
-                    Menu_putMessage("Buffer is full", MSG_CNT);
+                    Menu_putMsg("Buffer is full", MSG_CNT);
                 }else{
                     chron.statSpeeds[chron.statShots] = chron.speed0;
                     chron.statSpeedsSum += chron.statSpeeds[chron.statShots];

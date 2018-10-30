@@ -26,7 +26,6 @@ extern battery_type         battery;
 extern sysPars_type         sysPars;
 extern pellets_type         pellets;
 extern kalman_type          kalman;
-menuItem_type               *currMenuItem;
 
 /*!****************************************************************************
 * @brief    Main function
@@ -88,7 +87,6 @@ void main(void){
     adcInit();
     
     while(1){
-        currMenuItem = Menu_GetCurrentMenu();
         sync();                                                                 //Syncronize cycle
         //meas.chron.speed0 = meas.stats.cycBroken;                               //Debug
         battCalc();                                                             //Calculate battery parameters
@@ -149,7 +147,7 @@ void drawDisplay(void){
     //Chronograph binding
     if(chron.chrBindCnt != 0){
         chron.chrBindCnt--;
-        if(chron.chrBindCnt == 0) Menu_putMessage("Failed", MSG_CNT);
+        if(chron.chrBindCnt == 0) Menu_putMsg("Failed", MSG_CNT);
     }
     //Draw message
     ssd_putMessage();

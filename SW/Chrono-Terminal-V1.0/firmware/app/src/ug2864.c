@@ -147,8 +147,6 @@ void ssd_putParWnd(void){
 void ssd_putMessage(void){
     uint8_t i, j, x, y, boxLength, offs;
     if(menu.message.show == true){
-        menu.message.msgCnt--;
-        if(menu.message.msgCnt == 0) menu.message.show = false;
         //Message box parameters
         boxLength = menu.message.msgLen*6 + 8;
         x = SSD1306_LCDWIDTH/2 - boxLength/2;
