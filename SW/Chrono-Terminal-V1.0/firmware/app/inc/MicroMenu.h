@@ -210,32 +210,19 @@ extern menuItem_type* currMenuItem;
 #define MENU_ITEM_TEXT      Menu_getCurrItem()->text
 
 /*!****************************************************************************
-* Prototypes for the functions
+* Prototypes for the interface functions
 */
 menuItem_type *Menu_getCurrItem(void);
-void Menu_navigate(menuItem_type* const NewMenu);
-void Menu_listParse(menuItem_type* const NewMenu);
+void Menu_navigate(menuItem_type const *NewMenu);
 void Menu_putMsg(char *str, uint8_t msgCnt);
 void Menu_msgClr(void);
-void Menu_msgRun(void);
-void Menu_parWndRun(eNavEvent_type navEvent);
 void Menu_putParWnd(char *parUnits, uint16_t *pParOrigin, uint16_t *pParCopy,
                     eParFract_type parFract, int16_t brdMax, int16_t brdMin);
-void Menu_infoWndRun(eNavEvent_type navEvent);
-void Menu_infoWndTxtSplit(void);
 void Menu_putInfoWnd(char *pString, bool withPars);
-void Menu_txtEditWndRun(eNavEvent_type navEvent);
 void Menu_putTxtEditWnd(char *pStrOrig);
-void Menu_txtParSelWndRun(eNavEvent_type navEvent);
 void Menu_putTxtParSelWnd(char *pFirstPar, uint16_t *pTxtParNumOrigin, uint16_t qtyTxtPar);
-void Menu_navMenu(eNavEvent_type navEvent);
-void Menu_navDisp(eNavEvent_type navEvent);
-void Menu_navPwrOff(eNavEvent_type navEvent);
 void Menu_pwrSw(ePwrState_type ePwrState);
 void Menu_run(eNavEvent_type navEvent);
-void Menu_setParEdit(eNavEvent_type navEvent);
-void Menu_putConfirm(void (*pFunc)(void));
-void Menu_exeConfirm(eNavEvent_type navEvent);
 
 #endif //MicroMenu_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/
