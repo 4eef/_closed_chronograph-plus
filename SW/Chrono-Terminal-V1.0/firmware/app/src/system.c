@@ -53,7 +53,7 @@ void drawMenu(void){
         }
         //Put scroll onto line
         x = SCROLL_X_OFF;
-        offs = (menu.menuItems.currItem-1)*(SCROLL_LINE_LENGTH-8)/(menu.menuItems.totItems-1);
+        offs = (menu.menuItems.currItem)*(SCROLL_LINE_LENGTH-8)/(menu.menuItems.totItems);
         y = SCROLL_Y_OFF + offs;
         for(i=0; i<sizeof(menuScroll); i++){
             for (j=0; j<8; j++){
@@ -69,9 +69,9 @@ void drawMenu(void){
     pos = menu.menuItems.currItem - menu.menuItems.wndOffs;
     //Put strings
     ssd_putString6x8(14, 1, &menu.menuItems.parent[0]);
-    ssd_putString6x8(0, (MENU_START+MENU_INTERVAL*(pos-1)), &arrow[0]);         //Arrow to current position
+    ssd_putString6x8(0, (MENU_START+MENU_INTERVAL*(pos)), &arrow[0]);         //Arrow to current position
     if(menu.menuItems.totItems <= MENU_POSITIONS){
-        numItems = menu.menuItems.totItems;
+        numItems = menu.menuItems.totItems + 1;
     }else{
         numItems = MENU_POSITIONS;
     }

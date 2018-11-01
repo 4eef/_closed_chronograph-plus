@@ -20,9 +20,7 @@ menu_type                   menu;
 
 /*
 TO DO List:
-* Сделать ревизию на начало отсчета (0 или 1).
 * Общий рефакторинг.
-* Убрать формирование текстовых строк пунктов меню из Navigate.
 */
 
 /*!****************************************************************************
@@ -654,18 +652,12 @@ menuItem_type *Menu_getCurrItem(void){
 */
 void Menu_navigate(menuItem_type* const NewMenu){
     menuItem_type *tmpItem;
-    if((NewMenu == &NULL_MENU) || (NewMenu == NULL)){
-        Menu_putMsg("Item ptr error", MSG_CNT_DEFAULT);
-        return;
-    }
-    //Clear offset if passed to other level
-    if((NewMenu == MENU_CHILD) || (NewMenu == MENU_PARENT)) menu.menuItems.wndOffs = 0;
-    //Save new menu item
-    tmpItem = currMenuItem = NewMenu;
+    if((NewMenu == &NULL_MENU) || (NewMenu == NULL)) return;
     //Parse menu list parameters
+    tmpItem = NewMenu;
     //Menu title
-    if(MENU_PARENT != &NULL_MENU){
-        strcpy(menu.menuItems.parent, currMenuItem->parent->text);
+    if(tmpItem->parent != &NULL_MENU){
+        strcpy(menu.menuItems.parent, tmpItem->parent->text);
     }else{
         strcpy(menu.menuItems.parent, "Menu");
     }
@@ -674,22 +666,26 @@ void Menu_navigate(menuItem_type* const NewMenu){
     while(1){
         if(tmpItem->previous == &NULL_MENU) break;
         tmpItem = tmpItem->previous;
-        menu.menuItems.currItem++;//1
+        menu.menuItems.currItem++;
     }
-    //Window offset calculation НЕ ЗАКОНЧЕНО
-    if((menu.menuItems.currItem - menu.menuItems.wndOffs - (MENU_POSITIONS - 1)) > 0){
+    //Window offset reset if passed to other level
+    if((NewMenu == MENU_CHILD) || (NewMenu == MENU_PARENT)) menu.menuItems.wndOffs = 0;
+    //Window offset calculation
+    if(menu.menuItems.wndOffs < (menu.menuItems.currItem - (MENU_POSITIONS - 1))){
         menu.menuItems.wndOffs = menu.menuItems.currItem - (MENU_POSITIONS - 1);
-    }else if((menu.menuItems.wndOffs - menu.menuItems.currItem + 1) > 0){
-        menu.menuItems.wndOffs = menu.menuItems.currItem - 1;
+    }else if(menu.menuItems.wndOffs > menu.menuItems.currItem){
+        menu.menuItems.wndOffs = menu.menuItems.currItem;
     }
     //Copy all strings on current level
     menu.menuItems.totItems = 0;
     while(1){
         strcpy(menu.menuItems.child[menu.menuItems.totItems], tmpItem->text);
-        menu.menuItems.totItems++;
         if(tmpItem->next == &NULL_MENU) break;
         tmpItem = tmpItem->next;
+        menu.menuItems.totItems++;
     }
+    //Save new menu item
+    currMenuItem = NewMenu;
 }
 
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/
