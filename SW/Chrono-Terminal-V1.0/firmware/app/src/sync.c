@@ -64,7 +64,7 @@ void sync(void){
     if((timeDiff < FIVE_SEC_WARNING) && (timeDiff > 0)){
         cntDn = 1 + (timeDiff*CYC_PERIOD_US)/S_TO_US;
         sprintf(msg, "Shutdown in %u...", cntDn);
-        Menu_putMsg(msg, MSG_CNT_FOR_TOUT);
+        Menu_putMsg(msg, MSG_CNT_BLINK);
     }else if((power.uptimeCurr > timeSet) && (power.pwrMode == ePwrRun)) Menu_pwrSw(ePwrOff);
     else if((power.uptimeCurr > CYC_POFF_MAX) && (power.pwrMode == ePwrStop)) Menu_pwrSw(ePwrOff);
     TIM1->CR1       |= TIM_CR1_CEN;

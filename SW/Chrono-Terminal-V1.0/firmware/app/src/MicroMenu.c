@@ -22,6 +22,7 @@ menu_type                   menu;
 TO DO List:
 * Сделать ревизию на начало отсчета (0 или 1).
 * Общий рефакторинг.
+* Убрать формирование текстовых строк пунктов меню из Navigate.
 */
 
 /*!****************************************************************************
@@ -113,11 +114,11 @@ void Menu_navDisp(eNavEvent_type navEvent){
             menu.menuMode = eMenu;
             //Go to the root
             while(MENU_PARENT != &NULL_MENU){
-                Menu_Navigate(MENU_PARENT);
+                Menu_navigate(MENU_PARENT);
             }
             //Navigate to first element in list
             while(MENU_PREVIOUS != &NULL_MENU){
-                Menu_Navigate(MENU_PREVIOUS);
+                Menu_navigate(MENU_PREVIOUS);
             }
             break;
         default:
@@ -136,23 +137,23 @@ void Menu_navMenu(eNavEvent_type navEvent){
             if(MENU_PARENT == &NULL_MENU){
                 menu.menuMode = eDisplay;
             }else{
-                Menu_Navigate(MENU_PARENT);
+                Menu_navigate(MENU_PARENT);
             }
             break;
         case eBackLng:
             menu.menuMode = eDisplay;
             break;
         case eUp:
-            Menu_Navigate(MENU_PREVIOUS);
+            Menu_navigate(MENU_PREVIOUS);
             break;
         case eDown:
-            Menu_Navigate(MENU_NEXT);
+            Menu_navigate(MENU_NEXT);
             break;
         case eOk:
             if((MENU_ITEM_TYPE != eItem) && (MENU_PAR_DSCR != &NULL_PRM) && (MENU_PAR_DSCR != NULL)){
                 Menu_setParEdit(navEvent);
             }else if((MENU_CHILD != &NULL_MENU) && (MENU_CHILD != NULL)){
-                Menu_Navigate(MENU_CHILD);
+                Menu_navigate(MENU_CHILD);
             }
             break;
         case eOkLng:
@@ -232,7 +233,7 @@ void Menu_setParEdit(eNavEvent_type navEvent){
                     if(MENU_PAR_DSCR->pFunc != NULL){
                         MENU_PAR_DSCR->pFunc();
                     }else{
-                        Menu_putMsg("No such function", MSG_CNT);
+                        Menu_putMsg("No such function", MSG_CNT_DEFAULT);
                     }
                     break;
                 default:
@@ -283,7 +284,7 @@ void Menu_infoWndTxtSplit(void){
         if(menu.infoWindow.totStrs <= MENU_ITEMS_QTY_MAX){
             menu.infoWindow.totStrs++;
         }else{
-            Menu_putMsg("Too much strings", MSG_CNT);
+            Menu_putMsg("Too much strings", MSG_CNT_DEFAULT);
             menu.menuMode = menu.menuPrevMode;
             break;
         }
@@ -296,16 +297,16 @@ void Menu_infoWndTxtSplit(void){
 void Menu_putInfoWnd(char *pString, bool withPars){
     //Check input parameters
     if(pString == NULL){
-        Menu_putMsg("String ptr error", MSG_CNT);
+        Menu_putMsg("String ptr error", MSG_CNT_DEFAULT);
         return;
     }else if(strlen(pString) >= MENU_MSG_LEN_MAX){
-        Menu_putMsg("Msg is too long", MSG_CNT);
+        Menu_putMsg("Msg is too long", MSG_CNT_DEFAULT);
         return;
     }else if(strlen(pString) == 0){
-        Menu_putMsg("String is empty", MSG_CNT);
+        Menu_putMsg("String is empty", MSG_CNT_DEFAULT);
         return;
     }else if((MENU_PAR_DSCR->pFunc == NULL) && (withPars == true)){
-        Menu_putMsg("Func ptr error", MSG_CNT);
+        Menu_putMsg("Func ptr error", MSG_CNT_DEFAULT);
         return;
     }
     //Set parameters
@@ -380,7 +381,7 @@ void Menu_txtParSelWndRun(eNavEvent_type navEvent){
             break;
         case eBack:
             menu.menuMode = menu.menuPrevMode;
-            Menu_putMsg("Cancelled", MSG_CNT);
+            Menu_putMsg("Cancelled", MSG_CNT_DEFAULT);
             break;
         case eBackLng:
             break;
@@ -401,9 +402,9 @@ void Menu_txtParSelWndRun(eNavEvent_type navEvent){
         case eOk:
             if(menu.txtParSelWnd.pTxtParNumOrigin != NULL){
                 *menu.txtParSelWnd.pTxtParNumOrigin = menu.txtParSelWnd.currTxtPar;
-                Menu_putMsg("Saved", MSG_CNT);
+                Menu_putMsg("Saved", MSG_CNT_DEFAULT);
             }else{
-                Menu_putMsg("Ptr. error", MSG_CNT);
+                Menu_putMsg("Ptr. error", MSG_CNT_DEFAULT);
             }
             menu.menuMode = menu.menuPrevMode;
             break;
@@ -454,7 +455,7 @@ void Menu_txtEditWndRun(eNavEvent_type navEvent){
                     menu.txtEditWnd.string[menu.txtEditWnd.symPos] = SYM_TERMINATOR_NO;
                 }
             }else{
-                Menu_putMsg("String is empty", MSG_CNT);
+                Menu_putMsg("String is empty", MSG_CNT_DEFAULT);
             }
             if(menu.txtEditWnd.symPos != 0){
                 menu.txtEditWnd.symPos--;
@@ -462,7 +463,7 @@ void Menu_txtEditWndRun(eNavEvent_type navEvent){
             break;
         case eBackLng:
             menu.menuMode = menu.menuPrevMode;
-            Menu_putMsg("Cancelled", MSG_CNT);
+            Menu_putMsg("Cancelled", MSG_CNT_DEFAULT);
             break;
         case eUp:
             prevSym++;
@@ -522,13 +523,13 @@ void Menu_txtEditWndRun(eNavEvent_type navEvent){
                 i--;
             }
             if(strlen(menu.txtEditWnd.string) == 0){
-                Menu_putMsg("String is empty", MSG_CNT);
+                Menu_putMsg("String is empty", MSG_CNT_DEFAULT);
             }else if(menu.txtEditWnd.pStrOrig != NULL){
                 menu.menuMode = menu.menuPrevMode;
                 strcpy(menu.txtEditWnd.pStrOrig, menu.txtEditWnd.string);
-                Menu_putMsg("Saved", MSG_CNT);
+                Menu_putMsg("Saved", MSG_CNT_DEFAULT);
             }else{
-                Menu_putMsg("Ptr. error", MSG_CNT);
+                Menu_putMsg("Ptr. error", MSG_CNT_DEFAULT);
             }
             break;
         default:
@@ -564,7 +565,7 @@ void Menu_parWndRun(eNavEvent_type navEvent){
             break;
         case eBack:
             menu.menuMode = menu.menuPrevMode;
-            Menu_putMsg("Cancelled", MSG_CNT);
+            Menu_putMsg("Cancelled", MSG_CNT_DEFAULT);
             break;
         case eBackLng:
             break;
@@ -585,9 +586,9 @@ void Menu_parWndRun(eNavEvent_type navEvent){
         case eOk:
             if(menu.parEditWnd.pParOrigin != NULL){
                 *menu.parEditWnd.pParOrigin = menu.parEditWnd.parValue;
-                Menu_putMsg("Saved", MSG_CNT);
+                Menu_putMsg("Saved", MSG_CNT_DEFAULT);
             }else{
-                Menu_putMsg("Ptr. error", MSG_CNT);
+                Menu_putMsg("Ptr error", MSG_CNT_DEFAULT);
             }
             if(menu.parEditWnd.pParCopy != NULL){
                 *menu.parEditWnd.pParCopy = menu.parEditWnd.parValue;
@@ -641,7 +642,7 @@ void Menu_putMsg(char *str, uint8_t msgCnt){
 /*!****************************************************************************
 * @brief    Retrieves the currently selected meny item
 */
-menuItem_type* Menu_GetCurrentMenu(void){
+menuItem_type *Menu_getCurrItem(void){
 	return currMenuItem;
 }
 
@@ -651,31 +652,33 @@ menuItem_type* Menu_GetCurrentMenu(void){
 *           \ref MENU_CHILD, \ref MENU_NEXT or \ref MENU_PREVIOUS for relative navigation.
 * @retval   
 */
-void Menu_Navigate(menuItem_type* const NewMenu){
-    menuItem_type *tmpItem, *tmpPrntItem;
-    if((NewMenu == &NULL_MENU) || (NewMenu == NULL)) return;
+void Menu_navigate(menuItem_type* const NewMenu){
+    menuItem_type *tmpItem;
+    if((NewMenu == &NULL_MENU) || (NewMenu == NULL)){
+        Menu_putMsg("Item ptr error", MSG_CNT_DEFAULT);
+        return;
+    }
     //Clear offset if passed to other level
     if((NewMenu == MENU_CHILD) || (NewMenu == MENU_PARENT)) menu.menuItems.wndOffs = 0;
     //Save new menu item
     tmpItem = currMenuItem = NewMenu;
     //Parse menu list parameters
     //Menu title
-    if(tmpItem->parent != &NULL_MENU){
-        tmpPrntItem = tmpItem->parent;
-        strcpy(menu.menuItems.parent, tmpPrntItem->text);
+    if(MENU_PARENT != &NULL_MENU){
+        strcpy(menu.menuItems.parent, currMenuItem->parent->text);
     }else{
         strcpy(menu.menuItems.parent, "Menu");
     }
     //Get to the upper position of the menu list
     menu.menuItems.currItem = 0;
     while(1){
-        menu.menuItems.currItem++;
         if(tmpItem->previous == &NULL_MENU) break;
         tmpItem = tmpItem->previous;
+        menu.menuItems.currItem++;//1
     }
-    //Window offset calculation
-    if((menu.menuItems.currItem - menu.menuItems.wndOffs - MENU_POSITIONS) > 0){
-        menu.menuItems.wndOffs = menu.menuItems.currItem - MENU_POSITIONS;
+    //Window offset calculation НЕ ЗАКОНЧЕНО
+    if((menu.menuItems.currItem - menu.menuItems.wndOffs - (MENU_POSITIONS - 1)) > 0){
+        menu.menuItems.wndOffs = menu.menuItems.currItem - (MENU_POSITIONS - 1);
     }else if((menu.menuItems.wndOffs - menu.menuItems.currItem + 1) > 0){
         menu.menuItems.wndOffs = menu.menuItems.currItem - 1;
     }

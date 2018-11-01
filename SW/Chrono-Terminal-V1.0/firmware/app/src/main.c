@@ -72,15 +72,15 @@ void main(void){
     kalman.R = 15;
     power.uptimeSet = POWER_RUN_DEFAULT;
     //Menu function pointers
-    menu.pBackBtnFunc = NULL;
+    menu.pBackBtnFunc = chrSetsRst;
     menu.pUpBtnFunc = NULL;
     menu.pDownBtnFunc = NULL;
-    menu.pOkBtnFunc = chrSetsRst;
+    menu.pOkBtnFunc = clipReload;
     menu.pAnyBtnFunc = powerTimRst;
     menu.pPwrOnFunc = powerOn;
     menu.pPwrOffFunc = powerOff;
     //Navigate to an absolute menu item entry
-    Menu_Navigate(&rstats);
+    Menu_navigate(&rstats);
     //Initialize hardware
     initPeriphs();
     Menu_pwrSw(ePwrOff);//ePwrOff/ePwrOn
@@ -147,7 +147,7 @@ void drawDisplay(void){
     //Chronograph binding
     if(chron.chrBindCnt != 0){
         chron.chrBindCnt--;
-        if(chron.chrBindCnt == 0) Menu_putMsg("Failed", MSG_CNT);
+        if(chron.chrBindCnt == 0) Menu_putMsg("Failed", MSG_CNT_DEFAULT);
     }
     //Draw message
     ssd_putMessage();

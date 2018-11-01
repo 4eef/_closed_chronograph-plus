@@ -155,7 +155,6 @@ void drawIncScr(void);
 void drawChrScr(void);
 void drawHybrScr(void);
 void drawMenu(void);
-void chrSetsRst(void);
 
 #endif //system_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

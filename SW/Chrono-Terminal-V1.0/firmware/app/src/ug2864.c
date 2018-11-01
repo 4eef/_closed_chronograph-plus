@@ -21,7 +21,7 @@ ssdVideoBff_type    ssdVideoBff;
 * @brief    Put text parameter select window at the center of display
 */
 void ssd_putInfoTxtWnd(void){
-    uint8_t i, j, x, y, pos, offs, numStrs;
+    uint8_t i, j, x, y, offs, numStrs;
     //Draw the folder
     x = 0;
     y = 0;

@@ -12,6 +12,8 @@
 * Include
 */
 #include "string.h"
+#include "MicroMenu.h"
+#include "system.h"
 
 /*!****************************************************************************
 * User define
@@ -44,6 +46,8 @@ void swResFunc(void);
 void chrBindFunc(void);
 void offsCalFunc(void);
 void gainCalFunc(void);
+void chrSetsRst(void);
+void clipReload(void);
 
 #endif //menuFunctions_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

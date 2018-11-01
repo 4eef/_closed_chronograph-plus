@@ -25,8 +25,8 @@
 #define MENU_MSG_LEN_MAX        MENU_STR_LEN_MAX * MENU_ITEMS_QTY_MAX
 #define TXT_PAR_MIN_VAL         0
 #define MSG_LOCK                0
-#define MSG_CNT_FOR_TOUT        2
-#define MSG_CNT                 30
+#define MSG_CNT_BLINK           2
+#define MSG_CNT_DEFAULT         30
 #define MSG_CNT_LONG            60
 #define SYM_TERMINATOR_NO       0
 #define SYM_LF_NO               10
@@ -38,10 +38,6 @@
 #define SYM_ZBIG_NO             90
 #define SYM_ASMALL_NO           97
 #define SYM_ZSMALL_NO           122
-//Delete from this file
-#define MENU_INTERVAL           10
-#define MENU_START              12
-#define MSG_CNT_BIND            100
 
 /*!****************************************************************************
 * User typedef
@@ -205,19 +201,19 @@ extern menuItem_type* currMenuItem;
 #define MENU_PAR(name, pPar1, pPar2, pPar3, constPar1, constPar2, constPar3, pFunc) \
     menuPrmtr_type const name = {pPar1, pPar2, pPar3, constPar1, constPar2, constPar3, pFunc}
     
-#define MENU_PARENT         Menu_GetCurrentMenu()->parent
-#define MENU_CHILD          Menu_GetCurrentMenu()->child
-#define MENU_NEXT           Menu_GetCurrentMenu()->next
-#define MENU_PREVIOUS       Menu_GetCurrentMenu()->previous
-#define MENU_ITEM_TYPE      Menu_GetCurrentMenu()->eItemType
-#define MENU_PAR_DSCR       Menu_GetCurrentMenu()->parDscr
-#define MENU_ITEM_TEXT      Menu_GetCurrentMenu()->text
+#define MENU_PARENT         Menu_getCurrItem()->parent
+#define MENU_CHILD          Menu_getCurrItem()->child
+#define MENU_NEXT           Menu_getCurrItem()->next
+#define MENU_PREVIOUS       Menu_getCurrItem()->previous
+#define MENU_ITEM_TYPE      Menu_getCurrItem()->eItemType
+#define MENU_PAR_DSCR       Menu_getCurrItem()->parDscr
+#define MENU_ITEM_TEXT      Menu_getCurrItem()->text
 
 /*!****************************************************************************
 * Prototypes for the functions
 */
-menuItem_type* Menu_GetCurrentMenu(void);
-void Menu_Navigate(menuItem_type* const NewMenu);
+menuItem_type *Menu_getCurrItem(void);
+void Menu_navigate(menuItem_type* const NewMenu);
 void Menu_listParse(menuItem_type* const NewMenu);
 void Menu_putMsg(char *str, uint8_t msgCnt);
 void Menu_msgClr(void);

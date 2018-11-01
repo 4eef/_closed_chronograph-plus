@@ -58,6 +58,8 @@
 #define DISPLAY_CLEAR                   0
 #define DISPLAY_REFRESH                 1
 #define DISPLAY_OK                      2
+#define MENU_INTERVAL           10
+#define MENU_START              12
 
 /*!****************************************************************************
 * User enum

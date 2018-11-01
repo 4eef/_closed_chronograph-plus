@@ -24,22 +24,6 @@ pellets_type                pellets;
 
 /*!****************************************************************************
 * @brief    Fill video buffer with "menu"
-*/
-void chrSetsRst(void){
-    if(((sysPars.dispMode == eHybrid) || (sysPars.dispMode == eChronograph)) && (chron.clipCapacity > 1) && (chron.clipCurrent != chron.clipCapacity)){
-        chron.clipCurrent = chron.clipCapacity;
-        Menu_putMsg("Clip reloaded", MSG_CNT);
-    }else if((sysPars.dispMode == eChronograph) && (chron.statShots != 0)){
-        chron.statShots = 0;
-        chron.statSpeedsSum = 0;
-        chron.statSdev = 0;
-        chron.statMean = 0;
-        Menu_putMsg("Stats cleared", MSG_CNT);
-    }
-}
-
-/*!****************************************************************************
-* @brief    Fill video buffer with "menu"
 * @param    
 * @retval   
 */
