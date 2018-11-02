@@ -81,13 +81,15 @@ void Menu_navigate(menuItem_type const *NewMenu){
     }else if(menu.menuItems.wndOffs > menu.menuItems.currItem){
         menu.menuItems.wndOffs = menu.menuItems.currItem;
     }
-    //Copy all strings on current level
-    menu.menuItems.totItems = 0;
-    while(1){
-        strcpy(menu.menuItems.child[menu.menuItems.totItems], tmpItem->text);
-        if(tmpItem->next == &NULL_MENU) break;
-        tmpItem = tmpItem->next;
-        menu.menuItems.totItems++;
+    //Copy all strings on new level
+    if((NewMenu != MENU_NEXT) && (NewMenu != MENU_PREVIOUS)){
+        menu.menuItems.totItems = 0;
+        while(1){
+            strcpy(menu.menuItems.child[menu.menuItems.totItems], tmpItem->text);
+            if(tmpItem->next == &NULL_MENU) break;
+            tmpItem = tmpItem->next;
+            menu.menuItems.totItems++;
+        }
     }
     //Save new menu item
     currMenuItem = NewMenu;
@@ -511,7 +513,6 @@ void txtParSelWndRun(eNavEvent_type navEvent){
             break;
         case eBack:
             menu.menuMode = menu.menuPrevMode;
-            Menu_putMsg("Cancelled", MSG_CNT_DEFAULT);
             break;
         case eBackLng:
             break;
@@ -661,7 +662,6 @@ void parWndRun(eNavEvent_type navEvent){
             break;
         case eBack:
             menu.menuMode = menu.menuPrevMode;
-            Menu_putMsg("Cancelled", MSG_CNT_DEFAULT);
             break;
         case eBackLng:
             break;
