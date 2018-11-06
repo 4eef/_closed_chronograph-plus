@@ -22,7 +22,7 @@
 #include "delay.h"
 #include "ug2864.h"
 #include "lis3.h"
-#include "MicroMenu.h"
+#include "microMenu.h"
 #include "IR.h"
 #include "adc.h"
 #include "sync.h"

@@ -43,9 +43,9 @@ void battCalc(void){
         //Put message
         if(battery.battMsgPer == 0){
             if(volt <= BATT_VOLT_LOW){
-                Menu_putMsg("Battery depleted", MSG_CNT_LONG);
+                menu_putMsg("Battery depleted", MSG_CNT_LONG);
             }else{
-                Menu_putMsg("Low charge", MSG_CNT_LONG);
+                menu_putMsg("Low charge", MSG_CNT_LONG);
             }
             battery.battMsgPer = BATT_MSG_PERIOD;
         }
@@ -79,7 +79,7 @@ void battCalc(void){
     }
     //Counters managing
     if(battery.battMsgPer != 0) battery.battMsgPer--;
-    if((battery.battMsgPer == 0) && (battery.battVolt <= BATT_VOLT_LOW)) Menu_pwrSw(ePwrOff);
+    if((battery.battMsgPer == 0) && (battery.battVolt <= BATT_VOLT_LOW)) menu_pwrSw(ePwrOff);
 }
 
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

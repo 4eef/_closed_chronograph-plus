@@ -13,7 +13,7 @@
 */
 #include "stm32f0xx.h"
 #include "power.h"
-#include "MicroMenu.h"
+#include "microMenu.h"
 #include "system.h"
 
 /*!****************************************************************************

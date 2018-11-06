@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# IAR ELF Linker V7.80.2.11947/W32 for ARM                02/Nov/2018  11:11:34
+# IAR ELF Linker V7.80.2.11947/W32 for ARM                06/Nov/2018  22:43:20
 # Copyright 2007-2016 IAR Systems AB.
 #
 #    Output file  =  
@@ -25,7 +25,7 @@
 #        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\lis3.o
 #        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\main.o
 #        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\menuFunctions.o
-#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\MicroMenu.o
+#        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\microMenu.o
 #        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\power.o
 #        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\ssdFonts.o
 #        C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj\ssdGraph.o
@@ -69,7 +69,7 @@ initialize by copy { rw };
                             - 0x080000c0    0xc0
 
 "P1":                                     0x75e4
-  .text              ro code  0x080000c0   0xe54  MicroMenu.o [1]
+  .text              ro code  0x080000c0   0xe54  microMenu.o [1]
   .text              ro code  0x08000f14    0x10  strcpy.o [5]
   .text              ro code  0x08000f24    0x10  strlen.o [5]
   .text              ro code  0x08000f34    0x50  ABImemset.o [5]
@@ -168,7 +168,7 @@ initialize by copy { rw };
   .rodata            const    0x08006fd0    0x1c  main.o [1]
   .rodata            const    0x08006fec    0x1c  main.o [1]
   .rodata            const    0x08007008    0x1c  main.o [1]
-  .rodata            const    0x08007024    0x1c  MicroMenu.o [1]
+  .rodata            const    0x08007024    0x1c  microMenu.o [1]
   .text              ro code  0x08007040    0x1a  cmain.o [5]
   .text              ro code  0x0800705a     0x4  low_level_init.o [3]
   .text              ro code  0x0800705e     0x8  exit.o [3]
@@ -203,7 +203,7 @@ initialize by copy { rw };
   .rodata            const    0x080072c8    0x18  main.o [1]
   .rodata            const    0x080072e0    0x18  main.o [1]
   .rodata            const    0x080072f8    0x18  main.o [1]
-  .rodata            const    0x08007310    0x18  MicroMenu.o [1]
+  .rodata            const    0x08007310    0x18  microMenu.o [1]
   .rodata            const    0x08007328    0x14  battery.o [1]
   .rodata            const    0x0800733c    0x14  main.o [1]
   .rodata            const    0x08007350    0x14  main.o [1]
@@ -211,9 +211,9 @@ initialize by copy { rw };
   .rodata            const    0x08007378    0x14  main.o [1]
   .rodata            const    0x0800738c    0x14  main.o [1]
   .rodata            const    0x080073a0    0x14  main.o [1]
-  .rodata            const    0x080073b4    0x14  MicroMenu.o [1]
-  .rodata            const    0x080073c8    0x14  MicroMenu.o [1]
-  .rodata            const    0x080073dc    0x14  MicroMenu.o [1]
+  .rodata            const    0x080073b4    0x14  microMenu.o [1]
+  .rodata            const    0x080073c8    0x14  microMenu.o [1]
+  .rodata            const    0x080073dc    0x14  microMenu.o [1]
   .rodata            const    0x080073f0    0x14  sync.o [1]
   .rodata            const    0x08007404    0x10  IR.o [1]
   .rodata            const    0x08007414    0x10  IR.o [1]
@@ -227,10 +227,10 @@ initialize by copy { rw };
   .rodata            const    0x08007494    0x10  main.o [1]
   .rodata            const    0x080074a4    0x10  menuFunctions.o [1]
   .rodata            const    0x080074b4    0x10  menuFunctions.o [1]
-  .rodata            const    0x080074c4    0x10  MicroMenu.o [1]
-  .rodata            const    0x080074d4    0x10  MicroMenu.o [1]
-  .rodata            const    0x080074e4    0x10  MicroMenu.o [1]
-  .rodata            const    0x080074f4    0x10  MicroMenu.o [1]
+  .rodata            const    0x080074c4    0x10  microMenu.o [1]
+  .rodata            const    0x080074d4    0x10  microMenu.o [1]
+  .rodata            const    0x080074e4    0x10  microMenu.o [1]
+  .rodata            const    0x080074f4    0x10  microMenu.o [1]
   .rodata            const    0x08007504    0x10  ssdGraph.o [1]
   .rodata            const    0x08007514    0x10  ssdGraph.o [1]
   .rodata            const    0x08007524     0xc  battery.o [1]
@@ -238,9 +238,9 @@ initialize by copy { rw };
   .rodata            const    0x0800753c     0xc  main.o [1]
   .rodata            const    0x08007548     0xc  main.o [1]
   .rodata            const    0x08007554     0xc  main.o [1]
-  .rodata            const    0x08007560     0xc  MicroMenu.o [1]
-  .rodata            const    0x0800756c     0xc  MicroMenu.o [1]
-  .rodata            const    0x08007578     0xc  MicroMenu.o [1]
+  .rodata            const    0x08007560     0xc  microMenu.o [1]
+  .rodata            const    0x0800756c     0xc  microMenu.o [1]
+  .rodata            const    0x08007578     0xc  microMenu.o [1]
   .rodata            const    0x08007584     0xc  system.o [1]
   .rodata            const    0x08007590     0xc  system.o [1]
   .rodata            const    0x0800759c     0xc  system.o [1]
@@ -249,8 +249,8 @@ initialize by copy { rw };
   .rodata            const    0x080075bc     0x8  main.o [1]
   .rodata            const    0x080075c4     0x8  main.o [1]
   .rodata            const    0x080075cc     0x8  main.o [1]
-  .rodata            const    0x080075d4     0x8  MicroMenu.o [1]
-  .rodata            const    0x080075dc     0x8  MicroMenu.o [1]
+  .rodata            const    0x080075d4     0x8  microMenu.o [1]
+  .rodata            const    0x080075dc     0x8  microMenu.o [1]
   .rodata            const    0x080075e4     0x8  ssdGraph.o [1]
   .rodata            const    0x080075ec     0x8  system.o [1]
   .rodata            const    0x080075f4     0x8  system.o [1]
@@ -310,7 +310,7 @@ initialize by copy { rw };
 "P2", part 1 of 3:                           0x8
   P2-1                        0x20000000     0x8  <Init block>
     .data            inited   0x20000000     0x4  gpio.o [1]
-    .data            inited   0x20000004     0x4  MicroMenu.o [1]
+    .data            inited   0x20000004     0x4  microMenu.o [1]
                             - 0x20000008     0x8
 
 "P2", part 2 of 3:                         0x400
@@ -319,7 +319,7 @@ initialize by copy { rw };
                             - 0x20000408   0x400
 
 "P2", part 3 of 3:                         0xe78
-  .bss               zero     0x20000408   0x588  MicroMenu.o [1]
+  .bss               zero     0x20000408   0x588  microMenu.o [1]
   .bss               zero     0x20000990   0x404  ug2864.o [1]
   .bss               zero     0x20000d94   0x22c  system.o [1]
   .bss               zero     0x20000fc0   0x178  system.o [1]
@@ -367,7 +367,6 @@ Copy (__iar_copy_init3)
     ------                 -------  -------  -------
 C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\Debug\Obj: [1]
     IR.o                     2 604       72       20
-    MicroMenu.o              3 668      232    1 420
     adc.o                      504                 4
     battery.o                  448       32        1
     buttons.o                  820                 8
@@ -381,6 +380,7 @@ C:\Users\4eef\Projects\Chronograph+\SW\Chrono-Terminal-V1.0\firmware\PROJ_DIR\De
     lis3.o                     860        4       44
     main.o                     724    1 822
     menuFunctions.o            172      316
+    microMenu.o              3 668      232    1 420
     power.o                    480                 8
     ssdFonts.o                        1 944
     ssdGraph.o                           44
@@ -476,18 +476,8 @@ I2CRxInit               0x08001f55   0x98  Code  Gb  i2c.o [1]
 I2CTx                   0x08002191   0xec  Code  Gb  i2c.o [1]
 I2CTxInit               0x080020d9   0x96  Code  Gb  i2c.o [1]
 LoadInt                 0x0800286d   0x68  Code  Lc  xprintflarge_nomb.o [3]
-Menu_getCurrItem        0x080000c1    0x6  Code  Gb  MicroMenu.o [1]
-Menu_msgClr             0x080001e3    0xe  Code  Gb  MicroMenu.o [1]
-Menu_navigate           0x080000c7   0xe0  Code  Gb  MicroMenu.o [1]
-Menu_putInfoWnd         0x0800023f   0x90  Code  Gb  MicroMenu.o [1]
-Menu_putMsg             0x080001a7   0x3c  Code  Gb  MicroMenu.o [1]
-Menu_putParWnd          0x080001f1   0x4e  Code  Gb  MicroMenu.o [1]
-Menu_putTxtEditWnd      0x080002dd   0x48  Code  Gb  MicroMenu.o [1]
-Menu_putTxtParSelWnd    0x0800032d   0x44  Code  Gb  MicroMenu.o [1]
-Menu_pwrSw              0x0800037d   0x36  Code  Gb  MicroMenu.o [1]
-Menu_run                0x080003c5   0x80  Code  Gb  MicroMenu.o [1]
-NULL_MENU               0x08007024   0x1c  Data  Gb  MicroMenu.o [1]
-NULL_PRM                0x08007310   0x18  Data  Gb  MicroMenu.o [1]
+NULL_MENU               0x08007024   0x1c  Data  Gb  microMenu.o [1]
+NULL_PRM                0x08007310   0x18  Data  Gb  microMenu.o [1]
 NVIC_DisableIRQ         0x08005f4f    0xe  Code  Lc  adc.o [1]
 NVIC_DisableIRQ         0x0800354b    0xe  Code  Lc  IR.o [1]
 NVIC_DisableIRQ         0x08005d6f    0xe  Code  Lc  power.o [1]
@@ -573,7 +563,7 @@ chrgSym                 0x080075e4    0x8  Data  Gb  ssdGraph.o [1]
 chron                   0x20000d94  0x22c  Data  Gb  system.o [1]
 clipReload              0x08006a8f   0x38  Code  Gb  menuFunctions.o [1]
 clz                     0x08004fd5   0x2c  Code  Lc  fix16.o [1]
-currMenuItem            0x20000004    0x4  Data  Gb  MicroMenu.o [1]
+currMenuItem            0x20000004    0x4  Data  Gb  microMenu.o [1]
 deInitIR                0x08003c01   0x4a  Code  Gb  IR.o [1]
 delay_us                0x08001e5d   0x60  Code  Gb  delay.o [1]
 div                     0x08003519   0x20  Code  Gb  div.o [3]
@@ -582,7 +572,7 @@ drawDisplay             0x08005c19   0xbc  Code  Gb  main.o [1]
 drawHybrScr             0x080040f5  0x1ce  Code  Gb  system.o [1]
 drawIncScr              0x080044d9   0xe4  Code  Gb  system.o [1]
 drawMenu                0x08003f69  0x182  Code  Gb  system.o [1]
-exeConfirm              0x08000675   0x38  Code  Gb  MicroMenu.o [1]
+exeConfirm              0x08000675   0x38  Code  Gb  microMenu.o [1]
 exit                    0x0800705f    0x8  Code  Gb  exit.o [3]
 fix16_add               0x08004f49   0x24  Code  Gb  fix16.o [1]
 fix16_atan              0x080051b3   0x10  Code  Gb  fix16_trig.o [1]
@@ -599,8 +589,8 @@ gainCalFunc             0x08006a59    0x2  Code  Gb  menuFunctions.o [1]
 getNavEvent             0x08005759  0x2f8  Code  Gb  buttons.o [1]
 gppin_init              0x08006533  0x1cc  Code  Gb  gpio.o [1]
 hndlIRData              0x080035ed  0x4fe  Code  Gb  IR.o [1]
-infoTxtSplit            0x08000825  0x112  Code  Gb  MicroMenu.o [1]
-infoWndRun              0x08000941   0x84  Code  Gb  MicroMenu.o [1]
+infoTxtSplit            0x08000825  0x112  Code  Gb  microMenu.o [1]
+infoWndRun              0x08000941   0x84  Code  Gb  microMenu.o [1]
 initClocks              0x08006459   0xa0  Code  Gb  clock.o [1]
 initGpios               0x080064f9   0x3a  Code  Gb  gpio.o [1]
 initI2C1                0x08001ebd   0x98  Code  Gb  i2c.o [1]
@@ -621,16 +611,26 @@ lpfAccPrim              0x080051d5   0x24  Code  Gb  filter.o [1]
 lpfPrim                 0x200011ec   0x18  Data  Gb  filter.o [1]
 main                    0x08005a8d  0x16e  Code  Gb  main.o [1]
 meas                    0x2000126c    0x8  Data  Gb  system.o [1]
-menu                    0x20000408  0x588  Data  Gb  MicroMenu.o [1]
+menu                    0x20000408  0x588  Data  Gb  microMenu.o [1]
 menuFolder              0x08007504   0x10  Data  Gb  ssdGraph.o [1]
 menuScroll              0x08007664    0x4  Data  Gb  ssdGraph.o [1]
-msgRun                  0x08000eb9   0x2e  Code  Gb  MicroMenu.o [1]
-navDisp                 0x08000491   0xbc  Code  Gb  MicroMenu.o [1]
-navMenu                 0x08000579   0xd8  Code  Gb  MicroMenu.o [1]
-navPwrOff               0x0800047d   0x14  Code  Gb  MicroMenu.o [1]
+menu_getCurrItem        0x080000c1    0x6  Code  Gb  microMenu.o [1]
+menu_msgClr             0x080001e3    0xe  Code  Gb  microMenu.o [1]
+menu_navigate           0x080000c7   0xe0  Code  Gb  microMenu.o [1]
+menu_putInfoWnd         0x0800023f   0x90  Code  Gb  microMenu.o [1]
+menu_putMsg             0x080001a7   0x3c  Code  Gb  microMenu.o [1]
+menu_putParWnd          0x080001f1   0x4e  Code  Gb  microMenu.o [1]
+menu_putTxtEditWnd      0x080002dd   0x48  Code  Gb  microMenu.o [1]
+menu_putTxtParSelWnd    0x0800032d   0x44  Code  Gb  microMenu.o [1]
+menu_pwrSw              0x0800037d   0x36  Code  Gb  microMenu.o [1]
+menu_run                0x080003c5   0x80  Code  Gb  microMenu.o [1]
+msgRun                  0x08000eb9   0x2e  Code  Gb  microMenu.o [1]
+navDisp                 0x08000491   0xbc  Code  Gb  microMenu.o [1]
+navMenu                 0x08000579   0xd8  Code  Gb  microMenu.o [1]
+navPwrOff               0x0800047d   0x14  Code  Gb  microMenu.o [1]
 offsCalFunc             0x08006a57    0x2  Code  Gb  menuFunctions.o [1]
 pabout                  0x080070a0   0x18  Data  Gb  main.o [1]
-parWndRun               0x08000e05   0xb4  Code  Gb  MicroMenu.o [1]
+parWndRun               0x08000e05   0xb4  Code  Gb  microMenu.o [1]
 pcc                     0x08007118   0x18  Data  Gb  main.o [1]
 pchrbnd                 0x08007148   0x18  Data  Gb  main.o [1]
 pdb10edit               0x08007238   0x18  Data  Gb  main.o [1]
@@ -664,7 +664,7 @@ psd                     0x08007130   0x18  Data  Gb  main.o [1]
 psinfo                  0x080070b8   0x18  Data  Gb  main.o [1]
 pstats                  0x08007088   0x18  Data  Gb  main.o [1]
 pswres                  0x08007100   0x18  Data  Gb  main.o [1]
-putConfirm              0x08000651   0x18  Code  Gb  MicroMenu.o [1]
+putConfirm              0x08000651   0x18  Code  Gb  microMenu.o [1]
 q16TiltCalc             0x08004cd3   0x48  Code  Gb  lis3.o [1]
 rabout                  0x08006cf8   0x1c  Data  Gb  main.o [1]
 rservice                0x08006d14   0x1c  Data  Gb  main.o [1]
@@ -675,7 +675,7 @@ scclipc                 0x08006dbc   0x1c  Data  Gb  main.o [1]
 scdist                  0x08006df4   0x1c  Data  Gb  main.o [1]
 schrono                 0x08006d4c   0x1c  Data  Gb  main.o [1]
 scpeldb                 0x08006dd8   0x1c  Data  Gb  main.o [1]
-setParEdit              0x080006c1  0x15c  Code  Gb  MicroMenu.o [1]
+setParEdit              0x080006c1  0x15c  Code  Gb  microMenu.o [1]
 sibrdr                  0x08006fd0   0x1c  Data  Gb  main.o [1]
 sigacal                 0x08007008   0x1c  Data  Gb  main.o [1]
 sincline                0x08006d68   0x1c  Data  Gb  main.o [1]
@@ -728,8 +728,8 @@ sync                    0x08006193   0xce  Code  Gb  sync.o [1]
 syncInit                0x08006139   0x5a  Code  Gb  sync.o [1]
 sysPars                 0x20001194   0x3c  Data  Gb  system.o [1]
 trxAccData              0x08004d29  0x1ea  Code  Gb  lis3.o [1]
-txtEditWndRun           0x08000ac5  0x330  Code  Gb  MicroMenu.o [1]
-txtParSelWndRun         0x080009c5   0xbc  Code  Gb  MicroMenu.o [1]
+txtEditWndRun           0x08000ac5  0x330  Code  Gb  microMenu.o [1]
+txtParSelWndRun         0x080009c5   0xbc  Code  Gb  microMenu.o [1]
 ug2864_com              0x08001cb3   0x2c  Code  Gb  ug2864.o [1]
 ug2864_refresh          0x08001cdf   0x20  Code  Gb  ug2864.o [1]
 ug2864init              0x08001c01   0xb2  Code  Gb  ug2864.o [1]

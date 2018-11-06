@@ -14,7 +14,7 @@
 #include "stm32f0xx.h"
 #include "i2c.h"
 #include "delay.h"
-#include "MicroMenu.h"
+#include "microMenu.h"
 #include "fix16.h"
 #include "math.h"
 #include "filter.h"

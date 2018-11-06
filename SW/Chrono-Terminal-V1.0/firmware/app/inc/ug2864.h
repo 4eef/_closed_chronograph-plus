@@ -17,7 +17,7 @@
 #include "delay.h"
 #include "ssdFonts.h"
 #include "ssdGraph.h"
-#include "MicroMenu.h"
+#include "microMenu.h"
 
 /*!****************************************************************************
 * User define

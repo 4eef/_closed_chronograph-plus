@@ -8,7 +8,7 @@
 #ifndef menuItems_H
 #define menuItems_H
 
-#include "MicroMenu.h"
+#include "microMenu.h"
 #include "menuFunctions.h"
 
 extern sysPars_type         sysPars;

@@ -12,7 +12,7 @@
 * Include
 */
 #include "string.h"
-#include "MicroMenu.h"
+#include "microMenu.h"
 #include "system.h"
 
 /*!****************************************************************************

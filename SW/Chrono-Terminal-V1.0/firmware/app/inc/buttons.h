@@ -12,7 +12,7 @@
 * Include
 */
 #include "gpio.h"
-#include "MicroMenu.h"
+#include "microMenu.h"
 
 /*!****************************************************************************
 * User define

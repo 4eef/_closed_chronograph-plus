@@ -80,17 +80,17 @@ void main(void){
     menu.pPwrOnFunc = powerOn;
     menu.pPwrOffFunc = powerOff;
     //Navigate to an absolute menu item entry
-    Menu_navigate(&rstats);
+    menu_navigate(&rstats);
     //Initialize hardware
     initPeriphs();
-    Menu_pwrSw(ePwrOff);//ePwrOff/ePwrOn
+    menu_pwrSw(ePwrOff);//ePwrOff/ePwrOn
     adcInit();
     
     while(1){
         sync();                                                                 //Syncronize cycle
         //meas.chron.speed0 = meas.stats.cycBroken;                               //Debug
         battCalc();                                                             //Calculate battery parameters
-        Menu_run(getNavEvent());                                                //Run menu processor eWait);//
+        menu_run(getNavEvent());                                                //Run menu processor eWait);//
         if(power.pwrMode == ePwrRun){
             hndlIRData();                                                       //Data received via IR channel
             if(sysPars.dispMode != eChronograph) trxAccData();                  //Perform data transmition with accelerometer
@@ -142,12 +142,12 @@ void drawDisplay(void){
 
     if((pellets.irRxPelSgn.pelStat == PELLET_CONFIRM) || (pellets.irRxPelSgn.pelStat == PELLET_NEW)){
         pellets.irRxPelSgn.pelStat = PELLET_OK;
-        Menu_putTxtParSelWnd(pellets.pel[0].name, &chron.pellet, PELLET_KNOWN_LIST);
+        menu_putTxtParSelWnd(pellets.pel[0].name, &chron.pellet, PELLET_KNOWN_LIST);
     }
     //Chronograph binding
     if(chron.chrBindCnt != 0){
         chron.chrBindCnt--;
-        if(chron.chrBindCnt == 0) Menu_putMsg("Failed", MSG_CNT_DEFAULT);
+        if(chron.chrBindCnt == 0) menu_putMsg("Failed", MSG_CNT_DEFAULT);
     }
     //Draw message
     ssd_putMessage();

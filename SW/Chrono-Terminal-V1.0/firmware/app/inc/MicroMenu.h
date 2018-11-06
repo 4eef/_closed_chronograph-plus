@@ -1,11 +1,11 @@
 /*!****************************************************************************
-* @file    MicroMenu.h
+* @file    microMenu.h
 * @author  4eef
 * @version V1.0
-* @date    09.12.2016
+* @date    06.11.2018
 */
-#ifndef MicroMenu_H
-#define MicroMenu_H
+#ifndef microMenu_H
+#define microMenu_H
 
 /*!****************************************************************************
 * Include
@@ -201,28 +201,28 @@ extern menuItem_type* currMenuItem;
 #define MENU_PAR(name, pPar1, pPar2, pPar3, constPar1, constPar2, constPar3, pFunc) \
     menuPrmtr_type const name = {pPar1, pPar2, pPar3, constPar1, constPar2, constPar3, pFunc}
     
-#define MENU_PARENT         Menu_getCurrItem()->parent
-#define MENU_CHILD          Menu_getCurrItem()->child
-#define MENU_NEXT           Menu_getCurrItem()->next
-#define MENU_PREVIOUS       Menu_getCurrItem()->previous
-#define MENU_ITEM_TYPE      Menu_getCurrItem()->eItemType
-#define MENU_PAR_DSCR       Menu_getCurrItem()->parDscr
-#define MENU_ITEM_TEXT      Menu_getCurrItem()->text
+#define MENU_PARENT         menu_getCurrItem()->parent
+#define MENU_CHILD          menu_getCurrItem()->child
+#define MENU_NEXT           menu_getCurrItem()->next
+#define MENU_PREVIOUS       menu_getCurrItem()->previous
+#define MENU_ITEM_TYPE      menu_getCurrItem()->eItemType
+#define MENU_PAR_DSCR       menu_getCurrItem()->parDscr
+#define MENU_ITEM_TEXT      menu_getCurrItem()->text
 
 /*!****************************************************************************
 * Prototypes for the interface functions
 */
-menuItem_type *Menu_getCurrItem(void);
-void Menu_navigate(menuItem_type const *NewMenu);
-void Menu_putMsg(char *str, uint8_t msgCnt);
-void Menu_msgClr(void);
-void Menu_putParWnd(char *parUnits, uint16_t *pParOrigin, uint16_t *pParCopy,
+menuItem_type *menu_getCurrItem(void);
+void menu_navigate(menuItem_type const *NewMenu);
+void menu_putMsg(char *str, uint8_t msgCnt);
+void menu_msgClr(void);
+void menu_putParWnd(char *parUnits, uint16_t *pParOrigin, uint16_t *pParCopy,
                     eParFract_type parFract, int16_t brdMax, int16_t brdMin);
-void Menu_putInfoWnd(char *pString, bool withPars);
-void Menu_putTxtEditWnd(char *pStrOrig);
-void Menu_putTxtParSelWnd(char *pFirstPar, uint16_t *pTxtParNumOrigin, uint16_t qtyTxtPar);
-void Menu_pwrSw(ePwrState_type ePwrState);
-void Menu_run(eNavEvent_type navEvent);
+void menu_putInfoWnd(char *pString, bool withPars);
+void menu_putTxtEditWnd(char *pStrOrig);
+void menu_putTxtParSelWnd(char *pFirstPar, uint16_t *pTxtParNumOrigin, uint16_t qtyTxtPar);
+void menu_pwrSw(ePwrState_type ePwrState);
+void menu_run(eNavEvent_type navEvent);
 
-#endif //MicroMenu_H
+#endif //microMenu_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

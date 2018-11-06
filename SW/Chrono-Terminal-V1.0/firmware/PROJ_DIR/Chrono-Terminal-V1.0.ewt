@@ -2344,7 +2344,7 @@
       <name>$PROJ_DIR$\..\app\src\menuFunctions.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\app\src\MicroMenu.c</name>
+      <name>$PROJ_DIR$\..\app\src\microMenu.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\app\src\power.c</name>

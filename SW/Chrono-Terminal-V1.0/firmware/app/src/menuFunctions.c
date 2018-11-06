@@ -51,14 +51,14 @@ void chrSetsRst(void){
         chron.statSpeedsSum = 0;
         chron.statSdev = 0;
         chron.statMean = 0;
-        Menu_putMsg("Stats cleared", MSG_CNT_DEFAULT);
+        menu_putMsg("Stats cleared", MSG_CNT_DEFAULT);
     }
 }
 
 void clipReload(void){
     if(((sysPars.dispMode == eHybrid) || (sysPars.dispMode == eChronograph)) && (chron.clipCapacity > 1) && (chron.clipCurrent != chron.clipCapacity)){
         chron.clipCurrent = chron.clipCapacity;
-        Menu_putMsg("Clip reloaded", MSG_CNT_DEFAULT);
+        menu_putMsg("Clip reloaded", MSG_CNT_DEFAULT);
     }
 }
 
