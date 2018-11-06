@@ -1,2 +1,3 @@
 # Add any directories, files, or patterns you don't want to be tracked by version control
 SW/Chrono-Terminal-V1.0/firmware/PROJ_DIR/Debug/Obj/*
+SW/Chrono-Terminal-V1.0/firmware/PROJ_DIR/Debug/Exe/*
