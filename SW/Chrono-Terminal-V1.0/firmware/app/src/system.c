@@ -14,10 +14,10 @@
 /*!****************************************************************************
 * MEMORY
 */
-extern menu_type            menu;
-meas_type                   meas;
 stats_type                  stats;
 sysPars_type                sysPars;
+extern menu_type            menu;
+extern meas_type            meas;
 
 /*!****************************************************************************
 * @brief    Fill video buffer with "menu"

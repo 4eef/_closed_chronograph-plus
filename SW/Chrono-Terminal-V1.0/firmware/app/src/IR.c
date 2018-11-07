@@ -100,11 +100,11 @@ __irq void TIM2_IRQHandler(void){
         }else{                                                  //Falling edge
             if((TIM2->CR1 & TIM_CR1_CEN) != 0){
                 TIM2->CR1 &= ~TIM_CR1_CEN;
-                if((TIM2->CCR1 <= (IR_PREAMBLE_TIME+IR_PREAMBLE_TIME/CHR_TOLERANCE)) && (TIM2->CCR1 >= (IR_PREAMBLE_TIME-IR_PREAMBLE_TIME/CHR_TOLERANCE)) && (irRxData.rxState == IR_READY)){
+                if((TIM2->CCR1 <= (IR_PREAMBLE_TIME+IR_PREAMBLE_TIME/IR_TOLERANCE)) && (TIM2->CCR1 >= (IR_PREAMBLE_TIME-IR_PREAMBLE_TIME/IR_TOLERANCE)) && (irRxData.rxState == IR_READY)){
                     irRxData.rxBitCnt = 0;
                     irRxData.rxBytesCnt = 0;
                     irRxData.rxState = IR_BUSY;
-                }else if((TIM2->CCR1 <= (IR_LOG_ZERO_TIME+IR_LOG_ZERO_TIME/CHR_TOLERANCE)) && (TIM2->CCR1 >= (IR_LOG_ZERO_TIME-IR_LOG_ZERO_TIME/CHR_TOLERANCE)) && (irRxData.rxState == IR_BUSY)){
+                }else if((TIM2->CCR1 <= (IR_LOG_ZERO_TIME+IR_LOG_ZERO_TIME/IR_TOLERANCE)) && (TIM2->CCR1 >= (IR_LOG_ZERO_TIME-IR_LOG_ZERO_TIME/IR_TOLERANCE)) && (irRxData.rxState == IR_BUSY)){
                     irRxData.rxByte[irRxData.rxBytesCnt] &= ~(1 << irRxData.rxBitCnt);
                     irRxData.rxBitCnt++;
                     if(irRxData.rxBitCnt > IR_MAX_BITS){
@@ -115,7 +115,7 @@ __irq void TIM2_IRQHandler(void){
                             irRxData.rxBytesCnt = 0;
                         }
                     }
-                }else if((TIM2->CCR1 <= (IR_LOG_ONE_TIME+IR_LOG_ONE_TIME/CHR_TOLERANCE)) && (TIM2->CCR1 >= (IR_LOG_ONE_TIME-IR_LOG_ONE_TIME/CHR_TOLERANCE)) && (irRxData.rxState == IR_BUSY)){
+                }else if((TIM2->CCR1 <= (IR_LOG_ONE_TIME+IR_LOG_ONE_TIME/IR_TOLERANCE)) && (TIM2->CCR1 >= (IR_LOG_ONE_TIME-IR_LOG_ONE_TIME/IR_TOLERANCE)) && (irRxData.rxState == IR_BUSY)){
                     irRxData.rxByte[irRxData.rxBytesCnt] |= (1 << irRxData.rxBitCnt);
                     irRxData.rxBitCnt++;
                     if(irRxData.rxBitCnt > IR_MAX_BITS){

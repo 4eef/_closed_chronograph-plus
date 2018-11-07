@@ -13,11 +13,11 @@
 */
 #include "stm32f0xx.h"
 #include "gpio.h"
+#include "clock.h"
 
 /*!****************************************************************************
 * User define
 */
-#define F_APB1                  48000000
 #define IR_MAX_TIM_US           300000
 #define IR_PREAMBLE_TIME        6300
 #define IR_STOPBIT_TIME         1100
@@ -30,13 +30,7 @@
 #define IR_DATA_OVERRUN         3
 #define IR_MAX_BITS             7
 #define IR_MAX_BYTES            16
-#define CHR_TOLERANCE           10
-#define CHR_DIST_DEFAULT        200
-#define CHR_DIST_MPLY           100000
-#define CHR_TCK_NS              125
-#define CHR_DIST_MIN            100
-#define CHR_DIST_MAX            999
-#define CHR_SPD_MAX             65535
+#define IR_TOLERANCE            10
 
 /*!****************************************************************************
 * User enum
@@ -66,7 +60,6 @@ extern irRxData_type        irRxData;
 */
 void initIRConfig(void);
 void deInitIR(void);
-void hndlIRData(void);
 
 #endif //IR_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

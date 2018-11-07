@@ -15,6 +15,7 @@
 #include "ug2864.h"
 #include "lis3.h"
 #include "chrono.h"
+#include "inclinometer.h"
 
 /*!****************************************************************************
 * User define
@@ -37,6 +38,12 @@ typedef enum{
 }eDispMode_type;
 
 typedef struct{
+    char            modeTxts[SCR_MODES_NO][MENU_STR_LEN_MAX];
+    uint8_t         tmp;//Alignment
+    eDispMode_type  dispMode;
+}sysPars_type;
+
+typedef struct{
     uint32_t        shotsTotal;
     uint16_t        prefPellet;
     uint32_t        shotsPrefPellet;
@@ -45,23 +52,11 @@ typedef struct{
     uint32_t        cycBroken;
 }stats_type;
 
-typedef struct{
-    int16_t         accRoll;
-    int16_t         accPitch;
-    uint16_t        accRollBorder;
-    uint16_t        accPitchBorder;
-}meas_type;
-
-typedef struct{
-    char            modeTxts[SCR_MODES_NO][MENU_STR_LEN_MAX];
-    uint8_t         tmp;//Alignment
-    eDispMode_type  dispMode;
-}sysPars_type;
-
 /*!****************************************************************************
 * Extern viriables
 */
 extern sysPars_type         sysPars;
+extern stats_type           stats;
 
 /*!****************************************************************************
 * Macro functions

@@ -18,6 +18,12 @@
 /*!****************************************************************************
 * User define
 */
+#define CHR_DIST_DEFAULT        200
+#define CHR_DIST_MPLY           100000
+#define CHR_TCK_NS              125
+#define CHR_DIST_MIN            100
+#define CHR_DIST_MAX            999
+#define CHR_SPD_MAX             65535
 #define PELLET_DB_QTY           15
 #define PELLET_KNOWN_LIST       PELLET_DB_QTY - 1
 #define PELLET_SGN_TOLERANCE    10
