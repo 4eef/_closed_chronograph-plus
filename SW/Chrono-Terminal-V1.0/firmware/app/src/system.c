@@ -16,11 +16,8 @@
 */
 extern menu_type            menu;
 meas_type                   meas;
-chron_type                  chron;
-battery_type                battery;
 stats_type                  stats;
 sysPars_type                sysPars;
-pellets_type                pellets;
 
 /*!****************************************************************************
 * @brief    Fill video buffer with "menu"
@@ -89,34 +86,34 @@ void drawHybrScr(void){
     char speed0[8], speed1[4], speed2[4], speed3[4], speed4[4], magStat[6], rollAng[8], pitchAng[8];
     uint16_t val1, val2, ptch1, ptch2, roll1, roll2;
     //Pelet signature
-    ssd_putString6x8(0, 0, pellets.pel[chron.pellet].name);
+    ssd_putString6x8(0, 0, pellets.pel[chrono.pellet].name);
     //Speed 0
-    val1 = chron.speed0/FRACT_HUNDREDTHS;
-    val2 = chron.speed0-(val1*FRACT_HUNDREDTHS);
-    if(val1 == 0) val2 = chron.speed0;
+    val1 = chrono.speed0 / eHundreds;
+    val2 = chrono.speed0-(val1 * eHundreds);
+    if(val1 == 0) val2 = chrono.speed0;
     sprintf(speed0, "%u.%.2u%c", val1, val2, 47);
     ssd_putString12x16(0, 24, &speed0[0]);
     //Speed 1
-    sprintf(speed1, "%u", chron.speed1/100);
+    sprintf(speed1, "%u", chrono.speed1/100);
     ssd_putString6x8(98, 15, &speed1[0]);
     //Speed 2
-    sprintf(speed2, "%u", chron.speed2/100);
+    sprintf(speed2, "%u", chrono.speed2/100);
     ssd_putString6x8(98, 25, &speed2[0]);
     //Speed 3
-    sprintf(speed3, "%u", chron.speed3/100);
+    sprintf(speed3, "%u", chrono.speed3/100);
     ssd_putString6x8(98, 35, &speed3[0]);
     //Magazine status/Speed4
-    if(chron.clipCapacity > 1){
-        sprintf(magStat, "%u/%u", chron.clipCurrent, chron.clipCapacity);
+    if(chrono.clipCapacity > 1){
+        sprintf(magStat, "%u/%u", chrono.clipCurrent, chrono.clipCapacity);
         ssd_putString6x8(92, 45, &magStat[0]);
     }else{
-        sprintf(speed4, "%u", chron.speed4/100);
+        sprintf(speed4, "%u", chrono.speed4/100);
         ssd_putString6x8(98, 45, &speed4[0]);
     }
     //Roll angle
     val1 = abs(meas.accRoll) / 10;
-    roll1 = val1 / FRACT_TENTHS;
-    roll2 = val1 - (roll1 * FRACT_TENTHS);
+    roll1 = val1 / eTenths;
+    roll2 = val1 - (roll1 * eTenths);
     if(roll1 == 0) roll2 = val1;
     sprintf(rollAng, "%c%u.%.1u%c", 226, roll1, roll2, 248);
     ssd_putString6x8(0, 40, &rollAng[0]);
@@ -124,8 +121,8 @@ void drawHybrScr(void){
     ssd_putRollBar(meas.accRoll, meas.accRollBorder, ROLL_LOW_Y, ROLL_LOW_HEIGHT);
     //Pitch angle (add clearing of previous level)
     val1 = abs(meas.accPitch) / 10;
-    ptch1 = val1 / FRACT_TENTHS;
-    ptch2 = val1 - (ptch1*FRACT_TENTHS);
+    ptch1 = val1 / eTenths;
+    ptch2 = val1 - (ptch1 * eTenths);
     if(ptch1 == 0) ptch2 = val1;
     sprintf(pitchAng, "%c%u.%.1u%c", 232, ptch1, ptch2, 248);
     ssd_putString6x8(42, 40, &pitchAng[0]);
@@ -137,50 +134,50 @@ void drawChrScr(void){
     char speed0[8], speed1[4], speed2[4], speed3[4], speed4[4], magStat[6], energy[8], statShots[4], mean[8], sdev[8];
     uint16_t val1, val2;
     //Pelet signature
-    ssd_putString6x8(0, 0, pellets.pel[chron.pellet].name);
+    ssd_putString6x8(0, 0, pellets.pel[chrono.pellet].name);
     //Speed 0
-    val1 = chron.speed0/FRACT_HUNDREDTHS;
-    val2 = chron.speed0-(val1*FRACT_HUNDREDTHS);
-    if(val1 == 0) val2 = chron.speed0;
+    val1 = chrono.speed0 / eHundreds;
+    val2 = chrono.speed0-(val1 * eHundreds);
+    if(val1 == 0) val2 = chrono.speed0;
     sprintf(speed0, "%u.%.2u%c", val1, val2, 47);
     ssd_putString12x16(0, 24, &speed0[0]);
     //Speed 1
-    sprintf(speed1, "%u", chron.speed1/100);
+    sprintf(speed1, "%u", chrono.speed1/100);
     ssd_putString6x8(98, 15, &speed1[0]);
     //Speed 2
-    sprintf(speed2, "%u", chron.speed2/100);
+    sprintf(speed2, "%u", chrono.speed2/100);
     ssd_putString6x8(98, 25, &speed2[0]);
     //Speed 3
-    sprintf(speed3, "%u", chron.speed3/100);
+    sprintf(speed3, "%u", chrono.speed3/100);
     ssd_putString6x8(98, 35, &speed3[0]);
     //Magazine status/Speed4
-    if(chron.clipCapacity > 1){
-        sprintf(magStat, "%u/%u", chron.clipCurrent, chron.clipCapacity);
+    if(chrono.clipCapacity > 1){
+        sprintf(magStat, "%u/%u", chrono.clipCurrent, chrono.clipCapacity);
         ssd_putString6x8(92, 45, &magStat[0]);
     }else{
-        sprintf(speed4, "%u", chron.speed4/100);
+        sprintf(speed4, "%u", chrono.speed4/100);
         ssd_putString6x8(98, 45, &speed4[0]);
     }
     //Number of shots per measurement
-    sprintf(statShots, "%u", chron.statShots);
+    sprintf(statShots, "%u", chrono.statShots);
     ssd_putString6x8(98, 55, &statShots[0]);
     //Mean of current measurement
-    val1 = chron.statMean/FRACT_HUNDREDTHS;
-    val2 = chron.statMean-(val1*FRACT_HUNDREDTHS);
-    if(val1 == 0) val2 = chron.statMean;
+    val1 = chrono.statMean / eHundreds;
+    val2 = chrono.statMean-(val1 * eHundreds);
+    if(val1 == 0) val2 = chrono.statMean;
     sprintf(mean, "%c%u.%.2u", 230, val1, val2);
     ssd_putString6x8(0, 36, &mean[0]);
     //Standard deviation
-    val1 = chron.statSdev/FRACT_HUNDREDTHS;
-    val2 = chron.statSdev-(val1*FRACT_HUNDREDTHS);
-    if(val1 == 0) val2 = chron.statSdev;
+    val1 = chrono.statSdev / eHundreds;
+    val2 = chrono.statSdev-(val1 * eHundreds);
+    if(val1 == 0) val2 = chrono.statSdev;
     sprintf(sdev, "%c%u.%.2u", 229, val1, val2);
     ssd_putString6x8(49, 36, &sdev[0]);
     //Calculated energy
-    val1 = chron.statEnergy/FRACT_HUNDREDTHS;
-    val2 = chron.statEnergy-(val1*FRACT_HUNDREDTHS);
+    val1 = chrono.statEnergy / eHundreds;
+    val2 = chrono.statEnergy-(val1 * eHundreds);
     sprintf(energy, "%u.%.2u%c", val1, val2, 58);
-    if(val1 == 0) val2 = chron.statEnergy;
+    if(val1 == 0) val2 = chrono.statEnergy;
     ssd_putString12x16(0, 56, &energy[0]);
 }
 
@@ -189,8 +186,8 @@ void drawIncScr(void){
     uint16_t val1, ptch1, ptch2, roll1, roll2;
     //Roll angle
     val1 = abs(meas.accRoll) / 10;
-    roll1 = val1 / FRACT_TENTHS;
-    roll2 = val1 - (roll1 * FRACT_TENTHS);
+    roll1 = val1 / eTenths;
+    roll2 = val1 - (roll1 * eTenths);
     if(roll1 == 0) roll2 = val1;
     sprintf(rollAng, "%c%u.%.1u%c", 59, roll1, roll2, 61);
     ssd_putString12x16(0, 8, &rollAng[0]);
@@ -198,8 +195,8 @@ void drawIncScr(void){
     ssd_putRollBar(meas.accRoll, meas.accRollBorder, ROLL_HIGH_Y, ROLL_HIGH_HEIGHT);
     //Pitch angle
     val1 = abs(meas.accPitch) / 10;
-    ptch1 = val1 / FRACT_TENTHS;
-    ptch2 = val1 - (ptch1*FRACT_TENTHS);
+    ptch1 = val1 / eTenths;
+    ptch2 = val1 - (ptch1 * eTenths);
     if(ptch1 == 0) ptch2 = val1;
     sprintf(pitchAng, "%c%u.%.1u%c", 232, ptch1, ptch2, 248);
     ssd_putString6x8(76, 0, &pitchAng[0]);

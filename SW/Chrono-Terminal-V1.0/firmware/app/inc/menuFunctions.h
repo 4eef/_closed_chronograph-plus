@@ -14,6 +14,7 @@
 #include "string.h"
 #include "microMenu.h"
 #include "system.h"
+#include "chrono.h"
 
 /*!****************************************************************************
 * User define

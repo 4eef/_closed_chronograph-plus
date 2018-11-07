@@ -12,7 +12,7 @@
 #include "menuFunctions.h"
 
 extern menu_type            menu;
-extern chron_type           chron;
+extern chrono_type          chrono;
 extern sysPars_type         sysPars;
 
 const char statsTxt[] = "London is the capital and most populous city of England and the United Kingdom. Standing on the River Thames in the southeast of the island of Great Britain, London has been a major settlement for two millennia.";
@@ -46,18 +46,18 @@ void gainCalFunc(void){
 }
 
 void chrSetsRst(void){
-    if((sysPars.dispMode == eChronograph) && (chron.statShots != 0)){
-        chron.statShots = 0;
-        chron.statSpeedsSum = 0;
-        chron.statSdev = 0;
-        chron.statMean = 0;
+    if((sysPars.dispMode == eChronograph) && (chrono.statShots != 0)){
+        chrono.statShots = 0;
+        chrono.statSpeedsSum = 0;
+        chrono.statSdev = 0;
+        chrono.statMean = 0;
         menu_putMsg("Stats cleared", MSG_CNT_DEFAULT);
     }
 }
 
 void clipReload(void){
-    if(((sysPars.dispMode == eHybrid) || (sysPars.dispMode == eChronograph)) && (chron.clipCapacity > 1) && (chron.clipCurrent != chron.clipCapacity)){
-        chron.clipCurrent = chron.clipCapacity;
+    if(((sysPars.dispMode == eHybrid) || (sysPars.dispMode == eChronograph)) && (chrono.clipCapacity > 1) && (chrono.clipCurrent != chrono.clipCapacity)){
+        chrono.clipCurrent = chrono.clipCapacity;
         menu_putMsg("Clip reloaded", MSG_CNT_DEFAULT);
     }
 }

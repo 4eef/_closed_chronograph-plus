@@ -20,7 +20,7 @@ extern lis3AxisCal_type     lis3AxisCal;
 extern power_type           power;
 extern buttons_type         buttons;
 extern meas_type            meas;
-extern chron_type           chron;
+extern chrono_type           chrono;
 extern stats_type           stats;
 extern battery_type         battery;
 extern sysPars_type         sysPars;
@@ -56,8 +56,8 @@ void main(void){
     //Initial parameters
     meas.accRollBorder = 5;
     meas.accPitchBorder = 90;
-    chron.clipCapacity = PELLET_MIN;
-    chron.sensDist = CHR_DIST_DEFAULT;
+    chrono.clipCapacity = PELLET_MIN;
+    chrono.sensDist = CHR_DIST_DEFAULT;
     kalman.x.F = 0.5;
     kalman.x.covariance = 0.1;
     kalman.x.gain = 0.5;
@@ -88,7 +88,7 @@ void main(void){
     
     while(1){
         sync();                                                                 //Syncronize cycle
-        //meas.chron.speed0 = meas.stats.cycBroken;                               //Debug
+        //meas.chrono.speed0 = meas.stats.cycBroken;                               //Debug
         battCalc();                                                             //Calculate battery parameters
         menu_run(getNavEvent());                                                //Run menu processor eWait);//
         if(power.pwrMode == ePwrRun){
@@ -140,14 +140,14 @@ void drawDisplay(void){
             break;
     }
 
-    if((pellets.irRxPelSgn.pelStat == PELLET_CONFIRM) || (pellets.irRxPelSgn.pelStat == PELLET_NEW)){
-        pellets.irRxPelSgn.pelStat = PELLET_OK;
-        menu_putTxtParSelWnd(pellets.pel[0].name, &chron.pellet, PELLET_KNOWN_LIST);
+    if((pellets.rxPelSgn.pelStat == PELLET_CONFIRM) || (pellets.rxPelSgn.pelStat == PELLET_NEW)){
+        pellets.rxPelSgn.pelStat = PELLET_OK;
+        menu_putTxtParSelWnd(pellets.pel[0].name, &chrono.pellet, PELLET_KNOWN_LIST);
     }
     //Chronograph binding
-    if(chron.chrBindCnt != 0){
-        chron.chrBindCnt--;
-        if(chron.chrBindCnt == 0) menu_putMsg("Failed", MSG_CNT_DEFAULT);
+    if(chrono.chrBindCnt != 0){
+        chrono.chrBindCnt--;
+        if(chrono.chrBindCnt == 0) menu_putMsg("Failed", MSG_CNT_DEFAULT);
     }
     //Draw message
     ssd_putMessage();

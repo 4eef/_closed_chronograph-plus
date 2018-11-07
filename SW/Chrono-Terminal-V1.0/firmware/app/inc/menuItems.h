@@ -10,11 +10,14 @@
 
 #include "microMenu.h"
 #include "menuFunctions.h"
+#include "system.h"
+#include "chrono.h"
+#include "inclinometer.h"
 
 extern sysPars_type         sysPars;
 extern pellets_type         pellets;
 extern meas_type            meas;
-extern chron_type           chron;
+extern chrono_type          chrono;
 extern power_type           power;
 
 // Menu parameter items
@@ -25,8 +28,8 @@ MENU_PAR(psinfo,        NULL,                   NULL,                   NULL,   
 MENU_PAR(pmode,         sysPars.modeTxts[0],    &sysPars.dispMode,      NULL,                   SCR_MODES_NO,           NULL,                   NULL,                   NULL);
 MENU_PAR(ppot,          "min",                  &power.uptimeSet,       NULL,                   eNoFract,               POWER_RUN_MAX,          POWER_RUN_MIN,          NULL);
 MENU_PAR(pswres,        NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   swResFunc);
-MENU_PAR(pcc,           "pcs",                  &chron.clipCapacity,    &chron.clipCurrent,     eNoFract,               PELLET_MAX,             PELLET_MIN,             NULL);
-MENU_PAR(psd,           "mm",                   &chron.sensDist,        NULL,                   eTenths,                CHR_DIST_MAX,           CHR_DIST_MIN,           NULL);
+MENU_PAR(pcc,           "pcs",                  &chrono.clipCapacity,   &chrono.clipCurrent,    eNoFract,               PELLET_MAX,             PELLET_MIN,             NULL);
+MENU_PAR(psd,           "mm",                   &chrono.sensDist,       NULL,                   eTenths,                CHR_DIST_MAX,           CHR_DIST_MIN,           NULL);
 MENU_PAR(pchrbnd,       NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   NULL,                   chrBindFunc);
 MENU_PAR(pdb1edit,      "g",                    &pellets.pel[0].wght,   &pellets.pel[0].name,   eHundreds,              PELLET_WGH_MG10_MAX,    PELLET_WGH_MG10_MIN,    NULL);
 MENU_PAR(pdb2edit,      "g",                    &pellets.pel[1].wght,   &pellets.pel[1].name,   eHundreds,              PELLET_WGH_MG10_MAX,    PELLET_WGH_MG10_MIN,    NULL);

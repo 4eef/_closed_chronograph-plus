@@ -12,10 +12,7 @@
 * Include
 */
 #include "stm32f0xx.h"
-#include "clock.h"
 #include "gpio.h"
-#include "system.h"
-#include "power.h"
 
 /*!****************************************************************************
 * User define
@@ -58,6 +55,7 @@ typedef struct{
 /*!****************************************************************************
 * Extern viriables
 */
+extern irRxData_type        irRxData;
 
 /*!****************************************************************************
 * Macro functions

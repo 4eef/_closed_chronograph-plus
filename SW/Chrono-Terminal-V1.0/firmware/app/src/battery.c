@@ -14,9 +14,9 @@
 /*!****************************************************************************
 * MEMORY
 */
+battery_type                battery;
 extern adcData_type         adcData;
 extern meas_type            meas;
-extern battery_type         battery;
 extern sysPars_type         sysPars;
 extern menu_type            menu;
 

@@ -2326,16 +2326,10 @@
       <name>$PROJ_DIR$\..\app\src\buttons.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\app\src\chrono.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\app\src\delay.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\app\src\filter.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\app\src\inclinometer.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\app\src\IR.c</name>
