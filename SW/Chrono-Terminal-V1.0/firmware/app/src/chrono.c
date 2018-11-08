@@ -145,4 +145,30 @@ void hndlIRData(void){
     }
 }
 
+void chrono_statsRst(void){
+    if(chrono.statShots != 0){
+        chrono.statShots = 0;
+        chrono.statSpeedsSum = 0;
+        chrono.statSdev = 0;
+        chrono.statMean = 0;
+        menu_putMsg("Stats cleared", MSG_CNT_DEFAULT);
+    }
+}
+
+void chrono_clipReload(void){
+    if((chrono.clipCapacity > 1) && (chrono.clipCurrent != chrono.clipCapacity)){
+        chrono.clipCurrent = chrono.clipCapacity;
+        menu_putMsg("Clip reloaded", MSG_CNT_DEFAULT);
+    }
+}
+
+void chrono_bindNewDev(void){
+    uint32_t sgn;
+    if(chrono.chrBindCnt != 0){
+        chrono.chrBindCnt = 0;
+        chrono.chrSgntr = sgn;
+        menu_putMsg("Binded", MSG_CNT_DEFAULT);
+    }
+}
+
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

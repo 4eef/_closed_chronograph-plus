@@ -44,6 +44,8 @@ typedef struct{
 /*!****************************************************************************
 * Prototypes for the functions
 */
+void offsCalFunc(void);
+void gainCalFunc(void);
 
 #endif //inclinometer_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

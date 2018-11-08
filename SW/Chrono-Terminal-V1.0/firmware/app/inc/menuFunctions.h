@@ -43,12 +43,6 @@ extern const char statsTxt[];
 void statsParser(void);
 void aboutParser(void);
 void sinfoParser(void);
-void swResFunc(void);
-void chrBindFunc(void);
-void offsCalFunc(void);
-void gainCalFunc(void);
-void chrSetsRst(void);
-void clipReload(void);
 
 #endif //menuFunctions_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

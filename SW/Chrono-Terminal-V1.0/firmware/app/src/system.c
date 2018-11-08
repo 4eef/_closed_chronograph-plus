@@ -205,4 +205,8 @@ void drawIncScr(void){
     ssd_putString6x8(76, 9, &border[0]);
 }
 
+void swResFunc(void){
+    
+}
+
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

@@ -69,6 +69,7 @@ void drawIncScr(void);
 void drawChrScr(void);
 void drawHybrScr(void);
 void drawMenu(void);
+void swResFunc(void);
 
 #endif //system_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

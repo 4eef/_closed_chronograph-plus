@@ -57,7 +57,7 @@ void main(void){
     meas.accRollBorder = 5;
     meas.accPitchBorder = 90;
     chrono.clipCapacity = PELLET_MIN;
-    chrono.sensDist = CHR_DIST_DEFAULT;
+    chrono.sensDist = CHR_DIST_MIN;
     kalman.x.F = 0.5;
     kalman.x.covariance = 0.1;
     kalman.x.gain = 0.5;
@@ -72,10 +72,10 @@ void main(void){
     kalman.R = 15;
     power.uptimeSet = POWER_RUN_DEFAULT;
     //Menu function pointers
-    menu.pBackBtnFunc = chrSetsRst;
+    menu.pBackBtnFunc = NULL;
     menu.pUpBtnFunc = NULL;
     menu.pDownBtnFunc = NULL;
-    menu.pOkBtnFunc = clipReload;
+    menu.pOkBtnFunc = NULL;
     menu.pAnyBtnFunc = powerTimRst;
     menu.pPwrOnFunc = powerOn;
     menu.pPwrOffFunc = powerOff;

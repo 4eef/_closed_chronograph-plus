@@ -16,4 +16,13 @@
 */
 meas_type                   meas;
 
+
+void offsCalFunc(void){
+    
+}
+
+void gainCalFunc(void){
+    
+}
+
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/
