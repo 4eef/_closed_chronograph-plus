@@ -12,7 +12,6 @@
 * Include
 */
 #include "adc.h"
-#include "IR.h"
 #include "ug2864.h"
 #include "clock.h"
 #include "sync.h"

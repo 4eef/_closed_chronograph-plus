@@ -23,7 +23,6 @@
 #include "ug2864.h"
 #include "lis3.h"
 #include "microMenu.h"
-#include "IR.h"
 #include "adc.h"
 #include "sync.h"
 #include "power.h"
@@ -32,6 +31,7 @@
 #include "system.h"
 #include "fix16.h"
 #include "menuItems.h"
+#include "chrono.h"
 
 /*!****************************************************************************
 * User define

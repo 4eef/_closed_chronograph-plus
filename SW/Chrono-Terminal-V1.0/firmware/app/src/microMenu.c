@@ -34,11 +34,6 @@ void navMenu(eNavEvent_type navEvent);
 void navDisp(eNavEvent_type navEvent);
 void navPwrOff(eNavEvent_type navEvent);
 
-/*
-TO DO List:
-* ����� �����������.
-*/
-
 /*!****************************************************************************
 *                       MENU INTERFACE FUNCTIONS
 */

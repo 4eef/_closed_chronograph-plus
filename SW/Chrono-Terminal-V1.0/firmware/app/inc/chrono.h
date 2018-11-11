@@ -26,7 +26,7 @@
 #define CHR_SPD_MAX             65535
 #define PELLET_DB_QTY           15
 #define PELLET_KNOWN_LIST       PELLET_DB_QTY - 1
-#define PELLET_NEW_SGN_QTY      10
+#define PELLET_SGN_BUFF_QTY     25
 #define PELLET_SGN_TOLERANCE    10
 #define PELLET_CHANGE_THR       5
 #define PELLET_NEW_SGN_THR      10
@@ -57,17 +57,35 @@ typedef struct{
 }pellet_type;
 
 typedef struct{
-    uint16_t        newSgn[PELLET_NEW_SGN_QTY];
-    uint8_t         newSgnCnt;
-}pelNewSgn_type;
+    uint16_t        currSgn;
+    uint16_t        currSgnNum;
+    uint16_t        rxSgn[PELLET_SGN_BUFF_QTY];
+    uint16_t        rxSgnCurr;
+    uint16_t        rxSgnCnt;
+}pelSgn_type;
 
 typedef struct{
-    uint8_t         tmp;
+    uint16_t        speed[STAT_SHOTS_MAX];
+    uint16_t        speedCurr;
+    uint16_t        speedCnt;
+    uint16_t        energy;
+    uint16_t        mean;
+    uint16_t        sDev;
 }chrStats_type;
 
 typedef struct{
-    uint16_t        sgn;
+    uint16_t        clipCurr;
+    uint16_t        clipCapacity;
+    uint16_t        sensDist;
+    uint16_t        chrBindCnt;
 }chrSetts_type;
+
+typedef struct{
+    pellet_type     pellets[PELLET_DB_QTY];
+    pelSgn_type     pelSgn;
+    chrStats_type   chrStats;
+    chrSetts_type   chrSetts;
+}chrono1_type;
 
 // OLD
 typedef struct{
@@ -120,9 +138,9 @@ extern pellets_type         pellets;
 * Prototypes for the functions
 */
 void chrono_bindNew(void);
-void hndlIRData(void);
-void chrono_setsRst(void);
+void chrono_statsRst(void);
 void chrono_clipReload(void);
+void chrono_run(void);
 
 #endif //chrono_H
 /***************** (C) COPYRIGHT ************** END OF FILE ******** 4eef ****/

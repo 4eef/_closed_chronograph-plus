@@ -22,7 +22,7 @@ extern stats_type           stats;
 /*!****************************************************************************
 * @brief    Main function
 */
-void hndlIRData(void){
+void chrono_run(void){
     uint32_t dist, sgn, spd0, spd1, spd2, spd3, spd4, val1, val2, val3, val4;
     uint8_t i;
     if(irRxData.rxState == IR_DATA_READY){

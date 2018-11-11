@@ -92,7 +92,7 @@ void main(void){
         battCalc();                                                             //Calculate battery parameters
         menu_run(getNavEvent());                                                //Run menu processor eWait);//
         if(power.pwrMode == ePwrRun){
-            hndlIRData();                                                       //Data received via IR channel
+            chrono_run();                                                       //Data received via IR channel
             if(sysPars.dispMode != eChronograph) trxAccData();                  //Perform data transmition with accelerometer
             drawDisplay();                                                      //Perform display refresh
         }
